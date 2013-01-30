@@ -72,7 +72,7 @@ public class IopSpectralModel {
     public static double[] getABBricaud(double wl) {
         // a and b at 443 derived from values previously in a_bb_prediction
         // a_443 = 0.0394 and k (= 1/(1-b))= 1.52323
-        String wavelengthAsString = Double.toString(wl);
+        String wavelengthAsString = Integer.toString((int)wl);
         double aBricaud = BRICAUD_A.get(wavelengthAsString);
         double bBricaud = BRICAUD_B.get(wavelengthAsString);
         return new double[]{aBricaud, bBricaud};

@@ -44,7 +44,6 @@ public class CorrectionContext {
         lambdaI = sensor.getLambdaI();
         lambdaO = sensor.getLambdaO();
 
-        double[] subset = new double[lambdaI.length];
         PureWater pureWater = PureWater.read();
         int number_i = lambdaI.length;
         int number_o = lambdaO.length;
