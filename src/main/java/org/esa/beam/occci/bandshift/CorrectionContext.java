@@ -91,5 +91,59 @@ public class CorrectionContext {
         smsB =sms[1];
     }
 
+    public Sensor getSensor() {
+        return sensor;
+    }
 
+    public double getSmsA() {
+        return smsA;
+    }
+
+    public double getSmsB() {
+        return smsB;
+    }
+
+    public double[] getLambdaI() {
+        return lambdaI;
+    }
+
+    public double[] getLambdaO() {
+        return lambdaO;
+    }
+
+    public double[] getAw_i() {
+        return aw_i;
+    }
+
+    public double[] getAw_o() {
+        return aw_o;
+    }
+
+    public double[] getBbw_i() {
+        return bbw_i;
+    }
+
+    public double[] getBbw_o() {
+        return bbw_o;
+    }
+
+    public double[] getA_i() {
+        return a_i;
+    }
+
+    public double[] getA_o() {
+        return a_o;
+    }
+
+    public double[] getB_i() {
+        return b_i;
+    }
+
+    public double[] getB_o() {
+        return b_o;
+    }
+
+    public double getSpec_model_start() {
+        return spec_model_start;
+    }
 }

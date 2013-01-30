@@ -23,18 +23,20 @@ package org.esa.beam.occci.bandshift;
 public enum Sensor {
 
     SEAWIFS(new double[]{412., 490., 510., 555., 555., 555., 667., 667.},
-            new double[]{413., 488., 531., 531., 547., 560., 665., 670.}),
+            new double[]{413., 488., 531., 531., 547., 560., 665., 670.}, 555.0),
     MERIS(new double[]{413., 490., 510., 560., 560., 560., 665., 665.},
-          new double[]{412., 488., 531., 531., 547., 555., 667., 670.}),
+          new double[]{412., 488., 531., 531., 547., 555., 667., 670.}, 560.0),
     MODISA(new double[]{412., 488., 488., 531., 547., 547., 667., 667.},
-           new double[]{413., 510., 490., 510., 560., 555., 665., 670.});
+           new double[]{413., 510., 490., 510., 560., 555., 665., 670.}, 547.0);
 
     private final double[] lambdaI;
     private final double[] lambdaO;
+    private final double greenWavelength;
 
-    private Sensor(double[] lambdaI, double[] lambdaO) {
+    private Sensor(double[] lambdaI, double[] lambdaO, double  greenWavelength) {
         this.lambdaI = lambdaI;
         this.lambdaO = lambdaO;
+        this.greenWavelength = greenWavelength;
     }
 
     public double[] getLambdaI() {
@@ -43,5 +45,9 @@ public enum Sensor {
 
     public double[] getLambdaO() {
         return lambdaO;
+    }
+
+    public double getGreenWavelength() {
+        return greenWavelength;
     }
 }
