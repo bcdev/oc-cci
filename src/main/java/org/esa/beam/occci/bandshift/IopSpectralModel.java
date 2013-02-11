@@ -137,10 +137,6 @@ public class IopSpectralModel {
     public static double[] iopSpectralModel(double lambda_in, double a_in, double b_in, double aph_in, double adg_in, double bbp_in, double rrs_blue_in, double rrs_green_in,
                                             double lambda_out, double a_out, double b_out) {
 
-//        dimension_input = size(aph_in,/dimension)
-//     	  nb_conversions = dimension_input[0]
-//     	  if (n_elements(dimension_input) EQ 1) then nb_predictions = 1 else nb_predictions = dimension_input[1]
-
         double k = 1.52323; //  = 1/(1-b_443)
         double a_443 = 0.0394;
 

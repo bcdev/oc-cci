@@ -30,11 +30,11 @@ public class BandShiftCorrectionTest {
         double qaa_max = 5.0;
         double[] rrs = new double[]{0.00709421,0.00560526,0.00464842,0.00256442,0.00196990,0.000251790};
         double[] qaa = new double[]{0.0189454,0.00553217,0.0133541};
-        double[] correctionFacots = bandShiftCorrection.correct(rrs, rrs_wavelengths, qaa, qaa_min, qaa_max);
+        double[] correctionFactors = bandShiftCorrection.correct(rrs, rrs_wavelengths, qaa, qaa_min, qaa_max);
 
         rrs = new double[]{0.00711314, 0.00559714, 0.00459386, 0.00249029, 0.00189400, 0.000241144};
         qaa = new double[]{0.0192148, 0.00571175, 0.0138207};
-        correctionFacots = bandShiftCorrection.correct(rrs, rrs_wavelengths, qaa, qaa_min, qaa_max);
+        correctionFactors = bandShiftCorrection.correct(rrs, rrs_wavelengths, qaa, qaa_min, qaa_max);
 
     }
 }
