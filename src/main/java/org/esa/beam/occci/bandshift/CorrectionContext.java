@@ -18,6 +18,7 @@ package org.esa.beam.occci.bandshift;
 
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author MarcoZ
@@ -29,6 +30,7 @@ public class CorrectionContext {
     private final double smsB;
     private final double[] lambdaI;
     private final double[] lambdaO;
+    private final double[] lambdaOSorted;
     private final double[] aw_i;
     private final double[] aw_o;
     private final double[] bbw_i;
@@ -43,6 +45,8 @@ public class CorrectionContext {
         this.sensor = sensor;
         lambdaI = sensor.getLambdaI();
         lambdaO = sensor.getLambdaO();
+        lambdaOSorted = Arrays.copyOf(lambdaO, lambdaO.length);
+        Arrays.sort(lambdaOSorted);
 
         PureWater pureWater = PureWater.read();
         int number_i = lambdaI.length;
@@ -109,6 +113,10 @@ public class CorrectionContext {
 
     public double[] getLambdaO() {
         return lambdaO;
+    }
+
+    public double[] getLambdaOSorted() {
+        return lambdaOSorted;
     }
 
     public double[] getAw_i() {
