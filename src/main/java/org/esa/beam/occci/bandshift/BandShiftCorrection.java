@@ -40,16 +40,8 @@ public class BandShiftCorrection {
         this.context = context;
     }
 
-    public double[][] correct(double[] rrs, double[] rrs_wavelengths, double[] qaa) {
-        return correct(rrs, rrs_wavelengths, qaa, 0, 100);
-    }
 
-    public double[][] correct(double[] rrs, double[] rrs_wavelengths, double[] qaa, double qaa_min, double qaa_max) {
-        double[][] core = core(rrs, rrs_wavelengths, qaa, qaa_min, qaa_max);
-        return core;
-    }
-
-    double[][] core(double[] rrs, double[] rrs_wavelengths, double[] qaa, double qaa_min, double qaa_max) {
+    double[] correctBandshift(double[] rrs, double[] rrs_wavelengths, double[] qaa, double qaa_min, double qaa_max) {
         int number_correction = context.getLambdaI().length;
         Assert.argument(qaa.length == 3, "qaa must have dimension equal to 3");
 
@@ -82,7 +74,7 @@ public class BandShiftCorrection {
 
         if (invalid_aph || invalid_acdm || invalid_bbp) {
             // no correction
-            return new double[0][];
+            return new double[0];
         }
         // Only continue if there are intersection bins with a valid value for all of the used IOPs (aph, acdm, bbp)
         double[] rrsI = new double[number_correction];
@@ -93,7 +85,7 @@ public class BandShiftCorrection {
         double rrs_blue = rrs[blue_index] / 0.52 + 1.7 * rrs[blue_index];
         double rrs_green = rrs[green_index] / 0.52 + 1.7 * rrs[green_index];
 
-        double[][] result = new double[2][number_correction];
+        double[] rrs_corrected = new double[number_correction];
         for (int i = 0; i < number_correction; i++) {
 
             // Derive the aph, adg and bbp for the correction input wavelengths starting from the blue band
@@ -140,46 +132,43 @@ public class BandShiftCorrection {
             // Correction factors that, when multiplied with the RRS at correction input wavelengths give RRS at correction output wavelengths
             double correction_factor = QAA_rrs_aw_out / QAA_rrs_aw_in;
             // Predict RRS at output wavelengths, multiplying with correction factors
-            double rrs_corrected = correction_factor * rrsI[i];
-            result[0][i] = correction_factor;
-            result[1][i] = rrs_corrected;
+            rrs_corrected[i] = correction_factor * rrsI[i];
         }
-        return result;
+        return rrs_corrected;
     }
 
-   /* double[] weightedAverageEqualCorrectionProducts(double[] rrs_corrected) {
-        //rrs_dimension = size(rrs_corrected_matrix,/dimension)
-        //if (n_elements(rrs_dimension)) GT 1 then n_bins = (size(rrs_corrected_matrix,/dimension))[1] else n_bins = 1
-        //n_rrs_corrected_wavelengths = n_elements(rrs_corrected_wavelengths)
-//        non_doubles = make_array(n_rrs_corrected_wavelengths,value=1,/int)
-        double[] sorted_rrs_corrected_wavelengths = context.getLambdaOSorted();
-        unique_indexes = uniq(sorted_rrs_corrected_wavelengths)
-        //n_unique = n_elements(unique_indexes)
-        // Create an array with the first index of all unique elements in sorted_rrs_corrected_wavelengths
-        compare_indexes = 0
-        if n_unique GT 1 then compare_indexes =[compare_indexes, unique_indexes[0:n_unique - 2]+1]
-        // Where the last index of the unique elements in sorted_rrs_corrected_wavelengths does not correspond to the first index
-        // of the unique elements in sorted_rrs_corrected_wavelengths, then this means that elements is multiply present.
-        double_index = where(unique_indexes NE compare_indexes, n_doubles)
-        double[][] result = new double[2][42];
-        IF(n_doubles GT 0) THEN BEGIN
-        doubles = sorted_rrs_corrected_wavelengths[unique_indexes[double_index]]
-        foreach double_wl, doubles do begin
-                wavelength_index = where(rrs_corrected_wavelengths EQ double_wl)
-        non_doubles[wavelength_index] = 0
-        non_doubles[wavelength_index[0]] = 1
-        wl_index = where(correction_context.lambda_o EQ double_wl, n_wl)
-        if total(wl_index - wavelength_index) NE 0 then STOP,
-        'rrs wavelengths must match one on one to output wavelengths of correction context'
-        input_wl = correction_context.lambda_i[wl_index]
-        rel_weight = (1 - (abs(input_wl - double_wl) / total(abs(input_wl - double_wl)))) / (n_wl - 1)
-        rrs_corrected_matrix[wavelength_index[0],*]=
-        total(rebin(rel_weight, n_wl, n_bins) * rrs_corrected_matrix[wavelength_index, *],1)
-        endforeach
-                rrs_corrected_matrix = rrs_corrected_matrix[where(non_doubles EQ 1),*]
-        rrs_corrected_wavelengths = rrs_corrected_wavelengths[where(non_doubles EQ 1)]
-        ENDIF
-        return null;
+    double[] weightedAverageEqualCorrectionProducts(double[] rrs_corrected) {
+        int[] averageIndices = context.getSensor().getAverageIndices();
+        double[] rrs_Averaged = new double[rrs_corrected.length - 1];
+        int destIndex = 0;
+        for (int srcIndex = 0; srcIndex < rrs_corrected.length; srcIndex++) {
+            if (averageIndices[0] == srcIndex) {
+                rrs_Averaged[destIndex++] = weightedAverage(averageIndices, rrs_corrected);
+            } else if (averageIndices[1] == srcIndex) {
+                // skip
+            } else {
+                rrs_Averaged[destIndex++] = rrs_corrected[srcIndex];
+            }
+        }
+        return rrs_Averaged;
     }
-*/
+
+    private double weightedAverage(int[] averageIndices, double[] rrs_corrected) {
+        double[] lambdaI = context.getLambdaI();
+        double[] lambdaO = context.getLambdaO();
+        double double_wl = lambdaO[averageIndices[0]];
+
+        double[] wlDiff = new double[2];
+        wlDiff[0] = Math.abs(lambdaI[averageIndices[0]] - double_wl);
+        wlDiff[1] = Math.abs(lambdaI[averageIndices[1]] - double_wl);
+        double wlDiffSum = wlDiff[0] + wlDiff[1];
+
+        double[] rel_weigth = new double[2];
+        final int n_wl = 2;
+        rel_weigth[0] = (1 - (wlDiff[0] / wlDiffSum)) / (n_wl - 1);
+        rel_weigth[1] = (1 - (wlDiff[1] / wlDiffSum)) / (n_wl - 1);
+
+        return rrs_corrected[averageIndices[0]] * rel_weigth[0] + rrs_corrected[averageIndices[1]] * rel_weigth[1];
+    }
+
 }
