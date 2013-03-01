@@ -27,9 +27,11 @@ import java.util.Arrays;
  * reference wavelengths, and feeding the obtained IOPs into QAA(v5) in forward mode to calculate corrections factors.
  */
 public class BandShiftCorrection {
-    private static final int aph_index = 0;
-    private static final int acdm_index = 1;
-    private static final int bbp_index = 2;
+
+    private static final int APH_INDEX = 0;
+    private static final int ACDM_INDEX = 1;
+    private static final int BBP_INDEX = 2;
+
     //constants used in the calculation of the below-water-reflectance
     private static final double g0 = 0.089;
     private static final double g1 = 0.125;
@@ -39,7 +41,6 @@ public class BandShiftCorrection {
     public BandShiftCorrection(CorrectionContext context) {
         this.context = context;
     }
-
 
     double[] correctBandshift(double[] rrs, double[] rrs_wavelengths, double[] qaa, double qaa_min, double qaa_max) {
         int number_correction = context.getLambdaI().length;
@@ -57,6 +58,7 @@ public class BandShiftCorrection {
             throw new IllegalArgumentException("rrs_wavelengths does not contain green band at " + greenWavelength);
         }
 
+        // @todo  tb/tb continue here 2013-03-01
         // Determine the indexes of the correction input products and create the correction output product names
         int[] input_wavelength_indexes = new int[number_correction];
         for (int i = 0; i < number_correction; i++) {
@@ -68,9 +70,9 @@ public class BandShiftCorrection {
             input_wavelength_indexes[i] = rrs_prod_position;
         }
         // Determine which intersection bins have valid IOP values (GT MIN and LT MAX)
-        boolean invalid_aph = qaa[aph_index] <= qaa_min || qaa[aph_index] >= qaa_max;
-        boolean invalid_acdm = qaa[acdm_index] <= qaa_min || qaa[acdm_index] >= qaa_max;
-        boolean invalid_bbp = qaa[bbp_index] <= qaa_min || qaa[bbp_index] >= qaa_max;
+        boolean invalid_aph = qaa[APH_INDEX] <= qaa_min || qaa[APH_INDEX] >= qaa_max;
+        boolean invalid_acdm = qaa[ACDM_INDEX] <= qaa_min || qaa[ACDM_INDEX] >= qaa_max;
+        boolean invalid_bbp = qaa[BBP_INDEX] <= qaa_min || qaa[BBP_INDEX] >= qaa_max;
 
         if (invalid_aph || invalid_acdm || invalid_bbp) {
             // no correction
@@ -95,9 +97,9 @@ public class BandShiftCorrection {
             double[] iopSM_i = IopSpectralModel.iopSpectralModel(context.getSpec_model_start(),
                                                                  context.getSmsA(),
                                                                  context.getSmsB(),
-                                                                 qaa[aph_index],
-                                                                 qaa[acdm_index],
-                                                                 qaa[bbp_index],
+                                                                 qaa[APH_INDEX],
+                                                                 qaa[ACDM_INDEX],
+                                                                 qaa[BBP_INDEX],
                                                                  rrs_blue,
                                                                  rrs_green,
                                                                  context.getLambdaI()[i],
@@ -107,20 +109,20 @@ public class BandShiftCorrection {
             double[] iopSM_o = IopSpectralModel.iopSpectralModel(context.getSpec_model_start(),
                                                                  context.getSmsA(),
                                                                  context.getSmsB(),
-                                                                 qaa[aph_index],
-                                                                 qaa[acdm_index],
-                                                                 qaa[bbp_index],
+                                                                 qaa[APH_INDEX],
+                                                                 qaa[ACDM_INDEX],
+                                                                 qaa[BBP_INDEX],
                                                                  rrs_blue,
                                                                  rrs_green,
                                                                  context.getLambdaO()[i],
                                                                  context.getA_o()[i],
                                                                  context.getB_o()[i]);
             // Calculate the total absorption and backscattering at correction output wavelengths
-            double a_tot_out = iopSM_o[aph_index] + iopSM_o[acdm_index] + context.getAw_o()[i];
-            double bb_tot_out = iopSM_o[bbp_index] + context.getBbw_o()[i];
+            double a_tot_out = iopSM_o[APH_INDEX] + iopSM_o[ACDM_INDEX] + context.getAw_o()[i];
+            double bb_tot_out = iopSM_o[BBP_INDEX] + context.getBbw_o()[i];
             // Calculate the total absorption and backscattering at correction input wavelengths
-            double a_tot_in = iopSM_i[aph_index] + iopSM_i[acdm_index] + context.getAw_i()[i];
-            double bb_tot_in = iopSM_i[bbp_index] + context.getBbw_i()[i];
+            double a_tot_in = iopSM_i[APH_INDEX] + iopSM_i[ACDM_INDEX] + context.getAw_i()[i];
+            double bb_tot_in = iopSM_i[BBP_INDEX] + context.getBbw_i()[i];
             // Using the forward QAA mode, calculate the above water RRS for the correction output wavelengths
             double QAA_u_out = bb_tot_out / (a_tot_out + bb_tot_out);
             double QAA_rrs_bw_out = (g0 + g1 * QAA_u_out) * QAA_u_out;
