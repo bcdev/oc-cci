@@ -84,7 +84,12 @@ public class BandShiftCorrectionTest {
         final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs_in, RRS_WAVELENGTHS, qaa, QAA_MIN, QAA_MAX);
         assertEquals(8, rrs_corrected.length);
         // @todo 1 tb/tb continue here
-//        assertEquals(0.00709421, rrs_corrected[0], 1e-8);
+        //assertEquals(0.00709421, rrs_corrected[0], 1e-8);
+
+        final double[] shifted = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
+        assertEquals(7, shifted.length);
+//        assertEquals(0.00709421, shifted[0], 1e-8);
+
     }
 
     @Test

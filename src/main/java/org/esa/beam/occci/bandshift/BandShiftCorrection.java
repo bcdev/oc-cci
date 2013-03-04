@@ -58,7 +58,6 @@ public class BandShiftCorrection {
             throw new IllegalArgumentException("rrs_wavelengths does not contain green band at " + greenWavelength);
         }
 
-        // @todo  tb/tb continue here 2013-03-01
         // Determine the indexes of the correction input products and create the correction output product names
         int[] input_wavelength_indexes = new int[number_correction];
         for (int i = 0; i < number_correction; i++) {
@@ -69,6 +68,7 @@ public class BandShiftCorrection {
             }
             input_wavelength_indexes[i] = rrs_prod_position;
         }
+
         // Determine which intersection bins have valid IOP values (GT MIN and LT MAX)
         boolean invalid_aph = qaa[APH_INDEX] <= qaa_min || qaa[APH_INDEX] >= qaa_max;
         boolean invalid_acdm = qaa[ACDM_INDEX] <= qaa_min || qaa[ACDM_INDEX] >= qaa_max;
@@ -78,61 +78,67 @@ public class BandShiftCorrection {
             // no correction
             return new double[0];
         }
+
         // Only continue if there are intersection bins with a valid value for all of the used IOPs (aph, acdm, bbp)
         double[] rrsI = new double[number_correction];
         for (int i = 0; i < rrsI.length; i++) {
             rrsI[i] = rrs[input_wavelength_indexes[i]];
         }
+
         // Below-water reflectance for blue and green wavelengths
         double rrs_blue = rrs[blue_index] / 0.52 + 1.7 * rrs[blue_index];
         double rrs_green = rrs[green_index] / 0.52 + 1.7 * rrs[green_index];
 
         double[] rrs_corrected = new double[number_correction];
         for (int i = 0; i < number_correction; i++) {
-
             // Derive the aph, adg and bbp for the correction input wavelengths starting from the blue band
-
             double[] spec_model_start = new double[number_correction];
             Arrays.fill(spec_model_start, context.getSpec_model_start());
             double[] iopSM_i = IopSpectralModel.iopSpectralModel(context.getSpec_model_start(),
-                                                                 context.getSmsA(),
-                                                                 context.getSmsB(),
-                                                                 qaa[APH_INDEX],
-                                                                 qaa[ACDM_INDEX],
-                                                                 qaa[BBP_INDEX],
-                                                                 rrs_blue,
-                                                                 rrs_green,
-                                                                 context.getLambdaI()[i],
-                                                                 context.getA_i()[i],
-                                                                 context.getB_i()[i]);
+                    context.getSmsA(),
+                    context.getSmsB(),
+                    qaa[APH_INDEX],
+                    qaa[ACDM_INDEX],
+                    qaa[BBP_INDEX],
+                    rrs_blue,
+                    rrs_green,
+                    context.getLambdaI()[i],
+                    context.getA_i()[i],
+                    context.getB_i()[i]);
             // Derive the aph, adg and bbp for the correction output wavelengths starting from the blue band
             double[] iopSM_o = IopSpectralModel.iopSpectralModel(context.getSpec_model_start(),
-                                                                 context.getSmsA(),
-                                                                 context.getSmsB(),
-                                                                 qaa[APH_INDEX],
-                                                                 qaa[ACDM_INDEX],
-                                                                 qaa[BBP_INDEX],
-                                                                 rrs_blue,
-                                                                 rrs_green,
-                                                                 context.getLambdaO()[i],
-                                                                 context.getA_o()[i],
-                                                                 context.getB_o()[i]);
+                    context.getSmsA(),
+                    context.getSmsB(),
+                    qaa[APH_INDEX],
+                    qaa[ACDM_INDEX],
+                    qaa[BBP_INDEX],
+                    rrs_blue,
+                    rrs_green,
+                    context.getLambdaO()[i],
+                    context.getA_o()[i],
+                    context.getB_o()[i]);
+
             // Calculate the total absorption and backscattering at correction output wavelengths
             double a_tot_out = iopSM_o[APH_INDEX] + iopSM_o[ACDM_INDEX] + context.getAw_o()[i];
             double bb_tot_out = iopSM_o[BBP_INDEX] + context.getBbw_o()[i];
+
             // Calculate the total absorption and backscattering at correction input wavelengths
             double a_tot_in = iopSM_i[APH_INDEX] + iopSM_i[ACDM_INDEX] + context.getAw_i()[i];
             double bb_tot_in = iopSM_i[BBP_INDEX] + context.getBbw_i()[i];
+
             // Using the forward QAA mode, calculate the above water RRS for the correction output wavelengths
             double QAA_u_out = bb_tot_out / (a_tot_out + bb_tot_out);
             double QAA_rrs_bw_out = (g0 + g1 * QAA_u_out) * QAA_u_out;
-            double QAA_rrs_aw_out = (-1. * 0.52 * QAA_rrs_bw_out) / ((1.7 * QAA_rrs_bw_out) - 1);
+            double QAA_rrs_aw_out = (-0.52 * QAA_rrs_bw_out) / ((1.7 * QAA_rrs_bw_out) - 1.0);
+
             // Using the forward QAA model, calculate the above wrater RRS for the correction input wavelengths
             double QAA_u_in = bb_tot_in / (a_tot_in + bb_tot_in);
             double QAA_rrs_bw_in = (g0 + g1 * QAA_u_in) * QAA_u_in;
-            double QAA_rrs_aw_in = (-1. * 0.52 * QAA_rrs_bw_in) / ((1.7 * QAA_rrs_bw_in) - 1);
+            double QAA_rrs_aw_in = (-0.52 * QAA_rrs_bw_in) / ((1.7 * QAA_rrs_bw_in) - 1);
+
             // Correction factors that, when multiplied with the RRS at correction input wavelengths give RRS at correction output wavelengths
             double correction_factor = QAA_rrs_aw_out / QAA_rrs_aw_in;
+
             // Predict RRS at output wavelengths, multiplying with correction factors
             rrs_corrected[i] = correction_factor * rrsI[i];
         }

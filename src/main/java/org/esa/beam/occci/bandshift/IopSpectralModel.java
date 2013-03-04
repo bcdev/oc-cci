@@ -137,8 +137,8 @@ public class IopSpectralModel {
     public static double[] iopSpectralModel(double lambda_in, double a_in, double b_in, double aph_in, double adg_in, double bbp_in, double rrs_blue_in, double rrs_green_in,
                                             double lambda_out, double a_out, double b_out) {
 
-        double k = 1.52323; //  = 1/(1-b_443)
-        double a_443 = 0.0394;
+//        double k = 1.52323; //  = 1/(1-b_443)
+//        double a_443 = 0.0394;
 
         double S = 0.015;
         double rat = rrs_blue_in / rrs_green_in;
