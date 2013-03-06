@@ -256,7 +256,8 @@ qaa_bins=qaa_bins, qaa_min=qaa_min, qaa_max = qaa_max, correction_factors=correc
 qaa_valid_index=qaa_valid_index, rrs_valid_index = rrs_valid_index
 
 IF (not(keyword_set(qaa_min))) THEN qaa_min = 0.
-IF (not(keyword_set(qaa_max))) THEN qaa_min = 100.
+; -------- fixed - was if not max then set min tb 2013-03-06
+IF (not(keyword_set(qaa_max))) THEN qaa_max = 100.
 IF (not(keyword_set(qaa_bins))) THEN qaa_bins = rrs_bins
 sensor = correction_context.sensor
 

@@ -63,7 +63,7 @@ public class CorrectionContext {
         b_o = new double[number_o];
 
         for (int i = 0; i < number_i; i++) {
-            double[] awbw = pureWater.getSpectralDataPureWater(lambdaI[i]);
+            double[] awbw = pureWater.getSpectralDataPureWater(lambdaI[i], 0);
             if (awbw != null) {
                 aw_i[i] = awbw[0];
                 bbw_i[i] = awbw[1]/2.0;
@@ -76,7 +76,7 @@ public class CorrectionContext {
         }
 
         for (int i = 0; i < number_o; i++) {
-            double[] awbw = pureWater.getSpectralDataPureWater(lambdaO[i]);
+            double[] awbw = pureWater.getSpectralDataPureWater(lambdaO[i], 0);
             if (awbw != null) {
                 aw_o[i] = awbw[0];
                 bbw_o[i] = awbw[1]/2.0;
