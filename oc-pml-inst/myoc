@@ -1,0 +1,24 @@
+#!/bin/bash
+# OC environment setup
+# usage:  . myoc
+
+#export OC_INST=/home/hadoop/oc-pml-inst
+export OC_INST=/home/marcoz/Projects/BC/Beam-Ops/oc-cci/oc-pml-inst
+
+export OC_LOG=$OC_INST/log
+
+mkdir -p $OC_INST/log
+mkdir -p $OC_INST/requests
+
+export OC_PRODUCTION_JAR=$OC_INST/lib/calvalus-production-1.7-SNAPSHOT-tool.jar
+export OC_BEAM_VERSION=beam-4.10.4-SNAPSHOT
+export OC_CALVALUS_VERSION=calvalus-1.7-oc
+export JAVA_DIR=/usr/lib/jvm/default-java
+
+export PYTHONPATH=$OC_INST:$OC_INST/src:$PYTHONPATH
+export PATH=$OC_INST/bin:$OC_PROCESSING_DIR/bin:$JAVA_DIR/bin:$PATH
+
+PS1="\[\e]0;\u@\h: \w\a\]\[\e[1;32m\]\u \[\e[1;34m\]\w\[\e[0m\] \[\e[0;31m\](OC-pml)\[\e[0m\]$ "
+
+echo "using OC instance       $OC_INST"
+echo "using Calvalus software $OC_PROCESSING_DIR"
