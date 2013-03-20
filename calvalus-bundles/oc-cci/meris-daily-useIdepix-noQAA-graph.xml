@@ -1,0 +1,33 @@
+#set( $filelength = $inputPath.name.length() - 11 )
+#set( $filename = $inputPath.name.substring(0, $filelength) )
+<graph id="g">
+    <version>1.0</version>
+
+    <header>
+      <target refid="mergeNode" />
+      <source name="polymer">${inputPath}</source>
+      <source name="idepix">$parameters.getProperty("idepixDir")/L2_of_${filename}.seq</source>
+    </header>
+
+    <node id="mergeNode">
+        <operator>Merge</operator>
+        <sources>
+            <masterProduct>polymer</masterProduct>
+            <sourceProducts>idepix</sourceProducts>
+        </sources>
+
+        <parameters>
+            <includes>
+                <include>
+                    <productId>sourceProducts0</productId>
+                    <name>l1_flags</name>
+                </include>
+                <include>
+                    <productId>sourceProducts0</productId>
+                    <name>cloud_classif_flags</name>
+                </include>
+            </includes>
+            <geographicError>0.01</geographicError>
+        </parameters>
+    </node>
+</graph>
