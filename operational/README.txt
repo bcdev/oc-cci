@@ -1,1 +1,1 @@
-This Repository conatsin source code for the the oc-cci project.
+This repository contains source code for the the oc-cci project.
