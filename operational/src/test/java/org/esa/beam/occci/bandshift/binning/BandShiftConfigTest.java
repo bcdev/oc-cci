@@ -1,8 +1,11 @@
 package org.esa.beam.occci.bandshift.binning;
 
 import org.esa.beam.binning.PostProcessorConfig;
+import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,14 +33,24 @@ public class BandShiftConfigTest {
     }
 
     @Test
+    public void testSensorNameAnnotated() throws NoSuchFieldException {
+        final Field sensorNameField = BandShiftConfig.class.getDeclaredField("sensorName");
+        final Parameter sensorNameParameter = sensorNameField.getAnnotation(Parameter.class);
+        assertTrue(sensorNameParameter.notEmpty());
+        assertTrue(sensorNameParameter.notNull());
+
+        final String[] valueSet = sensorNameParameter.valueSet();
+        assertEquals(3, valueSet.length);
+        assertEquals("MERIS", valueSet[0]);
+        assertEquals("MODISA", valueSet[1]);
+        assertEquals("SEAWIFS", valueSet[2]);
+    }
+
+    @Test
     public void testSetGetSensorName() {
-        final String sensorName_1 = "thermometer";
-        final String sensorName_2 = "thermostat";
+        final String sensorName = "MODISA";
 
-        config.setSensorName(sensorName_1);
-        assertEquals(sensorName_1, config.getSensorName());
-
-        config.setSensorName(sensorName_2);
-        assertEquals(sensorName_2, config.getSensorName());
+        config.setSensorName(sensorName);
+        assertEquals(sensorName, config.getSensorName());
     }
 }
