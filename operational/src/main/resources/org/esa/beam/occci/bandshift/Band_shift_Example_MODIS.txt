@@ -1,0 +1,55 @@
+IDL Version 7.1.2, Microsoft Windows (Win32 x86_64 m64). (c) 2009, ITT Visual Information Solutions
+Installation number: 87301.
+Licensed for use by: Brockmann Consult
+
+% Compiled module: INTERSECTIONSORTEDUNIQUESETS.
+% Compiled module: GET_A_B_BRICAUD.
+% Compiled module: IOPSPECTRALMODEL.
+% Compiled module: READWATER.
+% Compiled module: READBWATER.
+% Compiled module: READSPECTRALDATAPUREWATER.
+% Compiled module: GETSPECTRALDATAPUREWATER.
+% Compiled module: BANDSHIFTCORRECTIONSETUP.
+% Compiled module: BANDSHIFTCORRECTIONCORE.
+% Compiled module: WEIGHTEDAVERAGEEQUALCORRECTIONPRODUCTS.
+% Compiled module: BANDSHIFTCORRECTION.
+IDL> bandShiftCorrectionSetup, correction_context, sensor='MODISA' 
+% Compiled module: STR_SEP.
+% Compiled module: MEAN.
+% Compiled module: MOMENT.
+IDL> rrs_matrix =[[0.00719889,0.00567422,0.00468322,0.00254233,0.00196100,0.000256445],[0.00709421,0.00560526,0.00464842,0.00256442,0.00196990,0.000251790],[0.00711314,0.00559714,0.00459386,0.00249029,0.00189400,0.000241144]]     
+IDL> rrs_wavelengths = [412,443,488,531,547,667]
+IDL> rrs_bins = [284234,284237,284238]
+IDL> qaa_matrix = [[0.0189454,0.00553217,0.0133541],[0.0192148,0.00571175,0.0138207],[0.0186105,0.00577449,0.0112262]]  
+IDL> qaa_bins = [284237,284238,284239]
+IDL> qaa_min = 0. 
+IDL> qaa_max = 5.
+IDL> debug = 1
+IDL> bandshiftCorrection, rrs_matrix, rrs_wavelengths, rrs_bins, qaa_matrix, correction_context, debug=debug,qaa_bins=qaa_bins, qaa_min=qaa_min, qaa_max=qaa_max, correction_factors=correction_factors
+Corrected 2 bins.
+% Compiled module: UNIQ.
+IDL> save, filename='correction_factor.sav', correction_factors
+IDL> print, qaa_min
+     0.000000
+IDL> print, qaa_max
+      5.00000
+IDL> print, qaa_bins
+      284237      284238      284239
+IDL> print, qaa_matrix
+    0.0189454   0.00553217    0.0133541
+    0.0192148   0.00571175    0.0138207
+    0.0186105   0.00577449    0.0112262
+IDL> print, rrs_matrix
+   0.00709421   0.00560526   0.00464842   0.00256442   0.00196990  0.000251790   0.00704848   0.00320291   0.00460546   0.00165014   0.00173372  0.000257120  0.000246795
+   0.00711314   0.00559714   0.00459386   0.00249029   0.00189400  0.000241144   0.00706780   0.00314073   0.00455216   0.00158715   0.00166740  0.000246265  0.000236338
+IDL> print, rrs_wavelengths
+      412.000      443.000      488.000      531.000      547.000      667.000      413.000      510.000      490.000      560.000      555.000      665.000      670.000
+IDL> print,rrs_bins
+      284237      284238
+IDL> print,correction_factors
+     0.993554     0.671219     0.990758      1.27980     0.837678     0.880105      1.02117     0.980162
+     0.993625     0.674444     0.990922      1.27745     0.837988     0.880360      1.02124     0.980070
+
+
+
+
