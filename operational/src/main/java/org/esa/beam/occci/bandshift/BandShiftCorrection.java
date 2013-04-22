@@ -42,7 +42,7 @@ public class BandShiftCorrection {
         this.context = context;
     }
 
-    double[] correctBandshift(double[] rrs, double[] rrs_wavelengths, double[] qaa, double qaa_min, double qaa_max) {
+    public double[] correctBandshift(double[] rrs, double[] rrs_wavelengths, double[] qaa, double qaa_min, double qaa_max) {
         int number_correction = context.getLambdaI().length;
         Assert.argument(qaa.length == 3, "qaa must have dimension equal to 3");
 
@@ -145,7 +145,7 @@ public class BandShiftCorrection {
         return rrs_corrected;
     }
 
-    double[] weightedAverageEqualCorrectionProducts(double[] rrs_corrected) {
+    public double[] weightedAverageEqualCorrectionProducts(double[] rrs_corrected) {
         int[] averageIndices = context.getSensor().getAverageIndices();
         double[] rrs_Averaged = new double[rrs_corrected.length - 1];
         int destIndex = 0;

@@ -53,4 +53,9 @@ public class BandShiftConfigTest {
         config.setSensorName(sensorName);
         assertEquals(sensorName, config.getSensorName());
     }
+
+//    @Test
+//    public void testBandNamesAnnotated() throws NoSuchFieldException {
+//        final Field bandNamesField = BandShiftConfig.class.getDeclaredField("bandNames");
+//    }
 }

@@ -6,6 +6,8 @@ import org.esa.beam.binning.PostProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.occci.bandshift.Sensor;
 
+import java.io.IOException;
+
 public class BandShiftDescriptor implements PostProcessorDescriptor {
 
     public static final String BAND_SHIFTING = "BandShifting";
@@ -22,16 +24,30 @@ public class BandShiftDescriptor implements PostProcessorDescriptor {
     @Override
     public PostProcessor createPostProcessor(VariableContext varCtx, PostProcessorConfig config) {
         final String sensorName = ((BandShiftConfig) config).getSensorName();
-        return new BandShiftPostProcessor(new String[0]);
+        final String[] outputFeatureNames = createOutputFeatureNames(sensorName);
+        final BandShiftPostProcessor bandShiftPostProcessor;
+        try {
+            bandShiftPostProcessor = new BandShiftPostProcessor(outputFeatureNames, sensorName);
+        } catch (IOException e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+        return bandShiftPostProcessor;
     }
 
     // package access for testing only tb 2013-04-19
     static String[] createOutputFeatureNames(String sensorName) {
-        final String[] outputFeatureNames = new String[8];
-        final double[] lambdaO = Sensor.MERIS.getLambdaO();
+        final Sensor sensor = Sensor.valueOf(sensorName);
+        final double[] lambdaO = sensor.getLambdaO();
+        final String[] outputFeatureNames = new String[lambdaO.length - 1];
+
+        int outIndex = 0;
         for (int i = 0; i < lambdaO.length; i++) {
+            if (sensor.getAverageIndices()[1] == i) {
+                continue;
+            }
             final int lambdaInt = (int) Math.floor(lambdaO[i]);
-            outputFeatureNames[i] = "Rrs_" + lambdaInt;
+            outputFeatureNames[outIndex] = "Rrs_" + lambdaInt;
+            ++outIndex;
         }
 
         return outputFeatureNames;
