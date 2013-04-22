@@ -12,7 +12,7 @@
         <wps:Input>
             <ows:Identifier>productionName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>OC-meris-daily-${year}-${month}</wps:LiteralData>
+                <wps:LiteralData>OC-merged-daily-${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -28,36 +28,30 @@
                 <wps:LiteralData>0.1</wps:LiteralData>
             </wps:Data>
         </wps:Input>
-        <wps:Input>
-            <ows:Identifier>processorName</ows:Identifier>
-            <wps:Data>
-                <wps:LiteralData>meris-daily-useIdepix-QAA</wps:LiteralData>
-            </wps:Data>
-        </wps:Input>
 
         <wps:Input>
             <ows:Identifier>calvalus.output.dir</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/meris-daily/${year}/${month}</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/merged-daily/${year}/${month}/${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
             <ows:Identifier>inputPath</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/polymer/${year}/${month}/MER_..._1.*${yyyy}${MM}${dd}.*.polymer.nc$</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/meris-daily/${year}/${month}/${date}-L3-1</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
         <wps:Input>
             <ows:Identifier>minDate</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>${minDate}</wps:LiteralData>
+                <wps:LiteralData>${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
             <ows:Identifier>maxDate</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>${maxDate}</wps:LiteralData>
+                <wps:LiteralData>${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
@@ -68,18 +62,7 @@
         </wps:Input>
 
         <wps:Input>
-            <ows:Identifier>processorParameters</ows:Identifier>
-            <wps:Data>
-                <wps:ComplexData>
-                    <parameters>
-                        <idepixDir>/calvalus/projects/oc/Idepix-RR-fullmission/${year}/${month}</idepixDir>
-                    </parameters>
-                </wps:ComplexData>
-            </wps:Data>
-        </wps:Input>
-
-        <wps:Input>
-            <ows:Identifier>calvalus.l3.parameters</ows:Identifier>
+            <ows:Identifier>calvalus.l3.parameters.first</ows:Identifier>
             <wps:Data>
                 <wps:ComplexData>
                     <parameters>
@@ -157,6 +140,42 @@
                                 <varName>bb_spm_413</varName>
                             </aggregator>
                         </aggregators>
+                        <!--TODO use BandShifting + BiasCorrection Processor-->
+                        <postProcessor>
+                            <type>Selection</type>
+                            <varNames>Rrs412_mean,Rrs560_mean,Rrs665_mean</varNames>
+                        </postProcessor>
+                    </parameters>
+                </wps:ComplexData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.l3.parameters</ows:Identifier>
+            <wps:Data>
+                <wps:ComplexData>
+                    <parameters>
+                        <numRows>4320</numRows>
+                        <aggregators>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>Rrs412_mean</varName>
+                            </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>Rrs560_mean</varName>
+                            </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>Rrs665_mean</varName>
+                            </aggregator>
+                        </aggregators>
+                        <!--TODO use QAA Processor
+                        <postProcessor>
+                            <type>Selection</type>
+                            <varNames>Rrs412_mean_mean,Rrs560_mean,Rrs665_mean</varNames>
+                        </postProcessor>
+                        -->
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
@@ -168,6 +187,7 @@
                 <wps:LiteralData>NetCDF4-BEAM</wps:LiteralData>
             </wps:Data>
         </wps:Input>
+        <!--
         <wps:Input>
             <ows:Identifier>calvalus.ql.parameters</ows:Identifier>
             <wps:Data>
@@ -183,7 +203,7 @@
                 </wps:ComplexData>
             </wps:Data>
         </wps:Input>
-
+        -->
     </wps:DataInputs>
 </wps:Execute>
 

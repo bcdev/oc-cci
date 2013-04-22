@@ -8,16 +8,25 @@ import sys
 from pmonitor import PMonitor
 from daemon import Daemon
 
+################################################################################
 years  = [  '2008' ]
 #years  = [ '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012' ]
 monthsAll = [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' ]
+monthsAll = [ '01' ]
 months2002 = [ '06', '07', '08', '09', '10', '11', '12' ]
 months2012 = [ '01', '02', '03', '04' ]
 
 inputs = ['MERIS_L1B']
-hosts  = [('localhost',4)]
-types  = [('template-step.py',4)]
+hosts  = [('localhost',12)]
+types  = [('template-step.py',12)]
+################################################################################
 
+def dateFromIsoString(isoString):
+    return datetime.datetime.strptime(isoString, '%Y-%m-%d')
+
+def dateRange(start_date, end_date):
+    for n in range(int ((end_date - start_date).days) + 1):
+        yield start_date + datetime.timedelta(n)
 
 def getMinMaxDate(year, month):
     monthrange = calendar.monthrange(int(year), int(month))
@@ -25,10 +34,12 @@ def getMinMaxDate(year, month):
     maxDate = datetime.date(int(year), int(month), monthrange[1])
     return (minDate, maxDate)
 
+################################################################################
 
 class OcMeris(Daemon):
     def run(self):
         pm = PMonitor(inputs, request='oc-meris', logdir='log', hosts=hosts, types=types)
+
         for year in years:
             months = monthsAll
             if year == '2002':
@@ -38,7 +49,7 @@ class OcMeris(Daemon):
 
             for month in months:
                 (minDate, maxDate) = getMinMaxDate(year, month)
-                polymerName = 'polymer-' + str(minDate) 
+                polymerName = 'polymer-' + str(minDate)
                 polymerParams = ['polymer-\${year}-\${month}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
@@ -46,13 +57,21 @@ class OcMeris(Daemon):
                               'month', str(month) ]
                 pm.execute('template-step.py', ['MERIS_L1B'], [polymerName], parameters=polymerParams, logprefix=polymerName)
 
-                dailyName = 'meris-daily-' + str(minDate) 
-                dailyParams = ['meris-daily-\${year}-\${month}.xml', \
-                              'minDate', str(minDate), \
-                              'maxDate', str(maxDate), \
-                              'year', str(year), \
-                              'month', str(month) ]
-                pm.execute('template-step.py', [polymerName], [dailyName], parameters=dailyParams, logprefix=dailyName)
+                for singleDay in dateRange(minDate, maxDate):
+                    merisDailyName = 'meris-daily-' + str(singleDay)
+                    merisDailyParams = ['meris-daily-useIdepix-QAA-\${date}.xml', \
+                              'date', str(singleDay), \
+                              'year', str(singleDay.year), \
+                              'month', str(singleDay.month) ]
+                    pm.execute('template-step.py', [polymerName], [merisDailyName], parameters=merisDailyParams, logprefix=merisDailyName)
+
+                    mergedDailyName = 'merged-daily-' + str(singleDay)
+                    mergedDailyParams = ['merged-daily-\${date}.xml', \
+                              'date', str(singleDay), \
+                              'year', str(singleDay.year), \
+                              'month', str(singleDay.month) ]
+                    pm.execute('template-step.py', [merisDailyName], [mergedDailyName], parameters=mergedDailyParams, logprefix=mergedDailyName)
+
         #======================================================
         pm.wait_for_completion()
 #======================================================

@@ -12,7 +12,7 @@
         <wps:Input>
             <ows:Identifier>productionName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>OC-meris-daily-${year}-${month}</wps:LiteralData>
+                <wps:LiteralData>OC-meris-daily-${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -31,14 +31,14 @@
         <wps:Input>
             <ows:Identifier>processorName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>meris-daily-useIdepix-noQAA</wps:LiteralData>
+                <wps:LiteralData>meris-daily-useIdepix-QAA</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
         <wps:Input>
             <ows:Identifier>calvalus.output.dir</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/meris-daily/${year}/${month}</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/meris-daily/${year}/${month}/${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
@@ -51,13 +51,13 @@
         <wps:Input>
             <ows:Identifier>minDate</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>${minDate}</wps:LiteralData>
+                <wps:LiteralData>${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
             <ows:Identifier>maxDate</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>${maxDate}</wps:LiteralData>
+                <wps:LiteralData>${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
@@ -144,7 +144,24 @@
                                 <type>AVG</type>
                                 <varName>Rrs665</varName>
                             </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>a_pig_413</varName>
+                            </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>a_ys_413</varName>
+                            </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>bb_spm_413</varName>
+                            </aggregator>
                         </aggregators>
+                        <!--TODO use BandShifting + BiasCorrection Processor-->
+                        <postProcessor>
+                            <type>Selection</type>
+                            <varNames>Rrs412_mean,Rrs560_mean,Rrs665_mean</varNames>
+                        </postProcessor>
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
