@@ -61,15 +61,15 @@ class OcMeris(Daemon):
                     merisDailyName = 'meris-daily-' + str(singleDay)
                     merisDailyParams = ['meris-daily-useIdepix-QAA-\${date}.xml', \
                               'date', str(singleDay), \
-                              'year', str(singleDay.year), \
-                              'month', str(singleDay.month) ]
+                              'year', '%4d' % (singleDay.year), \
+                              'month', '%02d' % (singleDay.month) ]
                     pm.execute('template-step.py', [polymerName], [merisDailyName], parameters=merisDailyParams, logprefix=merisDailyName)
 
                     mergedDailyName = 'merged-daily-' + str(singleDay)
                     mergedDailyParams = ['merged-daily-\${date}.xml', \
                               'date', str(singleDay), \
-                              'year', str(singleDay.year), \
-                              'month', str(singleDay.month) ]
+                              'year', '%4d' % (singleDay.year), \
+                              'month', '%02d' % (singleDay.month) ]
                     pm.execute('template-step.py', [merisDailyName], [mergedDailyName], parameters=mergedDailyParams, logprefix=mergedDailyName)
 
         #======================================================
