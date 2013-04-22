@@ -74,6 +74,4 @@ public enum Sensor {
     public int[] getAverageIndices() {
         return averageIndices;
     }
-
-
 }

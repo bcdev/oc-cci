@@ -23,11 +23,11 @@ public class BandShiftDescriptor implements PostProcessorDescriptor {
 
     @Override
     public PostProcessor createPostProcessor(VariableContext varCtx, PostProcessorConfig config) {
-        final String sensorName = ((BandShiftConfig) config).getSensorName();
-        final String[] outputFeatureNames = createOutputFeatureNames(sensorName);
+        final BandShiftConfig bandShiftConfig = (BandShiftConfig) config;
+        final String[] outputFeatureNames = createOutputFeatureNames(bandShiftConfig.getSensorName());
         final BandShiftPostProcessor bandShiftPostProcessor;
         try {
-            bandShiftPostProcessor = new BandShiftPostProcessor(outputFeatureNames, sensorName);
+            bandShiftPostProcessor = new BandShiftPostProcessor(outputFeatureNames, bandShiftConfig, varCtx);
         } catch (IOException e) {
             throw new IllegalStateException(e.getMessage());
         }
