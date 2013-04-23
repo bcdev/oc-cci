@@ -96,6 +96,5 @@ public class BandShiftDescriptorTest {
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
-
     }
 }

@@ -26,8 +26,6 @@ public class BandShiftPostProcessorTest {
         assertArrayEquals(outputFeatureNames, featureNamesFromProcessor);
     }
 
-
-
     @Test
     public void testThrowsExceptionOnMissingBands() throws IOException {
         final String[] outputFeatureNames = {"out", "feature", "names"};

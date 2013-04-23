@@ -1,6 +1,6 @@
 package org.esa.beam.occci.qaa;
 
-public class MerisConfigOldCoeffs implements SensorConfig {
+class MerisConfigOldCoeffs implements SensorConfig {
 
     private static final double[] awCoefficients = {-1.273, -1.163, -0.295};
     private static final double referenceWavelength = 560.0;

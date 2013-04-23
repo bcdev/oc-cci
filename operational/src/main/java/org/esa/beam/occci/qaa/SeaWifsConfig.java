@@ -1,6 +1,6 @@
 package org.esa.beam.occci.qaa;
 
-public class SeaWifsConfig implements SensorConfig {
+class SeaWifsConfig implements SensorConfig {
 
     private static final double[] awCoefficients = {-1.146, -1.366, -0.469};
     private static final double referenceWavelength = 555.0;

@@ -70,16 +70,8 @@ public class QaaOp extends PixelOperator {
         validOpImage = VirtualBandOpImage.createMask(validPixelExpression,
                                                      sourceProduct,
                                                      ResolutionLevel.MAXRES);
-        if ("MERIS".equalsIgnoreCase(sensorName)) {
-            sensorConfig = new MerisConfig();
-        } else if ("MODIS".equalsIgnoreCase(sensorName)) {
-            sensorConfig = new ModisConfig();
-        } else if ("SEAWIFS".equalsIgnoreCase(sensorName)) {
-            sensorConfig = new SeaWifsConfig();
 
-        } else {
-            throw new OperatorException("Unsupported sensor name: " + sensorName);
-        }
+        sensorConfig = SensorConfigFactory.get(sensorName);
         qaaAlgorithm = new QaaAlgorithm(sensorConfig);
 
         qaaResult = new ThreadLocal<QaaResult>() {
