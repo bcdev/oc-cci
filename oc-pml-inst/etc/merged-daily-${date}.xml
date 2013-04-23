@@ -187,6 +187,13 @@
                 <wps:LiteralData>NetCDF4-BEAM</wps:LiteralData>
             </wps:Data>
         </wps:Input>
+        <wps:Input>
+          <ows:Identifier>calvalus.output.prefix</ows:Identifier>
+          <wps:Data>
+            <wps:LiteralData>OC-merged-daily</wps:LiteralData>
+          </wps:Data>
+        </wps:Input>
+
         <!--
         <wps:Input>
             <ows:Identifier>calvalus.ql.parameters</ows:Identifier>

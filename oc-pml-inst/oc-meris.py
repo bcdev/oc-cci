@@ -57,6 +57,7 @@ class OcMeris(Daemon):
                               'month', str(month) ]
                 pm.execute('template-step.py', ['MERIS_L1B'], [polymerName], parameters=polymerParams, logprefix=polymerName)
 
+                dayCounter = 0
                 for singleDay in dateRange(minDate, maxDate):
                     merisDailyName = 'meris-daily-' + str(singleDay)
                     merisDailyParams = ['meris-daily-useIdepix-QAA-\${date}.xml', \
@@ -71,6 +72,10 @@ class OcMeris(Daemon):
                               'year', '%4d' % (singleDay.year), \
                               'month', '%02d' % (singleDay.month) ]
                     pm.execute('template-step.py', [merisDailyName], [mergedDailyName], parameters=mergedDailyParams, logprefix=mergedDailyName)
+
+                    dayCounter = dayCounter + 1
+                    if dayCounter > 3:
+                        break
 
         #======================================================
         pm.wait_for_completion()
