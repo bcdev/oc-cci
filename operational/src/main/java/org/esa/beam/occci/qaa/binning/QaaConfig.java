@@ -3,12 +3,13 @@ package org.esa.beam.occci.qaa.binning;
 
 import org.esa.beam.binning.PostProcessorConfig;
 import org.esa.beam.framework.gpf.annotations.Parameter;
+import org.esa.beam.occci.qaa.QaaConstants;
 
 public class QaaConfig extends PostProcessorConfig {
 
     @Parameter(notNull = true,
             notEmpty = true,
-            valueSet = {"MERIS", "MODIS", "SEAWIFS"})
+            valueSet = {QaaConstants.MERIS, QaaConstants.MODIS, QaaConstants.SEAWIFS})
     private String sensorName;
 
     @Parameter(notNull = true,
@@ -22,8 +23,8 @@ public class QaaConfig extends PostProcessorConfig {
     private String[] bandNames;
 
     @Parameter(description = "A comma separated list of band indices defining the output total absorption" +
-            "coefficient bands. Indices correspond to the input reflectance band wavelengths.",
-            defaultValue = "0,1,2,3,4,5")
+            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 4.",
+            defaultValue = "0,1,2,3,4")
     private int[] a_total_out_indices;
 
     @Parameter(description = "A comma separated list of band indices defining the output suspended matter" +
@@ -32,8 +33,8 @@ public class QaaConfig extends PostProcessorConfig {
     private int[] bb_spm_out_indices;
 
     @Parameter(description = "A comma separated list of band indices defining the output pigment absorption" +
-            "coefficient bands. Indices correspond to the input reflectance band wavelengths.",
-            defaultValue = "0,1,2,3,4,5")
+            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 2.",
+            defaultValue = "0,1,2")
     private int[] a_pig_out_indices;
 
     @Parameter(description = "A comma separated list of band indices defining the output yellow substance absorption" +
@@ -48,6 +49,7 @@ public class QaaConfig extends PostProcessorConfig {
         a_pig_out_indices = new int[0];
         a_ys_out_indices = new int[0];
         bb_spm_out_indices = new int[0];
+        bandNames = new String[0];
     }
 
     public String[] getBandNames() {

@@ -12,15 +12,15 @@ public class SensorConfigFactoryTest {
 
     @Test
     public void testGet() {
-        SensorConfig sensorConfig = SensorConfigFactory.get("MERIS");
+        SensorConfig sensorConfig = SensorConfigFactory.get(QaaConstants.MERIS);
         assertNotNull(sensorConfig);
         assertTrue(sensorConfig instanceof MerisConfig);
 
-        sensorConfig = SensorConfigFactory.get("MODIS");
+        sensorConfig = SensorConfigFactory.get(QaaConstants.MODIS);
         assertNotNull(sensorConfig);
         assertTrue(sensorConfig instanceof ModisConfig);
 
-        sensorConfig = SensorConfigFactory.get("SEAWIFS");
+        sensorConfig = SensorConfigFactory.get(QaaConstants.SEAWIFS);
         assertNotNull(sensorConfig);
         assertTrue(sensorConfig instanceof SeaWifsConfig);
     }

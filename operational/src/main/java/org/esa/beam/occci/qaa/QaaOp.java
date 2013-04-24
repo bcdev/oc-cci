@@ -42,8 +42,8 @@ public class QaaOp extends PixelOperator {
     private String[] reflectanceBandNames;
 
     @Parameter(description = "The name of the sensor",
-               defaultValue = "MERIS",
-               valueSet = {"MERIS", "MODIS", "SEAWIFS"})
+               defaultValue = QaaConstants.MERIS,
+               valueSet = {QaaConstants.MERIS, QaaConstants.MODIS, QaaConstants.SEAWIFS})
     private String sensorName;
 
     @Parameter(defaultValue = "l2_flags.WATER",

@@ -7,6 +7,7 @@ import org.esa.beam.binning.WritableVector;
 import org.esa.beam.occci.bandshift.BandShiftCorrection;
 import org.esa.beam.occci.bandshift.CorrectionContext;
 import org.esa.beam.occci.bandshift.Sensor;
+import org.esa.beam.occci.util.binning.BinningUtils;
 
 import java.io.IOException;
 
@@ -31,13 +32,7 @@ public class BandShiftPostProcessor extends PostProcessor {
         qaa = new double[3];
 
         final String[] bandNames = config.getBandNames();
-        bandIndices = new int[bandNames.length];
-        for (int i = 0; i < bandNames.length; i++) {
-            bandIndices[i] = varCtx.getVariableIndex(bandNames[i]);
-            if (bandIndices[i] < 0) {
-                throw new IllegalArgumentException("Configured input band is not available: " + bandNames[i]);
-            }
-        }
+        bandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
     }
 
     @Override
@@ -52,17 +47,19 @@ public class BandShiftPostProcessor extends PostProcessor {
 
         // @todo 3 tb/tb check if we need to make the thresholds configurable tb 2013-04-22
         final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambaInterface(), qaa, 0.0, 5.0);
-        if (rrs_corrected.length == 0) {
-            // no correction
-            for (int i = 0; i < postVector.size(); i++) {
-                postVector.set(i, Float.NaN);
-            }
-        } else {
+        if (isCorrected(rrs_corrected)) {
             final double[] rrs_shifted = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
 
             for (int i = 0; i < rrs_shifted.length; i++) {
                 postVector.set(i, (float) rrs_shifted[i]);
             }
+        } else {
+            BinningUtils.setToInvalid(postVector);
         }
     }
+
+    static boolean isCorrected(double[] rrs_corrected) {
+        return rrs_corrected.length != 0;
+    }
+
 }

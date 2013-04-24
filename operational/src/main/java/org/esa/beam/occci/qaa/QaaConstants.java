@@ -8,6 +8,10 @@ public final class QaaConstants {
     // @todo tb/tb 4 make configurable?? 2013-02-22
     public static final float NO_DATA_VALUE = Float.NaN;
 
+    public static final String MERIS = "MERIS";
+    public static final String MODIS = "MODIS";
+    public static final String SEAWIFS = "SEAWIFS";
+
     static final int NUM_A_TOTAL_BANDS = 5;
     static final int NUM_BB_SPM_BANDS = 5;
     static final int NUM_A_PIG_BANDS = 3;

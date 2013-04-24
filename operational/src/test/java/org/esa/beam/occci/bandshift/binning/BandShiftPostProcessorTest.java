@@ -3,14 +3,11 @@ package org.esa.beam.occci.bandshift.binning;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.support.VariableContextImpl;
 import org.esa.beam.binning.support.VectorImpl;
-import org.geotools.filter.function.FilterFunction_strEqualsIgnoreCase;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class BandShiftPostProcessorTest {
 
@@ -30,7 +27,7 @@ public class BandShiftPostProcessorTest {
     public void testThrowsExceptionOnMissingBands() throws IOException {
         final String[] outputFeatureNames = {"out", "feature", "names"};
         final BandShiftConfig config = createConfig("MERIS");
-        final VariableContextImpl variableContext =  createVariableContext();
+        final VariableContextImpl variableContext = createVariableContext();
 
         // add band to config that is not in the context
         final String[] bandNames = config.getBandNames();
@@ -67,6 +64,12 @@ public class BandShiftPostProcessorTest {
         assertEquals(0.001667401055, postVector.get(4), 1e-6);
         assertEquals(0.000246264943, postVector.get(5), 1e-6);
         assertEquals(0.000236338106, postVector.get(6), 1e-6);
+    }
+
+    @Test
+    public void testIsCorrected() {
+        assertTrue(BandShiftPostProcessor.isCorrected(new double[2]));
+        assertFalse(BandShiftPostProcessor.isCorrected(new double[0]));
     }
 
     private VariableContextImpl createVariableContext() {

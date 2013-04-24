@@ -27,5 +27,9 @@ public class QaaConfigTest {
         final int[] bb_spm_out_indices = config.getBb_spm_out_indices();
         assertNotNull(bb_spm_out_indices);
         assertEquals(0, bb_spm_out_indices.length);
+
+        final String[] bandNames = config.getBandNames();
+        assertNotNull(bandNames);
+        assertEquals(0, bandNames.length);
     }
 }
