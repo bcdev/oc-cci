@@ -1,6 +1,5 @@
 package org.esa.beam.occci.qaa.binning;
 
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
