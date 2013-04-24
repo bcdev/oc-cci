@@ -179,6 +179,7 @@
             <wps:LiteralData>OC-meris-daily</wps:LiteralData>
           </wps:Data>
         </wps:Input>
+        <!--
         <wps:Input>
             <ows:Identifier>calvalus.ql.parameters</ows:Identifier>
             <wps:Data>
@@ -194,7 +195,7 @@
                 </wps:ComplexData>
             </wps:Data>
         </wps:Input>
-
+        -->
     </wps:DataInputs>
 </wps:Execute>
 
