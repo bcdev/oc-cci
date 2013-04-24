@@ -145,7 +145,7 @@
                             <type>BandShifting</type>
                             <sensorName>MERIS</sensorName>
                             <!--MERIS (413. , 443. , 490. , 510. , 560. , 665.) IOP (aph, acdm, bbp)-->
-                            <bandNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs65_mean,a_pig_413_mean,a_ys_413_mean,bb_spm_413_mean</bandNames>
+                            <bandNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,a_pig_413_mean,a_ys_413_mean,bb_spm_413_mean</bandNames>
                         </postProcessor>
                     </parameters>
                 </wps:ComplexData>
@@ -161,15 +161,31 @@
                         <aggregators>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>Rrs412_mean</varName>
+                                <varName>Rrs_412</varName>
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>Rrs560_mean</varName>
+                                <varName>Rrs_488</varName>
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>Rrs665_mean</varName>
+                                <varName>Rrs_531</varName>
+                            </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>Rrs_547</varName>
+                            </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>Rrs_555</varName>
+                            </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>Rrs_667</varName>
+                            </aggregator>
+                            <aggregator>
+                                <type>AVG</type>
+                                <varName>Rrs_670</varName>
                             </aggregator>
                         </aggregators>
                         <!--TODO use QAA Processor
