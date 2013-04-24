@@ -52,10 +52,17 @@ public class BandShiftPostProcessor extends PostProcessor {
 
         // @todo 3 tb/tb check if we need to make the thresholds configurable tb 2013-04-22
         final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambaInterface(), qaa, 0.0, 5.0);
-        final double[] rrs_shifted = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
+        if (rrs_corrected.length == 0) {
+            // no correction
+            for (int i = 0; i < postVector.size(); i++) {
+                postVector.set(i, Float.NaN);
+            }
+        } else {
+            final double[] rrs_shifted = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
 
-        for (int i = 0; i < rrs_shifted.length; i++) {
-            postVector.set(i, (float) rrs_shifted[i]);
+            for (int i = 0; i < rrs_shifted.length; i++) {
+                postVector.set(i, (float) rrs_shifted[i]);
+            }
         }
     }
 }
