@@ -113,7 +113,6 @@ public class QaaAlgorithmTest {
         // old input vector was not normalized to PI - do it now tb 2013-03-01
         for (int i = 0; i < rrs_in.length; i++) {
             rrs_in[i] /= Math.PI;
-
         }
         //                       413               440          490          510            560            620              665
         //final float[] rrs = {0.030262154f, 0.031086152f, 0.022717977f, 0.013177891f, 0.0072450927f, 0.0028870495f, 0.0024475828f};

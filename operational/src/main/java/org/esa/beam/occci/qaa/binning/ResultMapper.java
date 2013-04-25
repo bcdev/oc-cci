@@ -4,7 +4,7 @@ package org.esa.beam.occci.qaa.binning;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.occci.qaa.QaaResult;
 
-public class ResultMapper {
+class ResultMapper {
 
     private final int[] a_pig_src;
     private final int[] a_pig_dest;
@@ -18,7 +18,7 @@ public class ResultMapper {
     private final int[] bb_spm_src;
     private final int[] bb_spm_dest;
 
-    public ResultMapper(QaaConfig config) {
+    ResultMapper(QaaConfig config) {
         int outIndex = 0;
 
         a_pig_src = config.getA_pig_out_indices();
@@ -50,7 +50,7 @@ public class ResultMapper {
         }
     }
 
-    public void assign(QaaResult result, WritableVector vector) {
+    void assign(QaaResult result, WritableVector vector) {
         final float[] a_pig = result.getA_PIG();
         for (int i = 0; i < a_pig_src.length; i++) {
             final float value = a_pig[a_pig_src[i]];
