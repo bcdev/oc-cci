@@ -14,6 +14,7 @@ public class QaaPostProcessor extends PostProcessor {
     private final int[] bandIndices;
     private final float[] rrs;
     QaaResult qaaResult;
+    private final ResultMapper resultMapper;
 
     public QaaPostProcessor(VariableContext varCtx, QaaConfig config, String[] outputFeatureNames) {
         super(outputFeatureNames);
@@ -26,6 +27,7 @@ public class QaaPostProcessor extends PostProcessor {
 
         rrs = new float[bandNames.length];
         qaaResult = new QaaResult();
+        resultMapper = new ResultMapper(config);
     }
 
     @Override
@@ -40,6 +42,7 @@ public class QaaPostProcessor extends PostProcessor {
             BinningUtils.setToInvalid(postVector);
             return;
         }
-        // @todo 1 tb/tb assign result to output vector 2013-04-24
+
+        resultMapper.assign(qaaResult, postVector);
     }
 }
