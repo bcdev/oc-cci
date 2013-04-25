@@ -4,6 +4,7 @@ package org.esa.beam.occci.qaa.binning;
 import org.esa.beam.binning.PostProcessor;
 import org.esa.beam.binning.PostProcessorConfig;
 import org.esa.beam.binning.PostProcessorDescriptor;
+import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.support.VariableContextImpl;
 import org.esa.beam.occci.qaa.QaaConstants;
 import org.junit.Before;
@@ -42,13 +43,14 @@ public class QaaDescriptorTest {
 
     @Test
     public void testCreatePostProcessor() {
-        final QaaConfig config = new QaaConfig();
-        config.setSensorName(QaaConstants.SEAWIFS);
+        final QaaConfig config = createValidConfig();
+        final VariableContext varCtx = createValidContext();
 
-        final PostProcessor postProcessor = descriptor.createPostProcessor(new VariableContextImpl(), config);
+        final PostProcessor postProcessor = descriptor.createPostProcessor(varCtx, config);
         assertNotNull(postProcessor);
         assertTrue(postProcessor instanceof QaaPostProcessor);
     }
+
 
     @Test
     public void testCreateOutputFeatureNames_MERIS_no_bb_spm() {
@@ -252,7 +254,34 @@ public class QaaDescriptorTest {
         }
     }
 
-    // @todo 1 tb/tb continue with backscatter testing
+    @Test
+    public void testValidateConfig_invalidBb_spm_out_indices() {
+        final QaaConfig config = createValidConfig();
+
+        config.setBb_spm_out_indices(new int[]{-1});
+        try {
+            QaaDescriptor.validate(config);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+            assertEquals("Invalid bb_spm_out index: -1. Must be in [0, 4]", expected.getMessage());
+        }
+
+        config.setBb_spm_out_indices(new int[]{5});
+        try {
+            QaaDescriptor.validate(config);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+            assertEquals("Invalid bb_spm_out index: 5. Must be in [0, 4]", expected.getMessage());
+        }
+
+        config.setBb_spm_out_indices(new int[]{0, 1, 0, 2, 3, 4});
+        try {
+            QaaDescriptor.validate(config);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+            assertEquals("Invalid number of bb_spm_out indices: 6. Must be in [0, 5]", expected.getMessage());
+        }
+    }
 
     private QaaConfig createValidConfig() {
         final QaaConfig config = new QaaConfig();
@@ -261,6 +290,19 @@ public class QaaDescriptorTest {
         config.setA_pig_out_indices(new int[] {0, 1, 2});
         config.setA_total_out_indices(new int[] {0, 1, 2, 3, 4});
         config.setA_ys_out_indices(new int[] {0, 1, 2});
+        config.setBb_spm_out_indices(new int[]{0, 1, 2, 3, 4});
         return config;
     }
+
+    private VariableContext createValidContext() {
+        final VariableContextImpl variableContext = new VariableContextImpl();
+        variableContext.defineVariable("one");
+        variableContext.defineVariable("two");
+        variableContext.defineVariable("three");
+        variableContext.defineVariable("four");
+        variableContext.defineVariable("five");
+        variableContext.defineVariable("six");
+        return variableContext;
+    }
+
 }

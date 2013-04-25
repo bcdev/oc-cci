@@ -5,7 +5,6 @@ import org.esa.beam.binning.PostProcessor;
 import org.esa.beam.binning.PostProcessorConfig;
 import org.esa.beam.binning.PostProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
-import org.esa.beam.binning.support.VariableContextImpl;
 import org.esa.beam.occci.qaa.QaaConstants;
 import org.esa.beam.occci.qaa.SensorConfig;
 import org.esa.beam.occci.qaa.SensorConfigFactory;
@@ -27,8 +26,10 @@ public class QaaDescriptor implements PostProcessorDescriptor {
     @Override
     public PostProcessor createPostProcessor(VariableContext varCtx, PostProcessorConfig postProcessorConfig) {
         final QaaConfig config = (QaaConfig) postProcessorConfig;
+        validate(config);
+
         final String[] outputFeatureNames = createOutputFeatureNames(config);
-        return new QaaPostProcessor(new VariableContextImpl(), config, outputFeatureNames);
+        return new QaaPostProcessor(varCtx, config, outputFeatureNames);
     }
 
     // package access for testing only tb 2013-04-23
@@ -111,6 +112,16 @@ public class QaaDescriptor implements PostProcessorDescriptor {
         for (int a_ys_out_index : a_ys_out_indices) {
             if (a_ys_out_index < 0 || a_ys_out_index > 2) {
                 throw new IllegalArgumentException("Invalid a_ys_out index: " + a_ys_out_index + ". Must be in [0, 2]");
+            }
+        }
+
+        final int[] bb_spm_out_indices = config.getBb_spm_out_indices();
+        if (bb_spm_out_indices.length > 5) {
+            throw new IllegalArgumentException("Invalid number of bb_spm_out indices: " + bb_spm_out_indices.length + ". Must be in [0, 5]");
+        }
+        for (int bb_spm_out_index : bb_spm_out_indices) {
+            if (bb_spm_out_index < 0 || bb_spm_out_index > 4) {
+                throw new IllegalArgumentException("Invalid bb_spm_out index: " + bb_spm_out_index + ". Must be in [0, 4]");
             }
         }
     }
