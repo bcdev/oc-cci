@@ -48,8 +48,10 @@ public class BandShiftDescriptorTest {
     }
 
     @Test
-    public void testCreateOutputFeaturesNames_MERIS() {
-        final String[] merisFeatures = BandShiftDescriptor.createOutputFeatureNames("MERIS");
+    public void testCreateOutputFeaturesNames() {
+        final BandShiftConfig config = new BandShiftConfig("bla");
+        config.setOutputCenterWavelengths(new int[]{412, 488, 531, 547, 555, 667, 670});
+        final String[] merisFeatures = BandShiftDescriptor.createOutputFeatureNames(config);
         assertEquals(7, merisFeatures.length);
 
         assertEquals("Rrs_412", merisFeatures[0]);
@@ -62,39 +64,21 @@ public class BandShiftDescriptorTest {
     }
 
     @Test
-    public void testCreateOutputFeaturesNames_MODIS() {
-        final String[] modisFeatures = BandShiftDescriptor.createOutputFeatureNames("MODISA");
-        assertEquals(7, modisFeatures.length);
+    public void testCreateOutputFeaturesNames_justTwo() {
+        final BandShiftConfig config = new BandShiftConfig("schwafel");
+        config.setOutputCenterWavelengths(new int[]{667, 670});
+        final String[] merisFeatures = BandShiftDescriptor.createOutputFeatureNames(config);
+        assertEquals(2, merisFeatures.length);
 
-        assertEquals("Rrs_413", modisFeatures[0]);
-        assertEquals("Rrs_510", modisFeatures[1]);
-        assertEquals("Rrs_490", modisFeatures[2]);
-        assertEquals("Rrs_560", modisFeatures[3]);
-        assertEquals("Rrs_555", modisFeatures[4]);
-        assertEquals("Rrs_665", modisFeatures[5]);
-        assertEquals("Rrs_670", modisFeatures[6]);
+        assertEquals("Rrs_667", merisFeatures[0]);
+        assertEquals("Rrs_670", merisFeatures[1]);
     }
 
     @Test
-    public void testCreateOutputFeaturesNames_SEAWIFS() {
-        final String[] seawifsFeatures = BandShiftDescriptor.createOutputFeatureNames("SEAWIFS");
-        assertEquals(7, seawifsFeatures.length);
-
-        assertEquals("Rrs_413", seawifsFeatures[0]);
-        assertEquals("Rrs_488", seawifsFeatures[1]);
-        assertEquals("Rrs_531", seawifsFeatures[2]);
-        assertEquals("Rrs_547", seawifsFeatures[3]);
-        assertEquals("Rrs_560", seawifsFeatures[4]);
-        assertEquals("Rrs_665", seawifsFeatures[5]);
-        assertEquals("Rrs_670", seawifsFeatures[6]);
-    }
-
-    @Test
-    public void testCreateOutputFeaturesNames_invalidSensor() {
-        try {
-            BandShiftDescriptor.createOutputFeatureNames("strange_sensor");
-            fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException expected) {
-        }
+    public void testCreateOutputFeaturesNames_noBands() {
+        final BandShiftConfig config = new BandShiftConfig("schwafel");
+        config.setOutputCenterWavelengths(new int[0]);
+        final String[] merisFeatures = BandShiftDescriptor.createOutputFeatureNames(config);
+        assertEquals(0, merisFeatures.length);
     }
 }

@@ -14,5 +14,9 @@ public class BandShiftConfigTest {
         final String[] bandNames = bandShiftConfig.getBandNames();
         assertNotNull(bandNames);
         assertEquals(0, bandNames.length);
+
+        final int[] outputCenterWavelengths = bandShiftConfig.getOutputCenterWavelengths();
+        assertNotNull(outputCenterWavelengths);
+        assertEquals(0, outputCenterWavelengths.length);
     }
 }

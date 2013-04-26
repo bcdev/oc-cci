@@ -25,9 +25,18 @@ public class BandShiftConfig extends PostProcessorConfig {
                     "bbp:  particle backscattering")
     private String[] bandNames;
 
+    @Parameter(notNull = true,
+            notEmpty = true,
+            description = "Defines the output bands of the processor. Must be a comma-separated list\n" +
+                    "of desired center-wavelengths for the bands. Available wavelengths are:\n" +
+                    "{412, 413, 443, 488, 490, 510, 531, 547, 555, 560, 665, 667, 670} nm",
+            defaultValue = "412,443,490,510,555,670")
+    private int[] outputCenterWavelengths;
+
     public BandShiftConfig(String name) {
         super(name);
         bandNames = new String[0];
+        outputCenterWavelengths = new int[0];
     }
 
     public void setSensorName(String sensorName) {
@@ -44,5 +53,13 @@ public class BandShiftConfig extends PostProcessorConfig {
 
     public String[] getBandNames() {
         return bandNames;
+    }
+
+    public int[] getOutputCenterWavelengths() {
+        return outputCenterWavelengths;
+    }
+
+    public void setOutputCenterWavelengths(int[] outputCenterWavelengths) {
+        this.outputCenterWavelengths = outputCenterWavelengths;
     }
 }

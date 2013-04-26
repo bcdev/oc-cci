@@ -4,7 +4,6 @@ import org.esa.beam.binning.PostProcessor;
 import org.esa.beam.binning.PostProcessorConfig;
 import org.esa.beam.binning.PostProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
-import org.esa.beam.occci.bandshift.Sensor;
 
 import java.io.IOException;
 
@@ -24,7 +23,7 @@ public class BandShiftDescriptor implements PostProcessorDescriptor {
     @Override
     public PostProcessor createPostProcessor(VariableContext varCtx, PostProcessorConfig config) {
         final BandShiftConfig bandShiftConfig = (BandShiftConfig) config;
-        final String[] outputFeatureNames = createOutputFeatureNames(bandShiftConfig.getSensorName());
+        final String[] outputFeatureNames = createOutputFeatureNames(bandShiftConfig);
         final BandShiftPostProcessor bandShiftPostProcessor;
         try {
             bandShiftPostProcessor = new BandShiftPostProcessor(outputFeatureNames, bandShiftConfig, varCtx);
@@ -35,19 +34,12 @@ public class BandShiftDescriptor implements PostProcessorDescriptor {
     }
 
     // package access for testing only tb 2013-04-19
-    static String[] createOutputFeatureNames(String sensorName) {
-        final Sensor sensor = Sensor.valueOf(sensorName);
-        final double[] lambdaO = sensor.getLambdaO();
-        final String[] outputFeatureNames = new String[lambdaO.length - 1];
+    static String[] createOutputFeatureNames(BandShiftConfig config) {
+        final int[] outputCenterWavelengths = config.getOutputCenterWavelengths();
+        final String[] outputFeatureNames = new String[outputCenterWavelengths.length];
 
-        int outIndex = 0;
-        for (int i = 0; i < lambdaO.length; i++) {
-            if (sensor.getAverageIndices()[1] == i) {
-                continue;
-            }
-            final int lambdaInt = (int) Math.floor(lambdaO[i]);
-            outputFeatureNames[outIndex] = "Rrs_" + lambdaInt;
-            ++outIndex;
+        for (int i = 0; i < outputCenterWavelengths.length; i++) {
+            outputFeatureNames[i] = "Rrs_" + outputCenterWavelengths[i];
         }
 
         return outputFeatureNames;
