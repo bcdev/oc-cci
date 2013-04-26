@@ -4,6 +4,7 @@ package org.esa.beam.occci.qaa;
 import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.gpf.OperatorException;
 import org.esa.beam.util.ProductUtils;
 import org.junit.Test;
 
@@ -48,6 +49,26 @@ public class QaaOpTest {
         assertEquals(0.0254953, getSample(targetProduct, "a_ys_413"), 1e-6);
         assertEquals(0.0160453, getSample(targetProduct, "a_ys_443"), 1e-6);
         assertEquals(0.0077673, getSample(targetProduct, "a_ys_490"), 1e-6);
+    }
+
+    @Test
+    public void testValidateSourceProduct_valid() {
+        final Product product = createTestProduct(2, 2);
+        final String[] bandNames = {"Rrs412", "Rrs443", "Rrs490", "Rrs510", "Rrs560", "Rrs620", "Rrs665"};
+
+        QaaOp.validateSourceProduct(bandNames, product);
+    }
+
+    @Test
+    public void testValidateSourceProduct_invalid() {
+        final Product product = createTestProduct(2, 2);
+        final String[] bandNames = {"schnick", "schnack", "schnuck"};
+
+        try {
+            QaaOp.validateSourceProduct(bandNames, product);
+            fail("OperatorException expected");
+        } catch (OperatorException expected) {
+        }
     }
 
     private double getSample(Product targetProduct, String bandName) {

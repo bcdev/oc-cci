@@ -8,23 +8,19 @@ import org.esa.beam.framework.gpf.OperatorSpi;
 import org.esa.beam.framework.gpf.annotations.OperatorMetadata;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.framework.gpf.annotations.SourceProduct;
-import org.esa.beam.framework.gpf.pointop.PixelOperator;
-import org.esa.beam.framework.gpf.pointop.ProductConfigurer;
-import org.esa.beam.framework.gpf.pointop.Sample;
-import org.esa.beam.framework.gpf.pointop.SampleConfigurer;
-import org.esa.beam.framework.gpf.pointop.WritableSample;
+import org.esa.beam.framework.gpf.pointop.*;
 import org.esa.beam.jai.ResolutionLevel;
 import org.esa.beam.jai.VirtualBandOpImage;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @OperatorMetadata(alias = "OC-CCI.QaaIOP",
-                  description = "Performs retrieval of inherent optical properties (IOPs) for " +
-                          "coastal and open ocean waters for different sensors. (for oc-cci)",
-                  authors = " Zhongping Lee, Mingrui Zhang (WSU); Marco Peters, Tom Block, Marco Zuehlke (Brockmann Consult)",
-                  copyright = "(C) 2011 by NRL and WSU",
-                  version = "2.0")
+        description = "Performs retrieval of inherent optical properties (IOPs) for " +
+                "coastal and open ocean waters for different sensors. (for oc-cci)",
+        authors = " Zhongping Lee, Mingrui Zhang (WSU); Marco Peters, Tom Block, Marco Zuehlke (Brockmann Consult)",
+        copyright = "(C) 2011 by NRL and WSU",
+        version = "2.0")
 public class QaaOp extends PixelOperator {
 
     private static final String PRODUCT_TYPE = "QAA_L2";
@@ -42,16 +38,16 @@ public class QaaOp extends PixelOperator {
     private String[] reflectanceBandNames;
 
     @Parameter(description = "The name of the sensor",
-               defaultValue = QaaConstants.MERIS,
-               valueSet = {QaaConstants.MERIS, QaaConstants.MODIS, QaaConstants.SEAWIFS})
+            defaultValue = QaaConstants.MERIS,
+            valueSet = {QaaConstants.MERIS, QaaConstants.MODIS, QaaConstants.SEAWIFS})
     private String sensorName;
 
     @Parameter(defaultValue = "l2_flags.WATER",
-               description = "Expression defining pixels considered for processing.")
+            description = "Expression defining pixels considered for processing.")
     private String validPixelExpression;
 
     @Parameter(defaultValue = "true", label = "Divide source Rrs by PI(3.14)",
-               description = "If selected the source remote reflectances are divided by PI")
+            description = "If selected the source remote reflectances are divided by PI")
     private boolean divideByPI;
 
     private VirtualBandOpImage validOpImage;
@@ -61,15 +57,15 @@ public class QaaOp extends PixelOperator {
 
     @Override
     protected void prepareInputs() throws OperatorException {
-        validateSourceProduct();
+        validateSourceProduct(reflectanceBandNames, sourceProduct);
         if (!sourceProduct.isCompatibleBandArithmeticExpression(validPixelExpression)) {
             String message = String.format("The given expression '%s' is not compatible with the source product.",
-                                           validPixelExpression);
+                    validPixelExpression);
             throw new OperatorException(message);
         }
         validOpImage = VirtualBandOpImage.createMask(validPixelExpression,
-                                                     sourceProduct,
-                                                     ResolutionLevel.MAXRES);
+                sourceProduct,
+                ResolutionLevel.MAXRES);
 
         sensorConfig = SensorConfigFactory.get(sensorName);
         qaaAlgorithm = new QaaAlgorithm(sensorConfig);
@@ -171,7 +167,7 @@ public class QaaOp extends PixelOperator {
         }
     }
 
-    private void validateSourceProduct() {
+    static void validateSourceProduct(String[] reflectanceBandNames, Product sourceProduct) {
         for (String bandName : reflectanceBandNames) {
             if (!sourceProduct.containsBand(bandName)) {
                 String msg = String.format("Source product must contain a band with the name '%s'", bandName);
