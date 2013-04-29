@@ -27,8 +27,8 @@ public class QaaPostProcessorTest {
         final VectorImpl outVector = new VectorImpl(rrs_in);
 
         final QaaConfig config = createConfig();
-        config.setA_pig_out_indices(new int[]{0, 1, 2});
-        config.setA_total_out_indices(new int[]{2, 3, 4});
+        config.setAPigOutIndices(new int[]{0, 1, 2});
+        config.setATotalOutIndices(new int[]{2, 3, 4});
 
         final VariableContextImpl varCtx = createVariableContext();
 
@@ -57,8 +57,8 @@ public class QaaPostProcessorTest {
         final VectorImpl outVector = new VectorImpl(rrs_in);
 
         final QaaConfig config = createConfig();
-        config.setA_ys_out_indices(new int[]{0, 2});
-        config.setBb_spm_out_indices(new int[]{0, 2, 3, 4});
+        config.setAYsOutIndices(new int[]{0, 2});
+        config.setBbSpmOutIndices(new int[]{0, 2, 3, 4});
 
         final VariableContextImpl varCtx = createVariableContext();
 

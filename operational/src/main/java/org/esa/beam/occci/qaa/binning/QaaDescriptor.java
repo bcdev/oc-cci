@@ -38,22 +38,22 @@ public class QaaDescriptor implements PostProcessorDescriptor {
         final ArrayList<String> featureNameList = new ArrayList<String>();
 
         final double[] wavelengths = sensorConfig.getWavelengths();
-        final int[] a_pig_out_indices = config.getA_pig_out_indices();
+        final int[] a_pig_out_indices = config.getAPigOutIndices();
         for (int a_pig_out_index : a_pig_out_indices) {
             featureNameList.add("a_pig_" + getWavelengthInt(wavelengths, a_pig_out_index));
         }
 
-        final int[] a_total_out_indices = config.getA_total_out_indices();
+        final int[] a_total_out_indices = config.getATotalOutIndices();
         for (int a_total_out_index : a_total_out_indices) {
             featureNameList.add("a_total_" + getWavelengthInt(wavelengths, a_total_out_index));
         }
 
-        final int[] a_ys_out_indices = config.getA_ys_out_indices();
+        final int[] a_ys_out_indices = config.getAYsOutIndices();
         for (int a_ys_out_index : a_ys_out_indices) {
             featureNameList.add("a_ys_" + getWavelengthInt(wavelengths, a_ys_out_index));
         }
 
-        final int[] bb_spm_out_indices = config.getBb_spm_out_indices();
+        final int[] bb_spm_out_indices = config.getBbSpmOutIndices();
         for (int bb_spm_out_index : bb_spm_out_indices) {
             featureNameList.add("bb_spm_" + getWavelengthInt(wavelengths, bb_spm_out_index));
         }
@@ -85,7 +85,7 @@ public class QaaDescriptor implements PostProcessorDescriptor {
             throw new IllegalArgumentException("Illegal number of input bands: must provide six reflectance band names");
         }
 
-        final int[] a_pig_out_indices = config.getA_pig_out_indices();
+        final int[] a_pig_out_indices = config.getAPigOutIndices();
         if (a_pig_out_indices.length > 3) {
             throw new IllegalArgumentException("Invalid number of a_pig_out indices: " + a_pig_out_indices.length + ". Must be in [0, 3]");
         }
@@ -95,7 +95,7 @@ public class QaaDescriptor implements PostProcessorDescriptor {
             }
         }
 
-        final int[] a_total_out_indices = config.getA_total_out_indices();
+        final int[] a_total_out_indices = config.getATotalOutIndices();
         if (a_total_out_indices.length > 5) {
             throw new IllegalArgumentException("Invalid number of a_total_out indices: " + a_total_out_indices.length + ". Must be in [0, 5]");
         }
@@ -105,7 +105,7 @@ public class QaaDescriptor implements PostProcessorDescriptor {
             }
         }
 
-        final int[] a_ys_out_indices = config.getA_ys_out_indices();
+        final int[] a_ys_out_indices = config.getAYsOutIndices();
         if (a_ys_out_indices.length > 3) {
             throw new IllegalArgumentException("Invalid number of a_ys_out indices: " + a_ys_out_indices.length + ". Must be in [0, 3]");
         }
@@ -115,7 +115,7 @@ public class QaaDescriptor implements PostProcessorDescriptor {
             }
         }
 
-        final int[] bb_spm_out_indices = config.getBb_spm_out_indices();
+        final int[] bb_spm_out_indices = config.getBbSpmOutIndices();
         if (bb_spm_out_indices.length > 5) {
             throw new IllegalArgumentException("Invalid number of bb_spm_out indices: " + bb_spm_out_indices.length + ". Must be in [0, 5]");
         }

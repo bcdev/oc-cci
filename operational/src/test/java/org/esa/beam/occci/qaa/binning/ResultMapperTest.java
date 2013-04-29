@@ -12,7 +12,7 @@ public class ResultMapperTest {
     @Test
     public void testAssign_a_pig() {
         final QaaConfig config = new QaaConfig();
-        config.setA_pig_out_indices(new int[]{1, 2});
+        config.setAPigOutIndices(new int[]{1, 2});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[2]);
@@ -27,7 +27,7 @@ public class ResultMapperTest {
     @Test
     public void testAssign_a_total() {
         final QaaConfig config = new QaaConfig();
-        config.setA_total_out_indices(new int[]{1, 3, 4});
+        config.setATotalOutIndices(new int[]{1, 3, 4});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[3]);
@@ -43,7 +43,7 @@ public class ResultMapperTest {
     @Test
     public void testAssign_a_ys() {
         final QaaConfig config = new QaaConfig();
-        config.setA_ys_out_indices(new int[]{0, 2});
+        config.setAYsOutIndices(new int[]{0, 2});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[2]);
@@ -58,7 +58,7 @@ public class ResultMapperTest {
     @Test
     public void testAssign_bb_spm() {
         final QaaConfig config = new QaaConfig();
-        config.setBb_spm_out_indices(new int[]{0, 2, 4});
+        config.setBbSpmOutIndices(new int[]{0, 2, 4});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[3]);
@@ -85,10 +85,10 @@ public class ResultMapperTest {
     @Test
     public void testAssign_mixed() {
         final QaaConfig config = new QaaConfig();
-        config.setA_pig_out_indices(new int[]{0});
-        config.setA_total_out_indices(new int[]{1});
-        config.setA_ys_out_indices(new int[]{2});
-        config.setBb_spm_out_indices(new int[]{3});
+        config.setAPigOutIndices(new int[]{0});
+        config.setATotalOutIndices(new int[]{1});
+        config.setAYsOutIndices(new int[]{2});
+        config.setBbSpmOutIndices(new int[]{3});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[4]);

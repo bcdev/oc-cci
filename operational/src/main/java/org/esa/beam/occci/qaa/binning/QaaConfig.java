@@ -25,30 +25,30 @@ public class QaaConfig extends PostProcessorConfig {
     @Parameter(description = "A comma separated list of band indices defining the output total absorption" +
             "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 4.",
             defaultValue = "0,1,2,3,4")
-    private int[] a_total_out_indices;
+    private int[] aTotalOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output suspended matter" +
-            "backscattering bands. Indices correspond to the input reflectance band wavelengths.",
-            defaultValue = "0,1,2,3,4,5")
-    private int[] bb_spm_out_indices;
+            "backscattering bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 4.",
+            defaultValue = "0,1,2,3,4")
+    private int[] bbSpmOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output pigment absorption" +
             "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 2.",
             defaultValue = "0,1,2")
-    private int[] a_pig_out_indices;
+    private int[] aPigOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output yellow substance absorption" +
-            "coefficient bands. Indices correspond to the input reflectance band wavelengths.",
-            defaultValue = "0,1,2,3,4,5")
-    private int[] a_ys_out_indices;
+            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 2.",
+            defaultValue = "0,1,2")
+    private int[] aYsOutIndices;
 
     public QaaConfig() {
         super("QAA");
 
-        a_total_out_indices = new int[0];
-        a_pig_out_indices = new int[0];
-        a_ys_out_indices = new int[0];
-        bb_spm_out_indices = new int[0];
+        aTotalOutIndices = new int[0];
+        aPigOutIndices = new int[0];
+        aYsOutIndices = new int[0];
+        bbSpmOutIndices = new int[0];
         bandNames = new String[0];
     }
 
@@ -60,36 +60,36 @@ public class QaaConfig extends PostProcessorConfig {
         this.bandNames = bandNames;
     }
 
-    public int[] getA_total_out_indices() {
-        return a_total_out_indices;
+    public int[] getATotalOutIndices() {
+        return aTotalOutIndices;
     }
 
-    public void setA_total_out_indices(int[] a_total_out_indices) {
-        this.a_total_out_indices = a_total_out_indices;
+    public void setATotalOutIndices(int[] aTotalOutIndices) {
+        this.aTotalOutIndices = aTotalOutIndices;
     }
 
-    public int[] getBb_spm_out_indices() {
-        return bb_spm_out_indices;
+    public int[] getBbSpmOutIndices() {
+        return bbSpmOutIndices;
     }
 
-    public void setBb_spm_out_indices(int[] bb_spm_out_indices) {
-        this.bb_spm_out_indices = bb_spm_out_indices;
+    public void setBbSpmOutIndices(int[] bbSpmOutIndices) {
+        this.bbSpmOutIndices = bbSpmOutIndices;
     }
 
-    public int[] getA_pig_out_indices() {
-        return a_pig_out_indices;
+    public int[] getAPigOutIndices() {
+        return aPigOutIndices;
     }
 
-    public void setA_pig_out_indices(int[] a_pig_out_indices) {
-        this.a_pig_out_indices = a_pig_out_indices;
+    public void setAPigOutIndices(int[] aPigOutIndices) {
+        this.aPigOutIndices = aPigOutIndices;
     }
 
-    public int[] getA_ys_out_indices() {
-        return a_ys_out_indices;
+    public int[] getAYsOutIndices() {
+        return aYsOutIndices;
     }
 
-    public void setA_ys_out_indices(int[] a_ys_out_indices) {
-        this.a_ys_out_indices = a_ys_out_indices;
+    public void setAYsOutIndices(int[] aYsOutIndices) {
+        this.aYsOutIndices = aYsOutIndices;
     }
 
     public String getSensorName() {

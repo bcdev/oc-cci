@@ -21,28 +21,28 @@ class ResultMapper {
     ResultMapper(QaaConfig config) {
         int outIndex = 0;
 
-        a_pig_src = config.getA_pig_out_indices();
+        a_pig_src = config.getAPigOutIndices();
         a_pig_dest = new int[a_pig_src.length];
         for (int i = 0; i < a_pig_dest.length; i++) {
             a_pig_dest[i] = outIndex;
             ++outIndex;
         }
 
-        a_total_src = config.getA_total_out_indices();
+        a_total_src = config.getATotalOutIndices();
         a_total_dest = new int[a_total_src.length];
         for (int i = 0; i < a_total_dest.length; i++) {
             a_total_dest[i] = outIndex;
             ++outIndex;
         }
 
-        a_ys_src = config.getA_ys_out_indices();
+        a_ys_src = config.getAYsOutIndices();
         a_ys_dest = new int[a_ys_src.length];
         for (int i = 0; i < a_ys_dest.length; i++) {
             a_ys_dest[i] = outIndex;
             ++outIndex;
         }
 
-        bb_spm_src = config.getBb_spm_out_indices();
+        bb_spm_src = config.getBbSpmOutIndices();
         bb_spm_dest = new int[bb_spm_src.length];
         for (int i = 0; i < bb_spm_dest.length; i++) {
             bb_spm_dest[i] = outIndex;

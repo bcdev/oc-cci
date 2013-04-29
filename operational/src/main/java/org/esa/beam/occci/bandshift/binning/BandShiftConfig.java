@@ -30,7 +30,7 @@ public class BandShiftConfig extends PostProcessorConfig {
             description = "Defines the output bands of the processor. Must be a comma-separated list\n" +
                     "of desired center-wavelengths for the bands. Available wavelengths are:\n" +
                     "{412, 413, 443, 488, 490, 510, 531, 547, 555, 560, 665, 667, 670} nm",
-            defaultValue = "412,443,490,510,555,670")
+            defaultValue = "412,443,490,510,555,667")
     private int[] outputCenterWavelengths;
 
     public BandShiftConfig(String name) {

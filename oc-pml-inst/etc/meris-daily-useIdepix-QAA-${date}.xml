@@ -157,10 +157,13 @@
                                 <varName>bb_spm_413</varName>
                             </aggregator>
                         </aggregators>
-                        <!--TODO use BandShifting + BiasCorrection Processor-->
+                        <!--TODO add BiasCorrection Processor-->
                         <postProcessor>
-                            <type>Selection</type>
-                            <varNames>Rrs412_mean,Rrs560_mean,Rrs665_mean</varNames>
+                            <type>BandShifting</type>
+                            <sensorName>MERIS</sensorName>
+                            <!--MERIS (413. , 443. , 490. , 510. , 560. , 665.) IOP (aph, acdm, bbp)-->
+                            <bandNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,a_pig_413_mean,a_ys_413_mean,bb_spm_413_mean</bandNames>
+                            <outputCenterWavelengths>412,443,490,510,555,667</outputCenterWavelengths>
                         </postProcessor>
                     </parameters>
                 </wps:ComplexData>

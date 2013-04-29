@@ -146,6 +146,7 @@
                             <sensorName>MERIS</sensorName>
                             <!--MERIS (413. , 443. , 490. , 510. , 560. , 665.) IOP (aph, acdm, bbp)-->
                             <bandNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,a_pig_413_mean,a_ys_413_mean,bb_spm_413_mean</bandNames>
+                            <outputCenterWavelengths>412,443,490,510,555,667</outputCenterWavelengths>
                         </postProcessor>
                     </parameters>
                 </wps:ComplexData>
@@ -165,15 +166,15 @@
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>Rrs_488</varName>
+                                <varName>Rrs_443</varName>
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>Rrs_531</varName>
+                                <varName>Rrs_490</varName>
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>Rrs_547</varName>
+                                <varName>Rrs_510</varName>
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
@@ -183,17 +184,16 @@
                                 <type>AVG</type>
                                 <varName>Rrs_667</varName>
                             </aggregator>
-                            <aggregator>
-                                <type>AVG</type>
-                                <varName>Rrs_670</varName>
-                            </aggregator>
                         </aggregators>
-                        <!--TODO use QAA Processor
                         <postProcessor>
-                            <type>Selection</type>
-                            <varNames>Rrs412_mean_mean,Rrs560_mean,Rrs665_mean</varNames>
+                            <type>QAA</type>
+                            <sensorName>SEAWIFS</sensorName>
+                            <bandNames>Rrs_412_mean,Rrs_443_mean,Rrs_490_mean,Rrs_510_mean,Rrs_555_mean,Rrs_667_mean</bandNames>
+                            <aTotalOutIndices>0,1,2,3,4</aTotalOutIndices>
+                            <bbSpmOutIndices>0,1,2,3,4</bbSpmOutIndices>
+                            <aPigOutIndices>0,1,2</aPigOutIndices>
+                            <aYsOutIndices>0,1,2</aYsOutIndices>
                         </postProcessor>
-                        -->
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
