@@ -21,6 +21,7 @@ public class BandShiftPostProcessor extends PostProcessor {
     private final int[] bandIndices;
     private final double[] rrs;
     private final double[] qaa;
+    private final ResultMapper resultMapper;
 
     protected BandShiftPostProcessor(String[] outputFeatureNames, BandShiftConfig config, VariableContext varCtx) throws IOException {
         super(outputFeatureNames);
@@ -33,6 +34,7 @@ public class BandShiftPostProcessor extends PostProcessor {
 
         final String[] bandNames = config.getBandNames();
         bandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
+        resultMapper = new ResultMapper(config);
     }
 
     @Override
@@ -46,13 +48,11 @@ public class BandShiftPostProcessor extends PostProcessor {
         }
 
         // @todo 3 tb/tb check if we need to make the thresholds configurable tb 2013-04-22
-        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambaInterface(), qaa, 0.0, 5.0);
+        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambdaInterface(), qaa, 0.0, 5.0);
         if (isCorrected(rrs_corrected)) {
             final double[] rrs_shifted = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
 
-            for (int i = 0; i < rrs_shifted.length; i++) {
-                postVector.set(i, (float) rrs_shifted[i]);
-            }
+            resultMapper.assign(rrs, rrs_shifted, postVector);
         } else {
             BinningUtils.setToInvalid(postVector);
         }
