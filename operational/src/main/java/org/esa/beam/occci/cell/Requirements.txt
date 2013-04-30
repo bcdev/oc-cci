@@ -1,0 +1,42 @@
+Cell
+- allow double precision data?
+
+CellContext
+- implement mapping between feature names and indices
+
+CellFactory
+- create cells according to parameters passed in (define class for this)
+
+CellProcessor
+- dynamically loaded
+- external config
+
+CellSource
+- provide Cells - can be either from HD or any other stream
+
+CellSink
+- consume cells - to HD or stream to somewhere
+- Metadata?
+
+General
+- progress monitoring - as we implement pushing, the CellSource needs to trigger progress monitoring.
+  Problem with this approach: when we use accumulators, their "real" work is executed in the "finish" phase.
+
+Processing cycle:
+(1) Init
+- validate inputs
+- load aux-data
+- open inputs
+
+(2) Process
+- stream cells
+
+(3) finish
+- flush chain
+- flush output and close files
+
+Problems:
+=========
+
+- Accumulating cells, i.e. L3 processing. Accumulating process needs finish() call to perform final calculation.
+  Memory impact??
