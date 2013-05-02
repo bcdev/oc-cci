@@ -1,4 +1,4 @@
-package org.esa.beam.occci.bandshift.cell;
+package org.esa.beam.occci.cell;
 
 
 import java.util.ArrayList;

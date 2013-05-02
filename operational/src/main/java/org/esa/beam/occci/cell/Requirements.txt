@@ -8,11 +8,13 @@ CellFactory
 - create cells according to parameters passed in (define class for this)
 
 CellProcessor
+- describe input and output
 - dynamically loaded
 - external config
 
 CellSource
 - provide Cells - can be either from HD or any other stream
+- how to handle source metadata?
 
 CellSink
 - consume cells - to HD or stream to somewhere
@@ -37,6 +39,14 @@ Processing cycle:
 
 Problems:
 =========
-
 - Accumulating cells, i.e. L3 processing. Accumulating process needs finish() call to perform final calculation.
   Memory impact??
+
+- when implementing Sensor-Merging: how to detect Cells that belong together?
+
+Binning Oddities:
+=================
+- When binning a single MERIS FR L1 Product, the "start_time" and "stop_time" attributes have the same value.
+  BinningOp Zeile 656
+- BinWriter writes "start_time"/"stop_time" which seems to conform to CF conventions (at least it apperas in the CFTimePart
+  in the Bem NetCDF package, BinnedProductReader reads "time_coverage_start"/"time_coverage_end". Unclear which is standard.

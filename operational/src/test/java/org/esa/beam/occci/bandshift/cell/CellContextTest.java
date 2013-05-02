@@ -1,6 +1,7 @@
 package org.esa.beam.occci.bandshift.cell;
 
 
+import org.esa.beam.occci.cell.CellContext;
 import org.junit.Before;
 import org.junit.Test;
 
