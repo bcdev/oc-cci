@@ -1,9 +1,9 @@
 package org.esa.beam.occci.qaa.binning;
 
 
-import org.esa.beam.binning.PostProcessor;
-import org.esa.beam.binning.PostProcessorConfig;
-import org.esa.beam.binning.PostProcessorDescriptor;
+import org.esa.beam.binning.CellProcessor;
+import org.esa.beam.binning.CellProcessorConfig;
+import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.occci.qaa.QaaConstants;
 import org.esa.beam.occci.qaa.SensorConfig;
@@ -11,7 +11,7 @@ import org.esa.beam.occci.qaa.SensorConfigFactory;
 
 import java.util.ArrayList;
 
-public class QaaDescriptor implements PostProcessorDescriptor {
+public class QaaDescriptor implements CellProcessorDescriptor {
 
     @Override
     public String getName() {
@@ -19,12 +19,12 @@ public class QaaDescriptor implements PostProcessorDescriptor {
     }
 
     @Override
-    public PostProcessorConfig createPostProcessorConfig() {
+    public CellProcessorConfig createConfig() {
         return new QaaConfig();
     }
 
     @Override
-    public PostProcessor createPostProcessor(VariableContext varCtx, PostProcessorConfig postProcessorConfig) {
+    public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig postProcessorConfig) {
         final QaaConfig config = (QaaConfig) postProcessorConfig;
         validate(config);
 

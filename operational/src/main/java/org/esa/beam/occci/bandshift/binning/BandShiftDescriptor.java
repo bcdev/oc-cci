@@ -1,13 +1,13 @@
 package org.esa.beam.occci.bandshift.binning;
 
-import org.esa.beam.binning.PostProcessor;
-import org.esa.beam.binning.PostProcessorConfig;
-import org.esa.beam.binning.PostProcessorDescriptor;
+import org.esa.beam.binning.CellProcessor;
+import org.esa.beam.binning.CellProcessorConfig;
+import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 
 import java.io.IOException;
 
-public class BandShiftDescriptor implements PostProcessorDescriptor {
+public class BandShiftDescriptor implements CellProcessorDescriptor {
 
     public static final String BAND_SHIFTING = "BandShifting";
 
@@ -16,12 +16,12 @@ public class BandShiftDescriptor implements PostProcessorDescriptor {
     }
 
     @Override
-    public PostProcessorConfig createPostProcessorConfig() {
+    public CellProcessorConfig createConfig() {
         return new BandShiftConfig(BAND_SHIFTING);
     }
 
     @Override
-    public PostProcessor createPostProcessor(VariableContext varCtx, PostProcessorConfig config) {
+    public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig config) {
         final BandShiftConfig bandShiftConfig = (BandShiftConfig) config;
         final String[] outputFeatureNames = createOutputFeatureNames(bandShiftConfig);
         final BandShiftPostProcessor bandShiftPostProcessor;

@@ -1,11 +1,11 @@
 package org.esa.beam.occci.qaa.binning;
 
 
-import org.esa.beam.binning.PostProcessorConfig;
+import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.occci.qaa.QaaConstants;
 
-public class QaaConfig extends PostProcessorConfig {
+public class QaaConfig extends CellProcessorConfig {
 
     @Parameter(notNull = true,
             notEmpty = true,

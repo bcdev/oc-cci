@@ -1,6 +1,6 @@
 package org.esa.beam.occci.bandshift.binning;
 
-import org.esa.beam.binning.PostProcessor;
+import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
@@ -11,7 +11,7 @@ import org.esa.beam.occci.util.binning.BinningUtils;
 
 import java.io.IOException;
 
-public class BandShiftPostProcessor extends PostProcessor {
+public class BandShiftPostProcessor extends CellProcessor {
 
     private static final int QAA_OFFSET = 6;
 
