@@ -1,9 +1,9 @@
 package org.esa.beam.occci.qaa.binning;
 
 
-import org.esa.beam.binning.PostProcessor;
-import org.esa.beam.binning.PostProcessorConfig;
-import org.esa.beam.binning.PostProcessorDescriptor;
+import org.esa.beam.binning.CellProcessor;
+import org.esa.beam.binning.CellProcessorConfig;
+import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.support.VariableContextImpl;
 import org.esa.beam.occci.qaa.QaaConstants;
@@ -24,7 +24,7 @@ public class QaaDescriptorTest {
     @SuppressWarnings("ConstantConditions")
     @Test
     public void testInterfaceImplemented() {
-        assertTrue(descriptor instanceof PostProcessorDescriptor);
+        assertTrue(descriptor instanceof CellProcessorDescriptor);
     }
 
     @Test
@@ -33,20 +33,20 @@ public class QaaDescriptorTest {
     }
 
     @Test
-    public void testCreatePostProcessorConfig() {
-        final PostProcessorConfig config = descriptor.createPostProcessorConfig();
+    public void testCreateConfig() {
+        final CellProcessorConfig config = descriptor.createConfig();
         assertNotNull(config);
         assertNotNull(config);
         assertTrue(config instanceof QaaConfig);
-        assertEquals("QAA", config.getPostProcessorName());
+        assertEquals("QAA", config.getName());
     }
 
     @Test
-    public void testCreatePostProcessor() {
+    public void testCreateCellProcessor() {
         final QaaConfig config = createValidConfig();
         final VariableContext varCtx = createValidContext();
 
-        final PostProcessor postProcessor = descriptor.createPostProcessor(varCtx, config);
+        final CellProcessor postProcessor = descriptor.createCellProcessor(varCtx, config);
         assertNotNull(postProcessor);
         assertTrue(postProcessor instanceof QaaPostProcessor);
     }

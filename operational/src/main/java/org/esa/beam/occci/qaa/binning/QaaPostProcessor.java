@@ -1,14 +1,14 @@
 package org.esa.beam.occci.qaa.binning;
 
 
-import org.esa.beam.binning.PostProcessor;
+import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.occci.qaa.*;
 import org.esa.beam.occci.util.binning.BinningUtils;
 
-public class QaaPostProcessor extends PostProcessor {
+public class QaaPostProcessor extends CellProcessor {
 
     private final QaaAlgorithm qaaAlgorithm;
     private final int[] bandIndices;

@@ -1,8 +1,8 @@
 package org.esa.beam.occci.bandshift.binning;
 
-import org.esa.beam.binning.PostProcessor;
-import org.esa.beam.binning.PostProcessorConfig;
-import org.esa.beam.binning.PostProcessorDescriptor;
+import org.esa.beam.binning.CellProcessor;
+import org.esa.beam.binning.CellProcessorConfig;
+import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.support.VariableContextImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class BandShiftDescriptorTest {
     @SuppressWarnings("ConstantConditions")
     @Test
     public void testInterfaceImplemented() {
-        assertTrue(descriptor instanceof PostProcessorDescriptor);
+        assertTrue(descriptor instanceof CellProcessorDescriptor);
     }
 
     @Test
@@ -30,19 +30,19 @@ public class BandShiftDescriptorTest {
     }
 
     @Test
-    public void testCreatePostProcessorConfig() {
-        final PostProcessorConfig config = descriptor.createPostProcessorConfig();
+    public void testCreateConfig() {
+        final CellProcessorConfig config = descriptor.createConfig();
         assertNotNull(config);
         assertTrue(config instanceof BandShiftConfig);
-        assertEquals("BandShifting", config.getPostProcessorName());
+        assertEquals("BandShifting", config.getName());
     }
 
     @Test
-    public void testCreatePostProcessor() {
+    public void testCreateCellProcessor() {
         final BandShiftConfig config = new BandShiftConfig("BandShifting");
         config.setSensorName("MODISA");
 
-        final PostProcessor postProcessor = descriptor.createPostProcessor(new VariableContextImpl(), config);
+        final CellProcessor postProcessor = descriptor.createCellProcessor(new VariableContextImpl(), config);
         assertNotNull(postProcessor);
         assertTrue(postProcessor instanceof BandShiftPostProcessor);
     }
