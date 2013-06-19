@@ -1,0 +1,42 @@
+<graph id="g">
+  <version>1.0</version>
+  <node id="mathNode">
+    <operator>BandMaths</operator>
+    <sources>
+      <sourceProducts>${idepix}</sourceProducts>
+    </sources>
+    <parameters>
+      <targetBands>
+        <targetBand>
+          <name>sun_zenith_band</name>
+          <expression>sun_zenith</expression>
+          <type>float32</type>
+        </targetBand>
+      </targetBands>
+    </parameters>
+  </node>
+  <node id="mergeNode">
+    <operator>Merge</operator>
+    <sources>
+      <masterProduct>${polymer}</masterProduct>
+      <sourceProducts>${idepix},mathNode</sourceProducts>
+    </sources>
+    <parameters>
+      <includes>
+        <include>
+          <productId>sourceProducts0</productId>
+          <name>l1_flags</name>
+        </include>
+        <include>
+          <productId>sourceProducts0</productId>
+          <name>cloud_classif_flags</name>
+        </include>
+        <include>
+          <productId>sourceProducts1</productId>
+          <name>sun_zenith_band</name>
+        </include>
+      </includes>
+      <geographicError>0.01</geographicError>
+    </parameters>
+  </node>
+</graph>
