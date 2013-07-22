@@ -4,12 +4,12 @@
     <version>1.0</version>
 
     <header>
-      <target refid="mergeNode" />
+      <target refid="polymerPlusIdepix" />
       <source name="polymer">${inputPath}</source>
       <source name="idepix">$parameters.getProperty("idepixDir")/L2_of_${filename}.seq</source>
     </header>
 
-    <node id="mergeNode">
+    <node id="polymerPlusIdepix">
         <operator>Merge</operator>
         <sources>
             <masterProduct>polymer</masterProduct>
