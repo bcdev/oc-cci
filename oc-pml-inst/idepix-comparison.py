@@ -53,15 +53,15 @@ class OcMeris(Daemon):
                 minDate = datetime.date(year, month, firstDay)
                 maxDate = datetime.date(year, month, lastDay)
                 
-                polymerName = 'polymer-' + str(minDate)
+                polymerTag = 'polymer-' + str(minDate)
                 params = ['polymer-\${year}-\${month}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
                               'year', str(year), \
                               'month', str(month) ]
-                pm.execute('template-step.py', ['MERIS_L1B'], [polymerName], parameters=params, logprefix=polymerName)
+                pm.execute('template-step.py', ['MERIS_L1B'], [polymerTag], parameters=params, logprefix=polymerTag)
 
-                idepixOldName = 'idepix-old-' + str(minDate)
+                idepixOldTag = 'idepix-old-' + str(minDate)
                 params = ['idepix-\${variant}-\${year}-\${month}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
@@ -69,9 +69,9 @@ class OcMeris(Daemon):
                               'processorBundleName', 'beam-idepix-cc', \
                               'year', str(year), \
                               'month', str(month) ]
-                pm.execute('template-step.py', ['MERIS_L1B'], [idepixOldName], parameters=params, logprefix=idepixOldName)
+                pm.execute('template-step.py', ['MERIS_L1B'], [idepixOldTag], parameters=params, logprefix=idepixOldTag)
 
-                idepixNewName = 'idepix-new-' + str(minDate)
+                idepixNewTag = 'idepix-new-' + str(minDate)
                 params = ['idepix-\${variant}-\${year}-\${month}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
@@ -79,9 +79,40 @@ class OcMeris(Daemon):
                               'processorBundleName', 'beam-idepix-oc', \
                               'year', str(year), \
                               'month', str(month) ]
-                pm.execute('template-step.py', ['MERIS_L1B'], [idepixNewName], parameters=params, logprefix=idepixNewName)
+                pm.execute('template-step.py', ['MERIS_L1B'], [idepixNewTag], parameters=params, logprefix=idepixNewTag)
+
+                #idepixNewQlTag = 'idepix-new-ql-' + str(minDate)
+                #params = ['idepix-ql-\${variant}-\${year}-\${month}.xml', \
+                #              'minDate', str(minDate), \
+                #              'maxDate', str(maxDate), \
+                #              'variant', 'new', \
+                #              'year', str(year), \
+                #              'month', str(month) ]
+                #pm.execute('template-step.py', [idepixNewTag, polymerTag], [idepixNewQlTag], parameters=params, logprefix=idepixNewQlTag)
 
 
+                mergedL2Tag = 'merged-l2-' + str(minDate)
+                params = ['merge-polymer-and-two-idepix-\${year}-\${month}.xml', \
+                              'minDate', str(minDate), \
+                              'maxDate', str(maxDate), \
+                              'variant', 'new', \
+                              'year', str(year), \
+                              'month', str(month) ]
+                pm.execute('template-step.py', [idepixNewTag, idepixOldTag, polymerTag], [mergedL2Tag], parameters=params, logprefix=mergedL2Tag)
+
+                mergedL2FormatTag = 'merge-l2-format-' + str(minDate)
+                params = ['l2-format-\${year}-\${month}.xml', \
+                              'minDate', str(minDate), \
+                              'maxDate', str(maxDate), \
+                              'year', str(year), \
+                              'month', str(month) ]
+                pm.execute('template-step.py', [mergedL2Tag], [mergedL2FormatTag], parameters=params, logprefix=mergedL2FormatTag)
+
+        (# quicklooks L2 polymer + old idepix ?)
+        # DONE # quicklooks L2 polymer + new idepix
+        # DONE # merge L2 polymer + old + new idepix --> Format to DIMAP
+        # daily L3 polymer + new idepix + quicklooks
+        (# daily L3 polymer + old idepix + quicklooks)
         #======================================================
         pm.wait_for_completion()
 #======================================================
