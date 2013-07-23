@@ -12,7 +12,7 @@
     <wps:Input>
       <ows:Identifier>productionName</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>OC-polymer-${year}-${month}</wps:LiteralData>
+        <wps:LiteralData>OC-polymer-${minDate}</wps:LiteralData>
       </wps:Data>
     </wps:Input>
     

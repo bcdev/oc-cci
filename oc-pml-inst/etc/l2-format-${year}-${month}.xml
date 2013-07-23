@@ -13,7 +13,7 @@
         <wps:Input>
             <ows:Identifier>productionName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>OC-merge-l2-format-${year}-${month}</wps:LiteralData>
+                <wps:LiteralData>OC-merge-l2-format-${minDate}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>

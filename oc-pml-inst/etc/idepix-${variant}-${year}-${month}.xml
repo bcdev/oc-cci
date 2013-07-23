@@ -12,7 +12,7 @@
         <wps:Input>
             <ows:Identifier>productionName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>OC-idepix-${variant}-${year}-${month}</wps:LiteralData>
+                <wps:LiteralData>OC-idepix-${variant}-${minDate}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 

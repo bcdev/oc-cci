@@ -12,7 +12,7 @@
     <wps:Input>
       <ows:Identifier>productionName</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>OC-merge-l2-${year}-${month}</wps:LiteralData>
+        <wps:LiteralData>OC-merge-l2-${minDate}</wps:LiteralData>
       </wps:Data>
     </wps:Input>
 
@@ -69,6 +69,13 @@
                       <idepixDirNew>/calvalus/projects/oc-pml/idepix-new/${year}/${month}</idepixDirNew>
                   </parameters>
               </wps:ComplexData>
+          </wps:Data>
+      </wps:Input>
+
+      <wps:Input>
+          <ows:Identifier>calvalus.hadoop.mapred.job.queue.name</ows:Identifier>
+          <wps:Data>
+              <wps:LiteralData>cc</wps:LiteralData>
           </wps:Data>
       </wps:Input>
   </wps:DataInputs>
