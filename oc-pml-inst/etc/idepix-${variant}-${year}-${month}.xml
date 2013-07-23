@@ -68,6 +68,7 @@
                     <parameters>
                         <ccOutputRad2Refl>false</ccOutputRad2Refl>
                         <ccOutputL2Pressures>false</ccOutputL2Pressures>
+                        <ccOutputSchillerCloudValue>false</ccOutputSchillerCloudValue>
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
