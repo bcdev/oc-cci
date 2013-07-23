@@ -14,7 +14,7 @@
         <operator>Merge</operator>
         <sources>
             <masterProduct>polymer</masterProduct>
-            <sourceProducts>idepixOld,idepixNew</sourceProducts>
+            <sourceProducts>idepixNew,idepixOld</sourceProducts>
         </sources>
 
         <parameters>
