@@ -2,18 +2,13 @@ package org.esa.beam.occci.biascorrect;
 
 import org.esa.beam.binning.*;
 import org.esa.beam.framework.gpf.annotations.Parameter;
-import org.esa.beam.util.DateTimeUtils;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class AggregatorBiasCorrect extends AbstractAggregator {
 
     public static final String NAME = "OC-CCI-BIAS";
     private final DateIndex dateIndex;
 
-    public AggregatorBiasCorrect(VariableContext ctx, String... varNames) {
+    public AggregatorBiasCorrect(VariableContext ctx, Config config) {
         super(NAME, createFeatureNames(ctx));
         // @todo 1 tb/tb get start and stop year as input parameter
         dateIndex = new DateIndex(2007, 2012);
@@ -64,7 +59,10 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
         @Override
         public Aggregator createAggregator(VariableContext varCtx, AggregatorConfig aggregatorConfig) {
-            return new AggregatorBiasCorrect(varCtx, aggregatorConfig.getVarNames());
+            if (aggregatorConfig instanceof Config) {
+                return new AggregatorBiasCorrect(varCtx, (Config) aggregatorConfig);
+            }
+            throw new IllegalArgumentException("Invalid type of configuration: " + aggregatorConfig.getClass());
         }
 
         @Override
@@ -91,34 +89,6 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         @Override
         public String[] getVarNames() {
             return varNames;
-        }
-    }
-
-    static class DateIndex {
-
-        private final Calendar calendar;
-        private final int startYear;
-        private final int stopYear;
-
-        public DateIndex(int startYear, int stopYear) {
-            this.startYear = startYear;
-            this.stopYear = stopYear;
-            calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        }
-
-        public int get(double mjd) {
-            //double mjd = 56538.75963d;   // 3.09.2013, 18:13 UTC
-
-            final double jd = DateTimeUtils.mjdToJD(mjd);
-            final Date utc = DateTimeUtils.jdToUTC(jd);
-            calendar.setTime(utc);
-            final int year = calendar.get(Calendar.YEAR);
-            if (year < startYear || year > stopYear) {
-                return -1;
-            }
-            final int yearOffset = 12 * (year - startYear);
-            final int month = calendar.get(Calendar.MONTH);
-            return yearOffset + month;
         }
     }
 }

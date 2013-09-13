@@ -4,11 +4,11 @@ import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 
-public class AggregatorBiasCorrectDateIndexTest {
+public class DateIndexTest {
 
     @Test
     public void testGetDateIndex() {
-        final AggregatorBiasCorrect.DateIndex dateIndex = new AggregatorBiasCorrect.DateIndex(2009, 2011);
+        final DateIndex dateIndex = new DateIndex(2009, 2011);
 
         int idx = dateIndex.get(55146.7756);    // 2009-11
         assertEquals(10, idx);                  // year 0, month 10
@@ -25,7 +25,7 @@ public class AggregatorBiasCorrectDateIndexTest {
 
     @Test
     public void testGetDateIndex_outOfRange() {
-        final AggregatorBiasCorrect.DateIndex dateIndex = new AggregatorBiasCorrect.DateIndex(2009, 2011);
+        DateIndex dateIndex = new DateIndex(2009, 2011);
 
         int idx = dateIndex.get(54830.3762);    // 2008-12
         assertEquals(-1, idx);                  // out of range
