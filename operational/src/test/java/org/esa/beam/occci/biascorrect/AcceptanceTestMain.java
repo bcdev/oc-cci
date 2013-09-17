@@ -49,7 +49,9 @@ public class AcceptanceTestMain {
         parameterMap.put("binningConfig", binningConfig);
 
         final FormatterConfig formatterConfig = new FormatterConfig();
-        formatterConfig.setOutputFile(new File("delete_me").getAbsolutePath());
+        formatterConfig.setOutputFile(new File("delete_me.nc").getAbsolutePath());
+        formatterConfig.setOutputType("Product");
+        formatterConfig.setOutputFormat("NetCDF");
         parameterMap.put("formatterConfig", formatterConfig);
         return parameterMap;
     }
