@@ -21,10 +21,13 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetVarNames_empty() {
+    public void testDefaultConstruction() {
         final String[] varNames = config.getVarNames();
         assertNotNull(varNames);
         assertEquals(0, varNames.length);
+
+        assertEquals(2005, config.getStartYear());
+        assertEquals(2010, config.getEndYear());
     }
 
     @Test
