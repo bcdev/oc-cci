@@ -55,12 +55,32 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
     @Override
     public void initTemporal(BinContext ctx, WritableVector vector) {
-        final int indexCount = dateIndexCalculator.getIndexCount();
+        final int size = vector.size();
+        for (int i = 0; i < size; i++) {
+            vector.set(i, 0.f);
+        }
     }
 
     @Override
     public void aggregateTemporal(BinContext ctx, Vector spatialVector, int numSpatialObs, WritableVector temporalVector) {
-        //System.out.println("aggregateTemporal");
+        if (numSpatialObs == 0) {
+            return;
+        }
+
+        final int indexCount = dateIndexCalculator.getIndexCount();
+        final int variablesCount = getSpatialFeatureNames().length - 1;
+        for (int i = 0; i < variablesCount; i++) {
+            final float value = spatialVector.get(i);
+            if (Float.isNaN(value)) {
+                continue;
+            }
+
+            final int offset = i * 2 * indexCount + (int) spatialVector.get(variablesCount) * 2;
+            final float sum = temporalVector.get(offset);
+            temporalVector.set(offset, sum + value);
+            final float count = temporalVector.get(offset + 1);
+            temporalVector.set(offset + 1, count + 1);
+        }
     }
 
     @Override

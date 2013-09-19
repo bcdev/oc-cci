@@ -162,6 +162,110 @@ public class AggregatorBiasCorrectTest {
         assertEquals(DateIndexCalculator.INVALID, spatialVector.get(3), 1e-6);
     }
 
+    @Test
+    public void testAggregateTemporal_noObservations() {
+        config.varNames = new String[]{"rrs_0"};
+        config.startYear = 2005;
+        config.endYear = 2006;
+        final TestVector spatialVector = new TestVector(2);
+        final TestVector temporalVector = new TestVector(48);
+
+        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+
+        aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector, 0, temporalVector);
+
+        for (int i = 0; i < 48; i++) {
+            assertEquals(0.f, temporalVector.get(i), 1e-6);
+        }
+    }
+
+    @Test
+    public void testAggregateTemporal_invalidObservations() {
+        config.varNames = new String[]{"rrs_0"};
+        config.startYear = 2005;
+        config.endYear = 2006;
+        final TestVector spatialVector = new TestVector(2);
+        spatialVector.set(0, Float.NaN);
+        spatialVector.set(1, 14);       // march 2006
+        final TestVector temporalVector = new TestVector(48);
+
+        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+
+        aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector, 1, temporalVector);
+
+        for (int i = 0; i < 48; i++) {
+            assertEquals(0.f, temporalVector.get(i), 1e-6);
+        }
+    }
+
+    @Test
+    public void testAggregateTemporal_oneBand_twoYears() {
+        config.varNames = new String[]{"rrs_0"};
+        config.startYear = 2005;
+        config.endYear = 2006;
+        final TestVector spatialVector = new TestVector(2);
+        spatialVector.set(0, 14.786f);
+        spatialVector.set(1, 14);       // march 2006
+        final TestVector temporalVector = new TestVector(48);
+
+        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+
+        aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector, 1, temporalVector);
+
+        assertEquals(14.786f, temporalVector.get(28), 1e-6);
+        assertEquals(1.f, temporalVector.get(29), 1e-6);
+
+        for (int i = 0; i < 48; i++) {
+            if (i == 28 || i == 29) {
+                continue;
+            }
+            assertEquals(0.f, temporalVector.get(i), 1e-6);
+        }
+    }
+
+    @Test
+    public void testAggregateTemporal_twoBands_oneYears() {
+        config.varNames = new String[]{"rrs_0", "rrs_1"};
+        config.startYear = 2006;
+        config.endYear = 2006;
+        final TestVector spatialVector = new TestVector(3);
+        spatialVector.set(0, 16.786f);
+        spatialVector.set(1, 19.013f);
+        spatialVector.set(2, 7);       // august 2006
+        final TestVector temporalVector = new TestVector(48);
+
+        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+
+        aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector, 1, temporalVector);
+
+        assertEquals(16.786f, temporalVector.get(14), 1e-6);
+        assertEquals(1.f, temporalVector.get(15), 1e-6);
+
+        assertEquals(19.013f, temporalVector.get(38), 1e-6);
+        assertEquals(1.f, temporalVector.get(39), 1e-6);
+
+        for (int i = 0; i < 48; i++) {
+            if (i == 14 || i == 15 || i == 38 || i == 39) {
+                continue;
+            }
+            assertEquals(0.f, temporalVector.get(i), 1e-6);
+        }
+    }
+
+    @Test
+    public void testInitTemporal() {
+        final TestVector spatialVector = new TestVector(6);
+
+        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+
+        aggregatorBiasCorrect.initTemporal(binContext, spatialVector);
+
+        final int size = spatialVector.size();
+        for (int i = 0; i < size; i++) {
+            assertEquals(0.f, spatialVector.get(i), 1e-6);
+        }
+    }
+
     private class TestVector implements WritableVector {
 
         private final float[] data;
@@ -195,6 +299,7 @@ public class AggregatorBiasCorrectTest {
                 return 0;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             public <T> T get(String name) {
                 return (T) map.get(name);
