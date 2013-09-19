@@ -6,7 +6,7 @@ import org.esa.beam.framework.datamodel.ProductData;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-class DateIndex {
+class DateIndexCalculator {
 
     static final int INVALID = -1;
 
@@ -14,7 +14,7 @@ class DateIndex {
     private final int startYear;
     private final int stopYear;
 
-    DateIndex(int startYear, int stopYear) {
+    DateIndexCalculator(int startYear, int stopYear) {
         this.startYear = startYear;
         this.stopYear = stopYear;
         calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -31,6 +31,10 @@ class DateIndex {
         final int yearOffset = 12 * (year - startYear);
         final int month = calendar.get(Calendar.MONTH);
         return yearOffset + month;
+    }
+
+    int getIndexCount() {
+        return (stopYear - startYear + 1) * 12;
     }
 
     // for testing only - tb 2013-09-18

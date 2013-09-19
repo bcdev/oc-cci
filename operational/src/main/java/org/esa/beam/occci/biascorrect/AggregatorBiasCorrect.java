@@ -3,17 +3,22 @@ package org.esa.beam.occci.biascorrect;
 import org.esa.beam.binning.*;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class AggregatorBiasCorrect extends AbstractAggregator {
 
     public static final String NAME = "OC-CCI-BIAS";
-    private final DateIndex dateIndex;
+    private final DateIndexCalculator dateIndexCalculator;
     private int dateIdx;
     private int numReflecs;
 
     public AggregatorBiasCorrect(Config config) {
-        super(NAME, createFeatureNames(config));
+        super(NAME, createSpatialFeatureNames(config),
+                createTemporalFeatureNames(config, createFrom(config)),
+                createOutputFeatureNames(config));
 
-        dateIndex = createFrom(config);
+        dateIndexCalculator = createFrom(config);
     }
 
     @Override
@@ -23,16 +28,16 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         for (int i = 0; i < numReflecs; i++) {
             vector.set(i, Float.NaN);
         }
-        vector.set(numReflecs, DateIndex.INVALID);
+        vector.set(numReflecs, DateIndexCalculator.INVALID);
 
-        dateIdx = DateIndex.INVALID;
+        dateIdx = DateIndexCalculator.INVALID;
     }
 
     @Override
     public void aggregateSpatial(BinContext ctx, Observation observationVector, WritableVector spatialVector) {
-        if (dateIdx == DateIndex.INVALID) {
-            final int currentIndex = dateIndex.get(observationVector.getMJD());
-            if (currentIndex != DateIndex.INVALID) {
+        if (dateIdx == DateIndexCalculator.INVALID) {
+            final int currentIndex = dateIndexCalculator.get(observationVector.getMJD());
+            if (currentIndex != DateIndexCalculator.INVALID) {
                 dateIdx = currentIndex;
             }
         }
@@ -50,7 +55,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
     @Override
     public void initTemporal(BinContext ctx, WritableVector vector) {
-        //System.out.println("initTemporal");
+        final int indexCount = dateIndexCalculator.getIndexCount();
     }
 
     @Override
@@ -68,7 +73,8 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 //        System.out.println("computeOutput");
     }
 
-    static String[] createFeatureNames(Config config) {
+    // package access for testing only tb 2013-09-18
+    static String[] createSpatialFeatureNames(Config config) {
         final String[] varNames = config.getVarNames();
 
         if (varNames.length == 0) {
@@ -82,16 +88,42 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         return featureNames;
     }
 
-    static DateIndex createFrom(Config config) {
+    static String[] createTemporalFeatureNames(Config config, DateIndexCalculator dateIndexCalculator) {
+        final NumberFormat numberFormat = new DecimalFormat("000");
+        final int numIndices = dateIndexCalculator.getIndexCount();
+        final String[] varNames = config.getVarNames();
+        final int numFeatures = varNames.length * numIndices * 2;
+        final String[] temporalFeatureNames = new String[numFeatures];
+
+        for (int var = 0; var < varNames.length; var++) {
+            for (int idx = 0; idx < numIndices; idx++) {
+                final int featureNameOffset = var + 2 * idx;
+                final String offset = numberFormat.format(idx);
+                temporalFeatureNames[featureNameOffset] = varNames[var] + "_" + offset + "_sum";
+                temporalFeatureNames[featureNameOffset + 1] = varNames[var] + "_" + offset + "_count";
+            }
+        }
+        return temporalFeatureNames;
+    }
+
+    static String[] createOutputFeatureNames(Config config) {
+        final String[] varNames = config.getVarNames();
+        final String[] outputFeatureNames = new String[varNames.length];
+        for (int i = 0; i < outputFeatureNames.length; i++) {
+            outputFeatureNames[i] = varNames[i].concat("_mean");
+        }
+        return outputFeatureNames;
+    }
+
+    static DateIndexCalculator createFrom(Config config) {
         final int startYear = config.getStartYear();
         final int endYear = config.getEndYear();
         if (endYear < startYear) {
             throw new IllegalArgumentException("End year < Start Year");
         }
 
-        return new DateIndex(startYear, endYear);
+        return new DateIndexCalculator(startYear, endYear);
     }
-
 
     public static class Descriptor implements AggregatorDescriptor {
 
