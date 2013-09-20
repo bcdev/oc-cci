@@ -34,7 +34,11 @@ class DateIndexCalculator {
     }
 
     int getIndexCount() {
-        return (stopYear - startYear + 1) * 12;
+        return getNumYears() * 12;
+    }
+
+    int getNumYears() {
+        return stopYear - startYear + 1;
     }
 
     // for testing only - tb 2013-09-18

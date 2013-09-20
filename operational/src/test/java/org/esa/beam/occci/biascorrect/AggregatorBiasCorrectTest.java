@@ -297,11 +297,6 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testAggregateMonths_oneBand_oneYear() {
-        config.varNames = new String[]{"rrs_2"};
-        config.startYear = 2008;
-        config.endYear = 2009;
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
-
         final TestVector temporalVector = new TestVector(24);   // 1 year
         temporalVector.set(0, 10);  // two measurements in Jan
         temporalVector.set(1, 2);
@@ -310,22 +305,118 @@ public class AggregatorBiasCorrectTest {
         temporalVector.set(22, 16);  // five measurements in Dec
         temporalVector.set(23, 5);
 
-        final float[] monthlyMeans = aggregatorBiasCorrect.aggregateMonths(temporalVector);
+        final float[] monthlyMeans = AggregatorBiasCorrect.aggregateMonths(temporalVector, 1, 0);
         assertNotNull(monthlyMeans);
         assertEquals(12, monthlyMeans.length);
 
-//        assertEquals(5.f, monthlyMeans[0], 1e-6);
-//        assertEquals(0.f, monthlyMeans[1], 1e-6);
-//        assertEquals(6.f, monthlyMeans[2], 1e-6);
-//        assertEquals(0.f, monthlyMeans[3], 1e-6);
-//        assertEquals(0.f, monthlyMeans[4], 1e-6);
-//        assertEquals(0.f, monthlyMeans[5], 1e-6);
-//        assertEquals(0.f, monthlyMeans[6], 1e-6);
-//        assertEquals(0.f, monthlyMeans[7], 1e-6);
-//        assertEquals(0.f, monthlyMeans[8], 1e-6);
-//        assertEquals(0.f, monthlyMeans[9], 1e-6);
-//        assertEquals(0.f, monthlyMeans[10], 1e-6);
-//        assertEquals(3.2f, monthlyMeans[11], 1e-6);
+        assertEquals(5.f, monthlyMeans[0], 1e-6);
+        assertEquals(0.f, monthlyMeans[1], 1e-6);
+        assertEquals(6.f, monthlyMeans[2], 1e-6);
+        assertEquals(0.f, monthlyMeans[3], 1e-6);
+        assertEquals(0.f, monthlyMeans[4], 1e-6);
+        assertEquals(0.f, monthlyMeans[5], 1e-6);
+        assertEquals(0.f, monthlyMeans[6], 1e-6);
+        assertEquals(0.f, monthlyMeans[7], 1e-6);
+        assertEquals(0.f, monthlyMeans[8], 1e-6);
+        assertEquals(0.f, monthlyMeans[9], 1e-6);
+        assertEquals(0.f, monthlyMeans[10], 1e-6);
+        assertEquals(3.2f, monthlyMeans[11], 1e-6);
+    }
+
+    @Test
+    public void testAggregateMonths_twoBands_oneYear() {
+        final TestVector temporalVector = new TestVector(48);   // 1 year, two bands
+        temporalVector.set(0, 11);  // two measurements in Jan, band 1
+        temporalVector.set(1, 2);
+        temporalVector.set(24, 12);  // two measurements in Jan, band 2
+        temporalVector.set(25, 2);
+        temporalVector.set(4, 14);  // three measurements in March, band 1
+        temporalVector.set(5, 3);
+        temporalVector.set(28, 15);  // three measurements in March, band 2
+        temporalVector.set(29, 3);
+        temporalVector.set(46, 17);  // five measurements in Dec, band 2
+        temporalVector.set(47, 5);
+
+        // first band
+        float[] monthlyMeans = AggregatorBiasCorrect.aggregateMonths(temporalVector, 1, 0);
+        assertEquals(5.5f, monthlyMeans[0], 1e-6);
+        assertEquals(0.f, monthlyMeans[1], 1e-6);
+        assertEquals(4.6666667f, monthlyMeans[2], 1e-6);
+        assertEquals(0.f, monthlyMeans[3], 1e-6);
+        assertEquals(0.f, monthlyMeans[4], 1e-6);
+        assertEquals(0.f, monthlyMeans[5], 1e-6);
+        assertEquals(0.f, monthlyMeans[6], 1e-6);
+        assertEquals(0.f, monthlyMeans[7], 1e-6);
+        assertEquals(0.f, monthlyMeans[8], 1e-6);
+        assertEquals(0.f, monthlyMeans[9], 1e-6);
+        assertEquals(0.f, monthlyMeans[10], 1e-6);
+        assertEquals(0.f, monthlyMeans[11], 1e-6);
+        // second band
+        monthlyMeans = AggregatorBiasCorrect.aggregateMonths(temporalVector, 1, 1);
+        assertEquals(6.f, monthlyMeans[0], 1e-6);
+        assertEquals(0.f, monthlyMeans[1], 1e-6);
+        assertEquals(5.f, monthlyMeans[2], 1e-6);
+        assertEquals(0.f, monthlyMeans[3], 1e-6);
+        assertEquals(0.f, monthlyMeans[4], 1e-6);
+        assertEquals(0.f, monthlyMeans[5], 1e-6);
+        assertEquals(0.f, monthlyMeans[6], 1e-6);
+        assertEquals(0.f, monthlyMeans[7], 1e-6);
+        assertEquals(0.f, monthlyMeans[8], 1e-6);
+        assertEquals(0.f, monthlyMeans[9], 1e-6);
+        assertEquals(0.f, monthlyMeans[10], 1e-6);
+        assertEquals(3.4f, monthlyMeans[11], 1e-6);
+    }
+
+    @Test
+    public void testAggregateMonths_oneBand_threeYears() {
+        final TestVector temporalVector = new TestVector(72);   // 3 years
+        temporalVector.set(0, 10);  // two measurements in Jan year 1
+        temporalVector.set(1, 2);
+        temporalVector.set(24, 12);  // two measurements in Jan year 2
+        temporalVector.set(25, 2);
+        temporalVector.set(28, 18);  // three measurements in March year 2
+        temporalVector.set(29, 3);
+        temporalVector.set(52, 19);  // three measurements in March year 3
+        temporalVector.set(53, 3);
+        temporalVector.set(70, 18);  // five measurements in Dec year 3
+        temporalVector.set(71, 5);
+
+        final float[] monthlyMeans = AggregatorBiasCorrect.aggregateMonths(temporalVector, 3, 0);
+        assertNotNull(monthlyMeans);
+        assertEquals(12, monthlyMeans.length);
+
+        assertEquals(5.5f, monthlyMeans[0], 1e-6);
+        assertEquals(0.f, monthlyMeans[1], 1e-6);
+        assertEquals(6.1666667f, monthlyMeans[2], 1e-6);
+        assertEquals(0.f, monthlyMeans[3], 1e-6);
+        assertEquals(0.f, monthlyMeans[4], 1e-6);
+        assertEquals(0.f, monthlyMeans[5], 1e-6);
+        assertEquals(0.f, monthlyMeans[6], 1e-6);
+        assertEquals(0.f, monthlyMeans[7], 1e-6);
+        assertEquals(0.f, monthlyMeans[8], 1e-6);
+        assertEquals(0.f, monthlyMeans[9], 1e-6);
+        assertEquals(0.f, monthlyMeans[10], 1e-6);
+        assertEquals(3.6f, monthlyMeans[11], 1e-6);
+    }
+
+    @Test
+    public void testAggregateYear() {
+        final float[] monthlyMeans = new float[12];
+        monthlyMeans[0] = 10.f;
+        monthlyMeans[1] = 11.f;
+        monthlyMeans[2] = 12.f;
+        monthlyMeans[3] = 13.f;
+        monthlyMeans[4] = 14.f;
+        monthlyMeans[5] = 15.f;
+        monthlyMeans[6] = 16.f;
+        monthlyMeans[7] = 17.f;
+        monthlyMeans[8] = 18.f;
+        monthlyMeans[9] = 19.f;
+        monthlyMeans[10] = 20.f;
+        monthlyMeans[11] = 21.f;
+
+        assertEquals(15.5f, AggregatorBiasCorrect.aggregateYear(monthlyMeans));
+
     }
 
     private class TestVector implements WritableVector {

@@ -12,6 +12,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
     private final DateIndexCalculator dateIndexCalculator;
     private int dateIdx;
     private int numReflecs;
+    private final String[] varNames;
 
     public AggregatorBiasCorrect(Config config) {
         super(NAME, createSpatialFeatureNames(config),
@@ -19,6 +20,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
                 createOutputFeatureNames(config));
 
         dateIndexCalculator = createFrom(config);
+        varNames = config.getVarNames();
     }
 
     @Override
@@ -90,8 +92,14 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
     @Override
     public void computeOutput(Vector temporalVector, WritableVector outputVector) {
-        final float[] monthlyMeans = new float[12];
+        final int numYears = dateIndexCalculator.getNumYears();
 
+        final int numBands = varNames.length;
+        for (int band = 0; band < numBands; band++) {
+            final float[] monthlyMeans = aggregateMonths(temporalVector, numYears, band);
+            final float mean = aggregateYear(monthlyMeans);
+            outputVector.set(band, mean);
+        }
     }
 
     // package access for testing only tb 2013-09-18
@@ -146,9 +154,40 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         return new DateIndexCalculator(startYear, endYear);
     }
 
-    float[] aggregateMonths(WritableVector temporalVector) {
-        return new float[12];
+    static float[] aggregateMonths(Vector temporalVector, int numYears, int bandNumber) {
+        final float[] monthlyMeans = new float[12];
+        final int varOffset = bandNumber * numYears * 12 * 2;
+
+        for (int month = 0; month < 12; month++) {
+            double monthSum = 0.f;
+            int monthMeasCount = 0;
+            for (int year = 0; year < numYears; year++) {
+                final int offset = (year * 12 + month) * 2 + varOffset;
+                final float monthlySum = temporalVector.get(offset);
+                final float monthlyCounts = temporalVector.get(offset + 1);
+                if (monthlyCounts > 0.f) {
+                    final float monthlyAverage = monthlySum / monthlyCounts;
+                    monthSum += monthlyAverage;
+                    monthMeasCount++;
+                }
+            }
+            if (monthMeasCount > 0) {
+                monthlyMeans[month] = (float) (monthSum / monthMeasCount);
+            }
+        }
+
+        return monthlyMeans;
     }
+
+    static float aggregateYear(float[] monthlyMeans) {
+        double sum = 0.0;
+
+        for (float monthlyMean : monthlyMeans) {
+            sum += monthlyMean;
+        }
+        return (float) (sum / monthlyMeans.length);
+    }
+
 
     public static class Descriptor implements AggregatorDescriptor {
 

@@ -45,5 +45,17 @@ public class DateIndexCalculatorTest {
         dateIndexCalculator = new DateIndexCalculator(2007, 2007);
         assertEquals(12, dateIndexCalculator.getIndexCount());
     }
+
+    @Test
+    public void testGetNumYears() {
+        DateIndexCalculator dateIndexCalculator = new DateIndexCalculator(2008, 2011);
+        assertEquals(4, dateIndexCalculator.getNumYears());
+
+        dateIndexCalculator = new DateIndexCalculator(2005, 2010);
+        assertEquals(6, dateIndexCalculator.getNumYears());
+
+        dateIndexCalculator = new DateIndexCalculator(2004, 2004);
+        assertEquals(1, dateIndexCalculator.getNumYears());
+    }
 }
 

@@ -44,7 +44,9 @@ public class AcceptanceTestMain {
         final BinningConfig binningConfig = new BinningConfig();
         binningConfig.setNumRows(100);
         final AggregatorBiasCorrect.Config aggregatorConfig = new AggregatorBiasCorrect.Config();
-        aggregatorConfig.varNames = new String[] {"radiance_1"};
+        aggregatorConfig.varNames = new String[]{"radiance_1"};
+        aggregatorConfig.startYear = 2006;
+        aggregatorConfig.endYear = 2009;
         binningConfig.setAggregatorConfigs(aggregatorConfig);
         parameterMap.put("binningConfig", binningConfig);
 
