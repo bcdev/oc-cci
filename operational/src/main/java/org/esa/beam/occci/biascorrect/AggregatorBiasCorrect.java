@@ -85,12 +85,13 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
     @Override
     public void completeTemporal(BinContext ctx, int numTemporalObs, WritableVector temporalVector) {
-        //System.out.println("completeTemporal");
+        // nothing to do here tb 2013-09-20
     }
 
     @Override
     public void computeOutput(Vector temporalVector, WritableVector outputVector) {
-//        System.out.println("computeOutput");
+        final float[] monthlyMeans = new float[12];
+
     }
 
     // package access for testing only tb 2013-09-18
@@ -143,6 +144,10 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         }
 
         return new DateIndexCalculator(startYear, endYear);
+    }
+
+    float[] aggregateMonths(WritableVector temporalVector) {
+        return new float[12];
     }
 
     public static class Descriptor implements AggregatorDescriptor {

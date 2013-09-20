@@ -224,7 +224,7 @@ public class AggregatorBiasCorrectTest {
     }
 
     @Test
-    public void testAggregateTemporal_twoBands_oneYears() {
+    public void testAggregateTemporal_twoBands_oneYear() {
         config.varNames = new String[]{"rrs_0", "rrs_1"};
         config.startYear = 2006;
         config.endYear = 2006;
@@ -253,6 +253,35 @@ public class AggregatorBiasCorrectTest {
     }
 
     @Test
+    public void testAggregateTemporal_oneBand_oneYear_twoMeasures() {
+        config.varNames = new String[]{"rrs_1"};
+        config.startYear = 2006;
+        config.endYear = 2006;
+        final TestVector spatialVector_1 = new TestVector(2);
+        spatialVector_1.set(0, 8.f);
+        spatialVector_1.set(1, 4);       // may 2006
+        final TestVector spatialVector_2 = new TestVector(2);
+        spatialVector_2.set(0, 10.f);
+        spatialVector_2.set(1, 4);       // may 2006
+        final TestVector temporalVector = new TestVector(48);
+
+        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+
+        aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector_1, 1, temporalVector);
+        aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector_2, 1, temporalVector);
+
+        assertEquals(8.f + 10.f, temporalVector.get(8), 1e-6);
+        assertEquals(2.f, temporalVector.get(9), 1e-6);
+
+        for (int i = 0; i < 48; i++) {
+            if (i == 8 || i == 9) {
+                continue;
+            }
+            assertEquals(0.f, temporalVector.get(i), 1e-6);
+        }
+    }
+
+    @Test
     public void testInitTemporal() {
         final TestVector spatialVector = new TestVector(6);
 
@@ -264,6 +293,39 @@ public class AggregatorBiasCorrectTest {
         for (int i = 0; i < size; i++) {
             assertEquals(0.f, spatialVector.get(i), 1e-6);
         }
+    }
+
+    @Test
+    public void testAggregateMonths_oneBand_oneYear() {
+        config.varNames = new String[]{"rrs_2"};
+        config.startYear = 2008;
+        config.endYear = 2009;
+        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+
+        final TestVector temporalVector = new TestVector(24);   // 1 year
+        temporalVector.set(0, 10);  // two measurements in Jan
+        temporalVector.set(1, 2);
+        temporalVector.set(4, 18);  // three measurements in March
+        temporalVector.set(5, 3);
+        temporalVector.set(22, 16);  // five measurements in Dec
+        temporalVector.set(23, 5);
+
+        final float[] monthlyMeans = aggregatorBiasCorrect.aggregateMonths(temporalVector);
+        assertNotNull(monthlyMeans);
+        assertEquals(12, monthlyMeans.length);
+
+//        assertEquals(5.f, monthlyMeans[0], 1e-6);
+//        assertEquals(0.f, monthlyMeans[1], 1e-6);
+//        assertEquals(6.f, monthlyMeans[2], 1e-6);
+//        assertEquals(0.f, monthlyMeans[3], 1e-6);
+//        assertEquals(0.f, monthlyMeans[4], 1e-6);
+//        assertEquals(0.f, monthlyMeans[5], 1e-6);
+//        assertEquals(0.f, monthlyMeans[6], 1e-6);
+//        assertEquals(0.f, monthlyMeans[7], 1e-6);
+//        assertEquals(0.f, monthlyMeans[8], 1e-6);
+//        assertEquals(0.f, monthlyMeans[9], 1e-6);
+//        assertEquals(0.f, monthlyMeans[10], 1e-6);
+//        assertEquals(3.2f, monthlyMeans[11], 1e-6);
     }
 
     private class TestVector implements WritableVector {
