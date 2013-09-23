@@ -28,6 +28,8 @@ public class ConfigTest {
 
         assertEquals(2005, config.getStartYear());
         assertEquals(2010, config.getEndYear());
+
+        assertEquals(Float.NaN, config.getNoDataValue(), 1e-6);
     }
 
     @Test
@@ -39,6 +41,13 @@ public class ConfigTest {
         assertEquals(2, varNames.length);
         assertEquals("hip", varNames[0]);
         assertEquals("hop", varNames[1]);
+    }
+
+    @Test
+    public void testGetNoDataValue() {
+        config.noDataValue = -167.89f;
+
+        assertEquals(-167.89f, config.getNoDataValue(), 1e-6);
     }
 }
 

@@ -9,10 +9,13 @@ import java.text.NumberFormat;
 public class AggregatorBiasCorrect extends AbstractAggregator {
 
     public static final String NAME = "OC-CCI-BIAS";
+
     private final DateIndexCalculator dateIndexCalculator;
     private int dateIdx;
     private int numReflecs;
     private final String[] varNames;
+    private static float[] monthlyMeans;
+    private static float noDataValue;
 
     public AggregatorBiasCorrect(Config config) {
         super(NAME, createSpatialFeatureNames(config),
@@ -21,6 +24,8 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
         dateIndexCalculator = createFrom(config);
         varNames = config.getVarNames();
+        monthlyMeans = new float[12];
+        noDataValue = config.getNoDataValue();
     }
 
     @Override
@@ -97,7 +102,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         final int numBands = varNames.length;
         for (int band = 0; band < numBands; band++) {
             final float[] monthlyMeans = aggregateMonths(temporalVector, numYears, band);
-            final float mean = aggregateYear(monthlyMeans);
+            final float mean = aggregateYear(monthlyMeans, noDataValue);
             outputVector.set(band, mean);
         }
     }
@@ -155,7 +160,6 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
     }
 
     static float[] aggregateMonths(Vector temporalVector, int numYears, int bandNumber) {
-        final float[] monthlyMeans = new float[12];
         for (int i = 0; i < monthlyMeans.length; i++) {
             monthlyMeans[i] = Float.NaN;
         }
@@ -182,7 +186,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         return monthlyMeans;
     }
 
-    static float aggregateYear(float[] monthlyMeans) {
+    static float aggregateYear(float[] monthlyMeans, float noDataValue) {
         double sum = 0.0;
         int count = 0;
 
@@ -195,7 +199,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         if (count > 0) {
             return (float) (sum / count);
         } else {
-            return Float.NaN;
+            return noDataValue;
         }
     }
 
@@ -230,12 +234,15 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         int startYear;
         @Parameter(defaultValue = "2010")
         int endYear;
+        @Parameter(defaultValue = "NaN")
+        float noDataValue;
 
         public Config() {
             super(NAME);
             varNames = new String[0];
             startYear = 2005;
             endYear = 2010;
+            noDataValue = Float.NaN;
         }
 
         @Override
@@ -249,6 +256,10 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
         public int getEndYear() {
             return endYear;
+        }
+
+        public float getNoDataValue() {
+            return noDataValue;
         }
     }
 }

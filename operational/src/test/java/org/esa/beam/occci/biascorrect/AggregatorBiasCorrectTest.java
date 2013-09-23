@@ -46,7 +46,6 @@ public class AggregatorBiasCorrectTest {
         }
     }
 
-
     @Test
     public void testCreateSpatialFeatureNames_empty() {
         final String[] featureNames = AggregatorBiasCorrect.createSpatialFeatureNames(config);
@@ -284,7 +283,6 @@ public class AggregatorBiasCorrectTest {
     @Test
     public void testInitTemporal() {
         final TestVector spatialVector = new TestVector(6);
-
         final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
 
         aggregatorBiasCorrect.initTemporal(binContext, spatialVector);
@@ -415,7 +413,7 @@ public class AggregatorBiasCorrectTest {
         monthlyMeans[10] = 20.f;
         monthlyMeans[11] = 21.f;
 
-        assertEquals(15.5f, AggregatorBiasCorrect.aggregateYear(monthlyMeans));
+        assertEquals(15.5f, AggregatorBiasCorrect.aggregateYear(monthlyMeans, 0.3f), 1e-6);
     }
 
     @Test
@@ -434,7 +432,7 @@ public class AggregatorBiasCorrectTest {
         monthlyMeans[10] = 20.f;
         monthlyMeans[11] = Float.NaN;
 
-        assertEquals(15.f, AggregatorBiasCorrect.aggregateYear(monthlyMeans));
+        assertEquals(15.f, AggregatorBiasCorrect.aggregateYear(monthlyMeans, 90.f), 1e-6);
     }
 
     @Test
@@ -444,7 +442,26 @@ public class AggregatorBiasCorrectTest {
             monthlyMeans[i] = Float.NaN;
         }
 
-        assertEquals(Float.NaN, AggregatorBiasCorrect.aggregateYear(monthlyMeans));
+        final float noDataValue = -23.f;
+        assertEquals(noDataValue, AggregatorBiasCorrect.aggregateYear(monthlyMeans, noDataValue), 1e-6);
+    }
+
+    @Test
+    public void testComputeOutput() {
+        config.varNames = new String[]{"rrs_4"};
+        config.startYear = 2003;
+        config.endYear = 2004;
+        final TestVector outputVector = new TestVector(1);
+        final TestVector temporalVector = new TestVector(48);   // one variable, two years
+
+        temporalVector.set(24, 12); // three times 4 in Jan 2004
+        temporalVector.set(25, 3);
+
+
+        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+
+        aggregatorBiasCorrect.computeOutput(temporalVector, outputVector);
+        assertEquals(4.f, outputVector.get(0), 1e-6);
     }
 
     private class TestVector implements WritableVector {
