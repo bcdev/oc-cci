@@ -156,6 +156,9 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
     static float[] aggregateMonths(Vector temporalVector, int numYears, int bandNumber) {
         final float[] monthlyMeans = new float[12];
+        for (int i = 0; i < monthlyMeans.length; i++) {
+            monthlyMeans[i] = Float.NaN;
+        }
         final int varOffset = bandNumber * numYears * 12 * 2;
 
         for (int month = 0; month < 12; month++) {
@@ -181,11 +184,19 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
     static float aggregateYear(float[] monthlyMeans) {
         double sum = 0.0;
+        int count = 0;
 
         for (float monthlyMean : monthlyMeans) {
-            sum += monthlyMean;
+            if (!Float.isNaN(monthlyMean)) {
+                sum += monthlyMean;
+                ++count;
+            }
         }
-        return (float) (sum / monthlyMeans.length);
+        if (count > 0) {
+            return (float) (sum / count);
+        } else {
+            return Float.NaN;
+        }
     }
 
 

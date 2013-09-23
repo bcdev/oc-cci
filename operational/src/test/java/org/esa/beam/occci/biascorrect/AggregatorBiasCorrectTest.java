@@ -310,16 +310,16 @@ public class AggregatorBiasCorrectTest {
         assertEquals(12, monthlyMeans.length);
 
         assertEquals(5.f, monthlyMeans[0], 1e-6);
-        assertEquals(0.f, monthlyMeans[1], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[1], 1e-6);
         assertEquals(6.f, monthlyMeans[2], 1e-6);
-        assertEquals(0.f, monthlyMeans[3], 1e-6);
-        assertEquals(0.f, monthlyMeans[4], 1e-6);
-        assertEquals(0.f, monthlyMeans[5], 1e-6);
-        assertEquals(0.f, monthlyMeans[6], 1e-6);
-        assertEquals(0.f, monthlyMeans[7], 1e-6);
-        assertEquals(0.f, monthlyMeans[8], 1e-6);
-        assertEquals(0.f, monthlyMeans[9], 1e-6);
-        assertEquals(0.f, monthlyMeans[10], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[3], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[4], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[5], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[6], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[7], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[8], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[9], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[10], 1e-6);
         assertEquals(3.2f, monthlyMeans[11], 1e-6);
     }
 
@@ -340,30 +340,30 @@ public class AggregatorBiasCorrectTest {
         // first band
         float[] monthlyMeans = AggregatorBiasCorrect.aggregateMonths(temporalVector, 1, 0);
         assertEquals(5.5f, monthlyMeans[0], 1e-6);
-        assertEquals(0.f, monthlyMeans[1], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[1], 1e-6);
         assertEquals(4.6666667f, monthlyMeans[2], 1e-6);
-        assertEquals(0.f, monthlyMeans[3], 1e-6);
-        assertEquals(0.f, monthlyMeans[4], 1e-6);
-        assertEquals(0.f, monthlyMeans[5], 1e-6);
-        assertEquals(0.f, monthlyMeans[6], 1e-6);
-        assertEquals(0.f, monthlyMeans[7], 1e-6);
-        assertEquals(0.f, monthlyMeans[8], 1e-6);
-        assertEquals(0.f, monthlyMeans[9], 1e-6);
-        assertEquals(0.f, monthlyMeans[10], 1e-6);
-        assertEquals(0.f, monthlyMeans[11], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[3], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[4], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[5], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[6], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[7], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[8], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[9], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[10], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[11], 1e-6);
         // second band
         monthlyMeans = AggregatorBiasCorrect.aggregateMonths(temporalVector, 1, 1);
         assertEquals(6.f, monthlyMeans[0], 1e-6);
-        assertEquals(0.f, monthlyMeans[1], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[1], 1e-6);
         assertEquals(5.f, monthlyMeans[2], 1e-6);
-        assertEquals(0.f, monthlyMeans[3], 1e-6);
-        assertEquals(0.f, monthlyMeans[4], 1e-6);
-        assertEquals(0.f, monthlyMeans[5], 1e-6);
-        assertEquals(0.f, monthlyMeans[6], 1e-6);
-        assertEquals(0.f, monthlyMeans[7], 1e-6);
-        assertEquals(0.f, monthlyMeans[8], 1e-6);
-        assertEquals(0.f, monthlyMeans[9], 1e-6);
-        assertEquals(0.f, monthlyMeans[10], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[3], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[4], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[5], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[6], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[7], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[8], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[9], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[10], 1e-6);
         assertEquals(3.4f, monthlyMeans[11], 1e-6);
     }
 
@@ -386,16 +386,16 @@ public class AggregatorBiasCorrectTest {
         assertEquals(12, monthlyMeans.length);
 
         assertEquals(5.5f, monthlyMeans[0], 1e-6);
-        assertEquals(0.f, monthlyMeans[1], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[1], 1e-6);
         assertEquals(6.1666667f, monthlyMeans[2], 1e-6);
-        assertEquals(0.f, monthlyMeans[3], 1e-6);
-        assertEquals(0.f, monthlyMeans[4], 1e-6);
-        assertEquals(0.f, monthlyMeans[5], 1e-6);
-        assertEquals(0.f, monthlyMeans[6], 1e-6);
-        assertEquals(0.f, monthlyMeans[7], 1e-6);
-        assertEquals(0.f, monthlyMeans[8], 1e-6);
-        assertEquals(0.f, monthlyMeans[9], 1e-6);
-        assertEquals(0.f, monthlyMeans[10], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[3], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[4], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[5], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[6], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[7], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[8], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[9], 1e-6);
+        assertEquals(Float.NaN, monthlyMeans[10], 1e-6);
         assertEquals(3.6f, monthlyMeans[11], 1e-6);
     }
 
@@ -416,7 +416,35 @@ public class AggregatorBiasCorrectTest {
         monthlyMeans[11] = 21.f;
 
         assertEquals(15.5f, AggregatorBiasCorrect.aggregateYear(monthlyMeans));
+    }
 
+    @Test
+    public void testAggregateYear_missingMonths() {
+        final float[] monthlyMeans = new float[12];
+        monthlyMeans[0] = 10.f;
+        monthlyMeans[1] = Float.NaN;
+        monthlyMeans[2] = 12.f;
+        monthlyMeans[3] = Float.NaN;
+        monthlyMeans[4] = 14.f;
+        monthlyMeans[5] = Float.NaN;
+        monthlyMeans[6] = 16.f;
+        monthlyMeans[7] = Float.NaN;
+        monthlyMeans[8] = 18.f;
+        monthlyMeans[9] = Float.NaN;
+        monthlyMeans[10] = 20.f;
+        monthlyMeans[11] = Float.NaN;
+
+        assertEquals(15.f, AggregatorBiasCorrect.aggregateYear(monthlyMeans));
+    }
+
+    @Test
+    public void testAggregateYear_noValidInput() {
+        final float[] monthlyMeans = new float[12];
+        for (int i = 0; i < monthlyMeans.length; i++) {
+            monthlyMeans[i] = Float.NaN;
+        }
+
+        assertEquals(Float.NaN, AggregatorBiasCorrect.aggregateYear(monthlyMeans));
     }
 
     private class TestVector implements WritableVector {
