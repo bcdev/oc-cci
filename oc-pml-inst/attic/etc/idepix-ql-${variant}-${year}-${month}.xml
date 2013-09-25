@@ -12,7 +12,7 @@
     <wps:Input>
       <ows:Identifier>productionName</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>OC-idepix-quicklook-${variant}-${minDate}</wps:LiteralData>
+        <wps:LiteralData>OC-idepix-quicklook-${variant}-${year}-${month}</wps:LiteralData>
       </wps:Data>
     </wps:Input>
 
@@ -71,28 +71,21 @@
           </wps:Data>
       </wps:Input>
 
-      <wps:Input>
-          <ows:Identifier>calvalus.ql.parameters</ows:Identifier>
-          <wps:Data>
-              <wps:ComplexData>
-                  <parameters>
-                      <quicklooks>
-                          <config>
-                              <RGBAExpressions>Rw665,Rw560,Rw443,</RGBAExpressions>
-                              <maskOverlays>cc_land,cc_cloud,cc_snow_ice</maskOverlays>
-                              <imageType>jpeg</imageType>
-                          </config>
-                      </quicklooks>
-                  </parameters>
-              </wps:ComplexData>
-          </wps:Data>
-      </wps:Input>
-
-      <wps:Input>
-          <ows:Identifier>calvalus.hadoop.mapred.job.queue.name</ows:Identifier>
-          <wps:Data>
-              <wps:LiteralData>cc</wps:LiteralData>
-          </wps:Data>
-      </wps:Input>
+    <wps:Input>
+      <ows:Identifier>calvalus.ql.parameters</ows:Identifier>
+      <wps:Data>
+        <wps:ComplexData>
+            <parameters>
+              <quicklooks>
+                <config>
+                  <RGBAExpressions>Rw665,Rw560,Rw443,</RGBAExpressions>
+                  <maskOverlays>cc_land,cc_cloud,cc_snow_ice</maskOverlays>
+                  <imageType>jpeg</imageType>
+                </config>
+              </quicklooks>
+            </parameters>
+        </wps:ComplexData>
+      </wps:Data>
+    </wps:Input>
   </wps:DataInputs>
 </wps:Execute>

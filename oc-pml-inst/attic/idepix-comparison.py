@@ -23,7 +23,8 @@ TIME_RANGES = [
   (11, 1, 1), (11, 15, 15),
   (12, 1, 31)
 ]
-year = 2003
+TIME_RANGES = [(7, 4, 4)]
+year = 2004
 
 inputs = ['MERIS_L1B']
 hosts  = [('localhost',12)]
@@ -72,7 +73,7 @@ class OcMeris(Daemon):
                 pm.execute('template-step.py', ['MERIS_L1B'], [idepixOldTag], parameters=params, logprefix=idepixOldTag)
 
                 idepixNewTag = 'idepix-new-' + str(minDate)
-                params = ['idepix-\${variant}-\${year}-\${month}.xml', \
+                params = ['idepix-\${variant}-\${minDate}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
                               'variant', 'new', \
@@ -92,7 +93,7 @@ class OcMeris(Daemon):
 
 
                 mergedL2Tag = 'merged-l2-' + str(minDate)
-                params = ['merge-polymer-and-two-idepix-\${year}-\${month}.xml', \
+                params = ['merge-polymer-and-two-idepix-\${minDate}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
                               'variant', 'new', \
@@ -101,18 +102,34 @@ class OcMeris(Daemon):
                 pm.execute('template-step.py', [idepixNewTag, idepixOldTag, polymerTag], [mergedL2Tag], parameters=params, logprefix=mergedL2Tag)
 
                 mergedL2FormatTag = 'merge-l2-format-' + str(minDate)
-                params = ['l2-format-\${year}-\${month}.xml', \
+                params = ['l2-format-\${minDate}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
                               'year', str(year), \
                               'month', str(month) ]
                 pm.execute('template-step.py', [mergedL2Tag], [mergedL2FormatTag], parameters=params, logprefix=mergedL2FormatTag)
 
-        (# quicklooks L2 polymer + old idepix ?)
+                for singleDay in dateRange(minDate, maxDate):
+                    merisDailyNewName = 'meris-daily-new-' + str(singleDay)
+                    merisDailyParams = ['daily-new-\${date}.xml', \
+                              'date', str(singleDay), \
+                              'year', '%4d' % (singleDay.year), \
+                              'month', str(singleDay.month) ]
+                    pm.execute('template-step.py', [polymerTag], [merisDailyNewName], parameters=merisDailyParams, logprefix=merisDailyNewName)
+
+                    merisDailyName = 'meris-daily-old-' + str(singleDay)
+                    merisDailyParams = ['daily-old-\${date}.xml', \
+                              'date', str(singleDay), \
+                              'year', '%4d' % (singleDay.year), \
+                              'month', str(singleDay.month) ]
+                    pm.execute('template-step.py', [polymerTag], [merisDailyName], parameters=merisDailyParams, logprefix=merisDailyName)
+
+
+        # quicklooks L2 polymer + old idepix ?)
         # DONE # quicklooks L2 polymer + new idepix
         # DONE # merge L2 polymer + old + new idepix --> Format to DIMAP
         # daily L3 polymer + new idepix + quicklooks
-        (# daily L3 polymer + old idepix + quicklooks)
+        # daily L3 polymer + old idepix + quicklooks)
         #======================================================
         pm.wait_for_completion()
 #======================================================

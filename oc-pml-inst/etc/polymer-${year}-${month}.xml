@@ -12,7 +12,7 @@
     <wps:Input>
       <ows:Identifier>productionName</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>OC-polymer-${minDate}</wps:LiteralData>
+        <wps:LiteralData>OC-polymer-${year}-${month}</wps:LiteralData>
       </wps:Data>
     </wps:Input>
     
@@ -38,7 +38,7 @@
     <wps:Input>
       <ows:Identifier>calvalus.output.dir</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>/calvalus/projects/oc-pml/polymer/${year}/${month}</wps:LiteralData>
+        <wps:LiteralData>/calvalus/projects/oc-pml/meris/polymer/${year}/${month}</wps:LiteralData>
       </wps:Data>
     </wps:Input>
     <wps:Input>

@@ -9,10 +9,11 @@ from pmonitor import PMonitor
 from daemon import Daemon
 
 ################################################################################
-years  = [  '2008' ]
 #years  = [ '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012' ]
-monthsAll = [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' ]
-monthsAll = [ '01' ]
+#monthsAll = [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' ]
+
+years  = [  '2004' ]
+monthsAll = [ '01', '02' ]
 months2002 = [ '06', '07', '08', '09', '10', '11', '12' ]
 months2012 = [ '01', '02', '03', '04' ]
 
@@ -53,8 +54,8 @@ class OcMeris(Daemon):
                 polymerParams = ['polymer-\${year}-\${month}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
-                              'year', str(year), \
-                              'month', str(month) ]
+                              'year', year, \
+                              'month', month ]
                 pm.execute('template-step.py', ['MERIS_L1B'], [polymerName], parameters=polymerParams, logprefix=polymerName)
 
                 dayCounter = 0
@@ -62,20 +63,16 @@ class OcMeris(Daemon):
                     merisDailyName = 'meris-daily-' + str(singleDay)
                     merisDailyParams = ['meris-daily-useIdepix-QAA-\${date}.xml', \
                               'date', str(singleDay), \
-                              'year', '%4d' % (singleDay.year), \
-                              'month', '%02d' % (singleDay.month) ]
+                              'year', year, \
+                              'month', month ]
                     pm.execute('template-step.py', [polymerName], [merisDailyName], parameters=merisDailyParams, logprefix=merisDailyName)
 
-                    mergedDailyName = 'merged-daily-' + str(singleDay)
-                    mergedDailyParams = ['merged-daily-\${date}.xml', \
-                              'date', str(singleDay), \
-                              'year', '%4d' % (singleDay.year), \
-                              'month', '%02d' % (singleDay.month) ]
-                    pm.execute('template-step.py', [merisDailyName], [mergedDailyName], parameters=mergedDailyParams, logprefix=mergedDailyName)
-
-                    dayCounter = dayCounter + 1
-                    if dayCounter > 3:
-                        break
+                    merisDailyBSName = 'meris-daily-bs-' + str(singleDay)
+                    merisDailyBSParams = ['meris-daily-bs-\${date}.xml', \
+                               'date', str(singleDay), \
+                               'year', year, \
+                               'month', month ]
+                    pm.execute('template-step.py', [merisDailyName], [merisDailyBSName], parameters=merisDailyBSParams, logprefix=merisDailyBSName)
 
         #======================================================
         pm.wait_for_completion()

@@ -12,7 +12,7 @@
         <wps:Input>
             <ows:Identifier>productionName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>OC-meris-daily-${date}</wps:LiteralData>
+                <wps:LiteralData>OC-meris-daily-old-${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -25,26 +25,26 @@
         <wps:Input>
             <ows:Identifier>processorBundleVersion</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>0.9</wps:LiteralData>
+                <wps:LiteralData>0.1</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
             <ows:Identifier>processorName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>meris-daily-useIdepix-QAA</wps:LiteralData>
+                <wps:LiteralData>daily</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
         <wps:Input>
             <ows:Identifier>calvalus.output.dir</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/meris/daily/${year}/${month}/${date}</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/meris-daily-old/${year}/${month}/${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
             <ows:Identifier>inputPath</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/meris/polymer/${year}/${month}/MER_..._1.*${yyyy}${MM}${dd}.*.polymer.nc$</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/polymer/${year}/${month}/MER_..._1.*${yyyy}${MM}${dd}.*.polymer.nc$</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -72,7 +72,7 @@
             <wps:Data>
                 <wps:ComplexData>
                     <parameters>
-                        <idepixDir>/calvalus/projects/oc/Idepix4v1/${year}/${month}</idepixDir>
+                        <idepixDir>/calvalus/projects/oc-pml/idepix-old/${year}/${month}</idepixDir>
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
@@ -84,7 +84,7 @@
                 <wps:ComplexData>
                     <parameters>
                         <numRows>4320</numRows>
-                        <maskExpr>not(l1_flags.INVALID or cloud_classif_flags.F_CLOUD or cloud_classif_flags.F_LAND) and ( (bitmask &amp; 31) == 0 ) and (Rw412 &lt;= 0.12)</maskExpr>
+                        <maskExpr>not(l1_flags.INVALID or cloud_classif_flags.F_CLOUD or cloud_classif_flags.F_LAND) and ( (bitmask &amp; 31) == 0 ) and (Rw412 &lt;= 0.12) and (sun_zenith_band &lt;= 70.0)</maskExpr>
                         <variables>
                             <variable>
                                 <name>Rrs412</name>
@@ -144,27 +144,7 @@
                                 <type>AVG</type>
                                 <varName>Rrs665</varName>
                             </aggregator>
-                            <aggregator>
-                                <type>AVG</type>
-                                <varName>a_pig_413</varName>
-                            </aggregator>
-                            <aggregator>
-                                <type>AVG</type>
-                                <varName>a_ys_413</varName>
-                            </aggregator>
-                            <aggregator>
-                                <type>AVG</type>
-                                <varName>bb_spm_413</varName>
-                            </aggregator>
                         </aggregators>
-                        <!--TODO add BiasCorrection Processor-->
-                        <postProcessor>
-                            <type>BandShifting</type>
-                            <sensorName>MERIS</sensorName>
-                            <!--MERIS (413. , 443. , 490. , 510. , 560. , 665.) IOP (aph, acdm, bbp)-->
-                            <bandNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,a_pig_413_mean,a_ys_413_mean,bb_spm_413_mean</bandNames>
-                            <outputCenterWavelengths>412,443,490,510,555,667</outputCenterWavelengths>
-                        </postProcessor>
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
@@ -176,12 +156,23 @@
                 <wps:LiteralData>NetCDF4-BEAM</wps:LiteralData>
             </wps:Data>
         </wps:Input>
+        <!--
         <wps:Input>
-          <ows:Identifier>calvalus.output.prefix</ows:Identifier>
-          <wps:Data>
-            <wps:LiteralData>OC-meris-daily</wps:LiteralData>
-          </wps:Data>
+            <ows:Identifier>calvalus.ql.parameters</ows:Identifier>
+            <wps:Data>
+                <wps:ComplexData>
+                    <parameters>
+                        <quicklooks>
+                            <config>
+                                <RGBAExpressions>Rrs665_mean,Rrs560_mean,Rrs412_mean,</RGBAExpressions>
+                                <imageType>jpeg</imageType>
+                            </config>
+                        </quicklooks>
+                    </parameters>
+                </wps:ComplexData>
+            </wps:Data>
         </wps:Input>
+        -->
     </wps:DataInputs>
 </wps:Execute>
 
