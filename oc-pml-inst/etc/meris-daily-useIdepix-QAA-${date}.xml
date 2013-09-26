@@ -157,6 +157,11 @@
                                 <varName>bb_spm_413</varName>
                             </aggregator>
                         </aggregators>
+                        <!--TODO replace postprocessor with AVG.outputSums = false when switching to BEAM 5-->
+                        <postProcessor>
+                            <type>Selection</type>
+                            <varNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,a_pig_413_mean,a_ys_413_mean,bb_spm_413_mean</varNames>
+                        </postProcessor>
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
