@@ -58,7 +58,6 @@ class OcMeris(Daemon):
                               'month', month ]
                 pm.execute('template-step.py', ['MERIS_L1B'], [polymerName], parameters=polymerParams, logprefix=polymerName)
 
-                dayCounter = 0
                 for singleDay in dateRange(minDate, maxDate):
                     merisDailyName = 'meris-daily-' + str(singleDay)
                     merisDailyParams = ['meris-daily-useIdepix-QAA-\${date}.xml', \
