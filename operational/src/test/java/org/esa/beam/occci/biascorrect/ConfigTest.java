@@ -26,8 +26,8 @@ public class ConfigTest {
         assertNotNull(varNames);
         assertEquals(0, varNames.length);
 
-        assertEquals(2005, config.getStartYear());
-        assertEquals(2010, config.getEndYear());
+        assertEquals(2003, config.getStartYear());
+        assertEquals(2007, config.getEndYear());
 
         assertEquals(Float.NaN, config.getNoDataValue(), 1e-6);
     }

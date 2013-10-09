@@ -23,7 +23,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
     private final int[] varIndexes;
     private final float noDataValue;
 
-    private int dateIdx;
+    private int spatialDateIdx;
 
     public AggregatorBiasCorrect(DateIndexCalculator dateIndexCalculator, String[] spatialFeatureNames, String[] temporalFeatureNames, String[] outputFeatureNames, float noDataValue, int[] varIndexes) {
         super(NAME, spatialFeatureNames, temporalFeatureNames, outputFeatureNames);
@@ -32,7 +32,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         this.varIndexes = varIndexes;
         this.noDataValue = noDataValue;
 
-        dateIdx = DateIndexCalculator.INVALID;
+        spatialDateIdx = DateIndexCalculator.INVALID;
     }
 
     @Override
@@ -41,17 +41,17 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
     @Override
     public void aggregateSpatial(BinContext ctx, Observation observationVector, WritableVector spatialVector) {
-        if (dateIdx == DateIndexCalculator.INVALID) {
+        if (spatialDateIdx == DateIndexCalculator.INVALID) {
             final int currentIndex = dateIndexCalculator.get(observationVector.getMJD());
             if (currentIndex != DateIndexCalculator.INVALID) {
-                dateIdx = currentIndex;
+                spatialDateIdx = currentIndex;
             }
         }
 
         for (int i = 0; i < numFeatures; i++) {
             spatialVector.set(i, observationVector.get(varIndexes[i]));
         }
-        spatialVector.set(numFeatures, dateIdx);
+        spatialVector.set(numFeatures, spatialDateIdx);
     }
 
     @Override
@@ -72,18 +72,19 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         if (numSpatialObs == 0) {
             return;
         }
-
+        int dateIndex = (int) spatialVector.get(numFeatures);
         final int indexCount = dateIndexCalculator.getIndexCount();
-        final int variablesCount = getSpatialFeatureNames().length - 1;
-        for (int i = 0; i < variablesCount; i++) {
+        for (int i = 0; i < numFeatures; i++) {
             final float value = spatialVector.get(i);
             if (Float.isNaN(value)) {
                 continue;
             }
 
-            final int offset = i * 2 * indexCount + (int) spatialVector.get(variablesCount) * 2;
+            final int offset = i * 2 * indexCount + dateIndex * 2;
+
             final float sum = temporalVector.get(offset);
             temporalVector.set(offset, sum + value);
+
             final float count = temporalVector.get(offset + 1);
             temporalVector.set(offset + 1, count + 1);
         }
@@ -251,9 +252,9 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         @Parameter
         String[] varNames;
 
-        @Parameter(defaultValue = "2005")
+        @Parameter(defaultValue = "2003")
         int startYear;
-        @Parameter(defaultValue = "2010")
+        @Parameter(defaultValue = "2007")
         int endYear;
         @Parameter(defaultValue = "NaN")
         float noDataValue;
@@ -261,8 +262,8 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         public Config() {
             super(NAME);
             varNames = new String[0];
-            startYear = 2005;
-            endYear = 2010;
+            startYear = 2003;
+            endYear = 2007;
             noDataValue = Float.NaN;
         }
 

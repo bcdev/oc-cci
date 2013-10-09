@@ -139,6 +139,8 @@ public class AggregatorBiasCorrectTest {
     @Test
     public void testAggregateSpatial() {
         config.varNames = new String[]{"rrs_0", "rrs_2"};
+        config.startYear = 2005;
+        config.endYear = 2010;
         final TestVector spatialVector = new TestVector(3);
 
         Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
