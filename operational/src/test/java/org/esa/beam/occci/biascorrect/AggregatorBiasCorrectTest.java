@@ -1,8 +1,10 @@
 package org.esa.beam.occci.biascorrect;
 
+import org.esa.beam.binning.Aggregator;
 import org.esa.beam.binning.BinContext;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.binning.support.ObservationImpl;
+import org.esa.beam.occci.MyVariableContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +18,7 @@ public class AggregatorBiasCorrectTest {
 
     private AggregatorBiasCorrect.Config config;
     private BinContext binContext;
+    private MyVariableContext ctx = new MyVariableContext("rrs_0", "rrs_1", "rrs_2", "rrs_3");
 
     @Before
     public void setUp() {
@@ -28,7 +31,7 @@ public class AggregatorBiasCorrectTest {
         config.startYear = 2011;
         config.endYear = 2014;
 
-        final DateIndexCalculator dateIndexCalculator = AggregatorBiasCorrect.createFrom(config);
+        final DateIndexCalculator dateIndexCalculator = AggregatorBiasCorrect.Descriptor.createDateIndexCalculator(config);
         assertNotNull(dateIndexCalculator);
         assertEquals(2011, dateIndexCalculator.getStartYear());
         assertEquals(2014, dateIndexCalculator.getStopYear());
@@ -40,7 +43,7 @@ public class AggregatorBiasCorrectTest {
         config.endYear = 2011;
 
         try {
-            AggregatorBiasCorrect.createFrom(config);
+            AggregatorBiasCorrect.Descriptor.createDateIndexCalculator(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
@@ -48,7 +51,7 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testCreateSpatialFeatureNames_empty() {
-        final String[] featureNames = AggregatorBiasCorrect.createSpatialFeatureNames(config);
+        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createSpatialFeatureNames(config);
         assertNotNull(featureNames);
         assertEquals(0, featureNames.length);
     }
@@ -57,7 +60,7 @@ public class AggregatorBiasCorrectTest {
     public void testCreateSpatialFeatureNames() {
         config.varNames = new String[]{"rrs_0", "rrs_1", "rrs_2"};
 
-        final String[] featureNames = AggregatorBiasCorrect.createSpatialFeatureNames(config);
+        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createSpatialFeatureNames(config);
         assertNotNull(featureNames);
         assertEquals(4, featureNames.length);
         assertEquals("rrs_0", featureNames[0]);
@@ -69,7 +72,7 @@ public class AggregatorBiasCorrectTest {
     @Test
     public void testCreateTemporalFeatureNames_empty() {
         final DateIndexCalculator dateIndexCalculator = new DateIndexCalculator(2008, 2011);
-        final String[] featureNames = AggregatorBiasCorrect.createTemporalFeatureNames(config, dateIndexCalculator);
+        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createTemporalFeatureNames(config, dateIndexCalculator);
         assertNotNull(featureNames);
         assertEquals(0, featureNames.length);
     }
@@ -79,7 +82,7 @@ public class AggregatorBiasCorrectTest {
         config.varNames = new String[]{"rrs_0"};
         final DateIndexCalculator dateIndexCalculator = new DateIndexCalculator(2008, 2008);
 
-        final String[] featureNames = AggregatorBiasCorrect.createTemporalFeatureNames(config, dateIndexCalculator);
+        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createTemporalFeatureNames(config, dateIndexCalculator);
         assertNotNull(featureNames);
         assertEquals(24, featureNames.length);
 
@@ -95,7 +98,7 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testCreateOutputFeatureNames_empty() {
-        final String[] featureNames = AggregatorBiasCorrect.createOutputFeatureNames(config);
+        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
         assertEquals(0, featureNames.length);
     }
@@ -104,7 +107,7 @@ public class AggregatorBiasCorrectTest {
     public void testCreateOutputFeatureNames() {
         config.varNames = new String[]{"rrs_0", "rrs_1", "rrs_2"};
 
-        final String[] featureNames = AggregatorBiasCorrect.createOutputFeatureNames(config);
+        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
         assertEquals(3, featureNames.length);
         assertEquals("rrs_0_mean", featureNames[0]);
@@ -112,36 +115,44 @@ public class AggregatorBiasCorrectTest {
         assertEquals("rrs_2_mean", featureNames[2]);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateAggregator_invalid() {
+        config.varNames = new String[]{"rrs_0", "rrs_1", "rrs_5"};
+        new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
+        // "rrs_5" is not in the context
+    }
+
     @Test
     public void testInitSpatial() {
         config.varNames = new String[]{"rrs_0", "rrs_1", "rrs_2"};
         final TestVector testVector = new TestVector(4);
-
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.initSpatial(binContext, testVector);
 
-        assertEquals(Float.NaN, testVector.get(0), 1e-6);
-        assertEquals(Float.NaN, testVector.get(1), 1e-6);
-        assertEquals(Float.NaN, testVector.get(2), 1e-6);
-        assertEquals(DateIndexCalculator.INVALID, testVector.get(3), 1e-6);
+        assertEquals(0f, testVector.get(0), 1e-6);
+        assertEquals(0f, testVector.get(1), 1e-6);
+        assertEquals(0f, testVector.get(2), 1e-6);
+        assertEquals(0f, testVector.get(3), 1e-6);
     }
 
     @Test
     public void testAggregateSpatial() {
-        config.varNames = new String[]{"rrs_0", "rrs_1", "rrs_2"};
-        final TestVector spatialVector = new TestVector(4);
+        config.varNames = new String[]{"rrs_0", "rrs_2"};
+        final TestVector spatialVector = new TestVector(3);
 
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.initSpatial(binContext, spatialVector);
 
-        aggregatorBiasCorrect.aggregateSpatial(binContext, new ObservationImpl(-1, -1, 3416.987, 1.8f, 2.8f, 3.8f), spatialVector);
+        double mjd = 3416.987;
+        float[] obsMeasurements = {1.8f, 2.8f, 3.8f, 4.8f};
+        ObservationImpl observation = new ObservationImpl(-1, -1, mjd, obsMeasurements);
+        aggregatorBiasCorrect.aggregateSpatial(binContext, observation, spatialVector);
 
         assertEquals(1.8f, spatialVector.get(0), 1e-6);
-        assertEquals(2.8f, spatialVector.get(1), 1e-6);
-        assertEquals(3.8f, spatialVector.get(2), 1e-6);
-        assertEquals(52, spatialVector.get(3), 1e-6);
+        assertEquals(3.8f, spatialVector.get(1), 1e-6);
+        assertEquals(52, spatialVector.get(2), 1e-6);
     }
 
     @Test
@@ -149,7 +160,7 @@ public class AggregatorBiasCorrectTest {
         config.varNames = new String[]{"rrs_0", "rrs_1", "rrs_2"};
         final TestVector spatialVector = new TestVector(4);
 
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.initSpatial(binContext, spatialVector);
 
@@ -163,13 +174,13 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testAggregateTemporal_noObservations() {
-        config.varNames = new String[]{"rrs_0"};
+        config.varNames = new String[]{"rrs_1"};
         config.startYear = 2005;
         config.endYear = 2006;
         final TestVector spatialVector = new TestVector(2);
         final TestVector temporalVector = new TestVector(48);
 
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector, 0, temporalVector);
 
@@ -180,7 +191,7 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testAggregateTemporal_invalidObservations() {
-        config.varNames = new String[]{"rrs_0"};
+        config.varNames = new String[]{"rrs_1"};
         config.startYear = 2005;
         config.endYear = 2006;
         final TestVector spatialVector = new TestVector(2);
@@ -188,7 +199,7 @@ public class AggregatorBiasCorrectTest {
         spatialVector.set(1, 14);       // march 2006
         final TestVector temporalVector = new TestVector(48);
 
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector, 1, temporalVector);
 
@@ -199,7 +210,7 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testAggregateTemporal_oneBand_twoYears() {
-        config.varNames = new String[]{"rrs_0"};
+        config.varNames = new String[]{"rrs_1"};
         config.startYear = 2005;
         config.endYear = 2006;
         final TestVector spatialVector = new TestVector(2);
@@ -207,7 +218,7 @@ public class AggregatorBiasCorrectTest {
         spatialVector.set(1, 14);       // march 2006
         final TestVector temporalVector = new TestVector(48);
 
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector, 1, temporalVector);
 
@@ -224,7 +235,7 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testAggregateTemporal_twoBands_oneYear() {
-        config.varNames = new String[]{"rrs_0", "rrs_1"};
+        config.varNames = new String[]{"rrs_1", "rrs_2"};
         config.startYear = 2006;
         config.endYear = 2006;
         final TestVector spatialVector = new TestVector(3);
@@ -233,7 +244,7 @@ public class AggregatorBiasCorrectTest {
         spatialVector.set(2, 7);       // august 2006
         final TestVector temporalVector = new TestVector(48);
 
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector, 1, temporalVector);
 
@@ -264,7 +275,7 @@ public class AggregatorBiasCorrectTest {
         spatialVector_2.set(1, 4);       // may 2006
         final TestVector temporalVector = new TestVector(48);
 
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector_1, 1, temporalVector);
         aggregatorBiasCorrect.aggregateTemporal(binContext, spatialVector_2, 1, temporalVector);
@@ -283,7 +294,7 @@ public class AggregatorBiasCorrectTest {
     @Test
     public void testInitTemporal() {
         final TestVector spatialVector = new TestVector(6);
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.initTemporal(binContext, spatialVector);
 
@@ -448,7 +459,7 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testComputeOutput() {
-        config.varNames = new String[]{"rrs_4"};
+        config.varNames = new String[]{"rrs_1"};
         config.startYear = 2003;
         config.endYear = 2004;
         final TestVector outputVector = new TestVector(1);
@@ -458,7 +469,7 @@ public class AggregatorBiasCorrectTest {
         temporalVector.set(25, 3);
 
 
-        final AggregatorBiasCorrect aggregatorBiasCorrect = new AggregatorBiasCorrect(config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
 
         aggregatorBiasCorrect.computeOutput(temporalVector, outputVector);
         assertEquals(4.f, outputVector.get(0), 1e-6);

@@ -1,6 +1,14 @@
 package org.esa.beam.occci.biascorrect;
 
-import org.esa.beam.binning.*;
+import org.esa.beam.binning.AbstractAggregator;
+import org.esa.beam.binning.Aggregator;
+import org.esa.beam.binning.AggregatorConfig;
+import org.esa.beam.binning.AggregatorDescriptor;
+import org.esa.beam.binning.BinContext;
+import org.esa.beam.binning.Observation;
+import org.esa.beam.binning.VariableContext;
+import org.esa.beam.binning.Vector;
+import org.esa.beam.binning.WritableVector;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 
 import java.text.DecimalFormat;
@@ -11,33 +19,24 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
     public static final String NAME = "OC-CCI-BIAS";
 
     private final DateIndexCalculator dateIndexCalculator;
+    private final int numFeatures;
+    private final int[] varIndexes;
+    private final float noDataValue;
+
     private int dateIdx;
-    private int numReflecs;
-    private final String[] varNames;
-    private static float[] monthlyMeans;
-    private static float noDataValue;
 
-    public AggregatorBiasCorrect(Config config) {
-        super(NAME, createSpatialFeatureNames(config),
-                createTemporalFeatureNames(config, createFrom(config)),
-                createOutputFeatureNames(config));
+    public AggregatorBiasCorrect(DateIndexCalculator dateIndexCalculator, String[] spatialFeatureNames, String[] temporalFeatureNames, String[] outputFeatureNames, float noDataValue, int[] varIndexes) {
+        super(NAME, spatialFeatureNames, temporalFeatureNames, outputFeatureNames);
+        this.dateIndexCalculator = dateIndexCalculator;
+        this.numFeatures = varIndexes.length;
+        this.varIndexes = varIndexes;
+        this.noDataValue = noDataValue;
 
-        dateIndexCalculator = createFrom(config);
-        varNames = config.getVarNames();
-        monthlyMeans = new float[12];
-        noDataValue = config.getNoDataValue();
+        dateIdx = DateIndexCalculator.INVALID;
     }
 
     @Override
     public void initSpatial(BinContext ctx, WritableVector vector) {
-        final int size = vector.size();
-        numReflecs = size - 1;
-        for (int i = 0; i < numReflecs; i++) {
-            vector.set(i, Float.NaN);
-        }
-        vector.set(numReflecs, DateIndexCalculator.INVALID);
-
-        dateIdx = DateIndexCalculator.INVALID;
     }
 
     @Override
@@ -49,10 +48,10 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
             }
         }
 
-        for (int i = 0; i < numReflecs; i++) {
-            spatialVector.set(i, observationVector.get(i));
+        for (int i = 0; i < numFeatures; i++) {
+            spatialVector.set(i, observationVector.get(varIndexes[i]));
         }
-        spatialVector.set(numReflecs, dateIdx);
+        spatialVector.set(numFeatures, dateIdx);
     }
 
     @Override
@@ -99,70 +98,16 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
     public void computeOutput(Vector temporalVector, WritableVector outputVector) {
         final int numYears = dateIndexCalculator.getNumYears();
 
-        final int numBands = varNames.length;
-        for (int band = 0; band < numBands; band++) {
+        for (int band = 0; band < numFeatures; band++) {
             final float[] monthlyMeans = aggregateMonths(temporalVector, numYears, band);
             final float mean = aggregateYear(monthlyMeans, noDataValue);
             outputVector.set(band, mean);
         }
     }
 
-    // package access for testing only tb 2013-09-18
-    static String[] createSpatialFeatureNames(Config config) {
-        final String[] varNames = config.getVarNames();
-
-        if (varNames.length == 0) {
-            return new String[0];
-        }
-
-        final String[] featureNames = new String[varNames.length + 1];
-        System.arraycopy(varNames, 0, featureNames, 0, varNames.length);
-        featureNames[varNames.length] = "dateIndex";
-
-        return featureNames;
-    }
-
-    static String[] createTemporalFeatureNames(Config config, DateIndexCalculator dateIndexCalculator) {
-        final NumberFormat numberFormat = new DecimalFormat("000");
-        final int numIndices = dateIndexCalculator.getIndexCount();
-        final String[] varNames = config.getVarNames();
-        final int numFeatures = varNames.length * numIndices * 2;
-        final String[] temporalFeatureNames = new String[numFeatures];
-
-        for (int var = 0; var < varNames.length; var++) {
-            for (int idx = 0; idx < numIndices; idx++) {
-                final int featureNameOffset = var + 2 * idx;
-                final String offset = numberFormat.format(idx);
-                temporalFeatureNames[featureNameOffset] = varNames[var] + "_" + offset + "_sum";
-                temporalFeatureNames[featureNameOffset + 1] = varNames[var] + "_" + offset + "_count";
-            }
-        }
-        return temporalFeatureNames;
-    }
-
-    static String[] createOutputFeatureNames(Config config) {
-        final String[] varNames = config.getVarNames();
-        final String[] outputFeatureNames = new String[varNames.length];
-        for (int i = 0; i < outputFeatureNames.length; i++) {
-            outputFeatureNames[i] = varNames[i].concat("_mean");
-        }
-        return outputFeatureNames;
-    }
-
-    static DateIndexCalculator createFrom(Config config) {
-        final int startYear = config.getStartYear();
-        final int endYear = config.getEndYear();
-        if (endYear < startYear) {
-            throw new IllegalArgumentException("End year < Start Year");
-        }
-
-        return new DateIndexCalculator(startYear, endYear);
-    }
 
     static float[] aggregateMonths(Vector temporalVector, int numYears, int bandNumber) {
-        for (int i = 0; i < monthlyMeans.length; i++) {
-            monthlyMeans[i] = Float.NaN;
-        }
+        final float[] monthlyMeans = new float[12];
         final int varOffset = bandNumber * numYears * 12 * 2;
 
         for (int month = 0; month < 12; month++) {
@@ -180,6 +125,8 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
             }
             if (monthMeasCount > 0) {
                 monthlyMeans[month] = (float) (monthSum / monthMeasCount);
+            } else {
+                monthlyMeans[month] = Float.NaN;
             }
         }
 
@@ -209,7 +156,29 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         @Override
         public Aggregator createAggregator(VariableContext varCtx, AggregatorConfig aggregatorConfig) {
             if (aggregatorConfig instanceof Config) {
-                return new AggregatorBiasCorrect((Config) aggregatorConfig);
+                Config config = (Config) aggregatorConfig;
+                DateIndexCalculator dateIndexCalculator = createDateIndexCalculator(config);
+                String[] spatialFeatureNames = createSpatialFeatureNames(config);
+                String[] temporalFeatureNames = createTemporalFeatureNames(config, dateIndexCalculator);
+                String[] outputFeatureNames = createOutputFeatureNames(config);
+                float noDataValue = config.getNoDataValue();
+                String[] varNames = config.getVarNames();
+
+                int[] varIndexes = new int[varNames.length];
+                for (int i = 0; i < varNames.length; i++) {
+                    int varIndex = varCtx.getVariableIndex(varNames[i]);
+                    if (varIndex < 0) {
+                        throw new IllegalArgumentException("Input Variable does not exist: " + varNames[i]);
+                    }
+                    varIndexes[i] = varIndex;
+                }
+
+                return new AggregatorBiasCorrect(dateIndexCalculator,
+                                                 spatialFeatureNames,
+                                                 temporalFeatureNames,
+                                                 outputFeatureNames,
+                                                 noDataValue,
+                                                 varIndexes);
             }
             throw new IllegalArgumentException("Invalid type of configuration: " + aggregatorConfig.getClass());
         }
@@ -222,6 +191,58 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         @Override
         public AggregatorConfig createConfig() {
             return new Config();
+        }
+
+        // package access for testing only tb 2013-09-18
+        static String[] createSpatialFeatureNames(Config config) {
+            final String[] varNames = config.getVarNames();
+
+            if (varNames.length == 0) {
+                return new String[0];
+            }
+
+            final String[] featureNames = new String[varNames.length + 1];
+            System.arraycopy(varNames, 0, featureNames, 0, varNames.length);
+            featureNames[varNames.length] = "dateIndex";
+
+            return featureNames;
+        }
+
+        static String[] createTemporalFeatureNames(Config config, DateIndexCalculator dateIndexCalculator) {
+            final NumberFormat numberFormat = new DecimalFormat("000");
+            final int numIndices = dateIndexCalculator.getIndexCount();
+            final String[] varNames = config.getVarNames();
+            final int numFeatures = varNames.length * numIndices * 2;
+            final String[] temporalFeatureNames = new String[numFeatures];
+
+            for (int var = 0; var < varNames.length; var++) {
+                for (int idx = 0; idx < numIndices; idx++) {
+                    final int featureNameOffset = var + 2 * idx;
+                    final String offset = numberFormat.format(idx);
+                    temporalFeatureNames[featureNameOffset] = varNames[var] + "_" + offset + "_sum";
+                    temporalFeatureNames[featureNameOffset + 1] = varNames[var] + "_" + offset + "_count";
+                }
+            }
+            return temporalFeatureNames;
+        }
+
+        static String[] createOutputFeatureNames(Config config) {
+            final String[] varNames = config.getVarNames();
+            final String[] outputFeatureNames = new String[varNames.length];
+            for (int i = 0; i < outputFeatureNames.length; i++) {
+                outputFeatureNames[i] = varNames[i].concat("_mean");
+            }
+            return outputFeatureNames;
+        }
+
+        static DateIndexCalculator createDateIndexCalculator(Config config) {
+            final int startYear = config.getStartYear();
+            final int endYear = config.getEndYear();
+            if (endYear < startYear) {
+                throw new IllegalArgumentException("End year < Start Year");
+            }
+
+            return new DateIndexCalculator(startYear, endYear);
         }
     }
 
