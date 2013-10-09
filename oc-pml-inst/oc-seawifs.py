@@ -53,7 +53,7 @@ class OcMeris(Daemon):
 
                 # for now because we have not more test-data
                 minDate = datetime.date(int(year), int(month), 1)
-                maxDate = datetime.date(int(year), int(month), 1)
+                maxDate = datetime.date(int(year), int(month), 9)
 
                 for singleDay in dateRange(minDate, maxDate):
                     seawifsDailyBSName = 'seawifs-daily-bs-' + str(singleDay)
