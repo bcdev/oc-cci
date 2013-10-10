@@ -19,7 +19,7 @@ public class BandShiftConfig extends CellProcessorConfig {
                     "Reflectance center wavelengths (rrs_0, rrs_1, rrs_2, rrs_3, rrs_4, rrs_5) for \n" +
                     "                         MODIS (412. , 443. , 488. , 531. , 547. , 667.)\n" +
                     "                         MERIS (413. , 443. , 490. , 510. , 560. , 665.)\n" +
-                    "                       SEAWIFS (412. , 443. , 490. , 510. , 555. , 667.)\n" +
+                    "                       SEAWIFS (412. , 443. , 490. , 510. , 555. , 670.)\n" +
                     "aph:  phytoplankton absorption\n" +
                     "acdm: detritus-gelbstoff absorption\n" +
                     "bbp:  particle backscattering")
@@ -30,7 +30,7 @@ public class BandShiftConfig extends CellProcessorConfig {
             description = "Defines the output bands of the processor. Must be a comma-separated list\n" +
                     "of desired center-wavelengths for the bands. Available wavelengths are:\n" +
                     "{412, 413, 443, 488, 490, 510, 531, 547, 555, 560, 665, 667, 670} nm",
-            defaultValue = "412,443,490,510,555,667")
+            defaultValue = "412,443,490,510,555,670")
     private int[] outputCenterWavelengths;
 
     public BandShiftConfig(String name) {
