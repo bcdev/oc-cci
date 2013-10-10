@@ -2,3 +2,5 @@ org.esa.beam.occci.bandshift.binning.BandShiftDescriptor
 org.esa.beam.occci.qaa.binning.QaaDescriptor
 org.esa.beam.occci.util.binning.IdentityCellProcessor$Descriptor
 org.esa.beam.occci.util.binning.SumToMeanCellProcessor$Descriptor
+org.esa.beam.occci.util.binning.MarkSensorProcessor$Descriptor
+org.esa.beam.occci.bandshift.binning.BandShiftChainDescriptor

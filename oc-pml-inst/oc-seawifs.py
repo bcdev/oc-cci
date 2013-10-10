@@ -41,6 +41,7 @@ class OcMeris(Daemon):
     def run(self):
         pm = PMonitor(inputs, request='oc-seawifs', logdir='log', hosts=hosts, types=types)
 
+        biasInputs = []
         for year in years:
             months = monthsAll
             if year == '2002':
@@ -63,6 +64,15 @@ class OcMeris(Daemon):
                                'month', month ,\
                                'doy', '%03d' % (singleDay.timetuple().tm_yday)  ]
                     pm.execute('template-step.py', ['SEAWIFS_L3_daily'], [seawifsDailyBSName], parameters=seawifsDailyBSParams, logprefix=seawifsDailyBSName)
+                    if year >= '2003' and year <= '2007':
+                        biasInputs.append(seawifsDailyBSName)
+
+
+        biasMapName = 'meris-bias-map'
+        biasMapParams = ['bias-map-\${sensor}.xml', \
+                               'sensor', 'seawifs', \
+                               'sensorMarker', '12' ]
+        pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
 
         #======================================================
         pm.wait_for_completion()

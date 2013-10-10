@@ -25,47 +25,39 @@ import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 
-public class SumToMeanCellProcessor extends CellProcessor {
+public class MarkSensorProcessor extends CellProcessor {
 
-    private final int weightIndex;
-    private final int[] sumIndices;
+    private final int sensor;
 
-    public SumToMeanCellProcessor(VariableContext varCtx, String weightFeatureName, String...sumFeatureNames) {
-        super(createOutputFeatureNames(sumFeatureNames));
-
-        weightIndex = varCtx.getVariableIndex(weightFeatureName);
-        sumIndices = new int[sumFeatureNames.length];
-        for (int i = 0; i < sumIndices.length; i++) {
-            sumIndices[i] = varCtx.getVariableIndex(sumFeatureNames[i]);
-        }
+    public MarkSensorProcessor(VariableContext varCtx, int sensor) {
+        super(createOutputFeatureNames(varCtx));
+        this.sensor = sensor;
     }
 
     @Override
     public void compute(Vector outputVector, WritableVector postVector) {
-        float weight = outputVector.get(weightIndex);
-        for (int i = 0; i < postVector.size(); i++) {
-            float sum = outputVector.get(sumIndices[i]);
-            float mean = sum / weight;
-            postVector.set(i, mean);
+        for (int i = 0; i < outputVector.size(); i++) {
+            postVector.set(i, outputVector.get(i));
         }
+        postVector.set(outputVector.size(), sensor);
     }
 
     public static class Config extends CellProcessorConfig {
-        @Parameter(description = "Name of the sum feature", notNull = true, notEmpty = true)
-        private String[] sumFeatureNames;
-
-        @Parameter(description = "Name of the weight feature",
-                   defaultValue = "weights")
-        private String weightFeatureName;
+        @Parameter(description = "Adds an indication indication for the used sensor", notNull = true)
+        private int sensor;
 
         public Config() {
             super(Descriptor.NAME);
+        }
+
+        public void setSensor(int sensor) {
+            this.sensor = sensor;
         }
     }
 
     public static class Descriptor implements CellProcessorDescriptor {
 
-        public static final String NAME = "SumToMean";
+        public static final String NAME = "MarkSensor";
 
         @Override
         public String getName() {
@@ -75,7 +67,7 @@ public class SumToMeanCellProcessor extends CellProcessor {
         @Override
         public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
             Config config = (Config) cellProcessorConfig;
-            return new SumToMeanCellProcessor(varCtx, config.weightFeatureName, config.sumFeatureNames);
+            return new MarkSensorProcessor(varCtx, config.sensor);
         }
 
         @Override
@@ -84,11 +76,14 @@ public class SumToMeanCellProcessor extends CellProcessor {
         }
     }
 
-    private static String[] createOutputFeatureNames(String[] sumFeatureNames) {
-        String[] features = new String[sumFeatureNames.length];
-        for (int i = 0; i < sumFeatureNames.length; i++) {
-            features[i] = sumFeatureNames[i].replace("_sum", "");
+    private static String[] createOutputFeatureNames(VariableContext varCtx) {
+        int variableCount = varCtx.getVariableCount();
+
+        String[] features = new String[variableCount + 1];
+        for (int i = 0; i < variableCount; i++) {
+            features[i] = varCtx.getVariableName(i);
         }
+        features[variableCount] = "sensor";
         return features;
     }
 }

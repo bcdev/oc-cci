@@ -48,9 +48,8 @@
                 <wps:ComplexData>
                     <parameters>
                         <postProcessor>
-                            <type>SumToMean</type>
-                            <weightFeatureName>weights</weightFeatureName>
-                            <sumFeatureNames>Rrs_412_sum,Rrs_443_sum,Rrs_490_sum,Rrs_510_sum,Rrs_555_sum,Rrs_670_sum,Rrs_765_sum,Rrs_865_sum</sumFeatureNames>
+                            <type>BandShiftChain</type>
+                            <sensorName>SEAWIFS</sensorName>
                         </postProcessor>
                     </parameters>
                 </wps:ComplexData>
@@ -64,10 +63,10 @@
             </wps:Data>
         </wps:Input>
         <wps:Input>
-          <ows:Identifier>calvalus.output.prefix</ows:Identifier>
-          <wps:Data>
-            <wps:LiteralData>OC-seawifs-daily-bs</wps:LiteralData>
-          </wps:Data>
+            <ows:Identifier>calvalus.output.prefix</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>OC-seawifs-daily-bs</wps:LiteralData>
+            </wps:Data>
         </wps:Input>
 
     </wps:DataInputs>

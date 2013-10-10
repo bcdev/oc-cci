@@ -6,13 +6,13 @@
              xmlns:ows="http://www.opengis.net/ows/1.1"
              xmlns:xlink="http://www.w3.org/1999/xlink">
 
-    <ows:Identifier>Cell</ows:Identifier>
+    <ows:Identifier>CellL3</ows:Identifier>
 
     <wps:DataInputs>
         <wps:Input>
             <ows:Identifier>productionName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>OC-meris-daily-bs-${date}</wps:LiteralData>
+                <wps:LiteralData>OC-BIAS-map-${sensor}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -32,13 +32,27 @@
         <wps:Input>
             <ows:Identifier>calvalus.output.dir</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/meris/daily-bs/${year}/${month}/${date}</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/${sensor}/bias-map</wps:LiteralData>
             </wps:Data>
         </wps:Input>
+
         <wps:Input>
             <ows:Identifier>inputPath</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/meris/daily/${year}/${month}/${date}-L3-1</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/${sensor}/daily-bs/{2003,2004,2005,2006,2007}/??/????-??-??/part*</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>minDate</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>2003-01-01</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>maxDate</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>2007-12-31</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -47,9 +61,17 @@
             <wps:Data>
                 <wps:ComplexData>
                     <parameters>
+                        <aggregators>
+                            <aggregator>
+                                <type>OC-CCI-BIAS</type>
+                                <varNames>Rrs_412,Rrs_443,Rrs_490,Rrs_510,Rrs_555,Rrs_670</varNames>
+                                <startYear>2003</startYear>
+                                <endYear>2007</endYear>
+                            </aggregator>
+                        </aggregators>
                         <postProcessor>
-                            <type>BandShiftChain</type>
-                            <sensorName>MERIS</sensorName>
+                            <type>MarkSensor</type>
+                            <sensor>${sensorMarker}</sensor>
                         </postProcessor>
                     </parameters>
                 </wps:ComplexData>
@@ -57,7 +79,7 @@
         </wps:Input>
 
         <wps:Input>
-            <ows:Identifier>outputFormat</ows:Identifier>
+            <ows:Identifier>calvalus.output.format</ows:Identifier>
             <wps:Data>
                 <wps:LiteralData>NetCDF4-BEAM</wps:LiteralData>
             </wps:Data>
@@ -65,10 +87,9 @@
         <wps:Input>
             <ows:Identifier>calvalus.output.prefix</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>OC-meris-daily-bs</wps:LiteralData>
+                <wps:LiteralData>OC-${sensor}-bias</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
     </wps:DataInputs>
 </wps:Execute>
-

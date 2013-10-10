@@ -41,6 +41,7 @@ class OcMeris(Daemon):
     def run(self):
         pm = PMonitor(inputs, request='oc-meris', logdir='log', hosts=hosts, types=types)
 
+        biasInputs = []
         for year in years:
             months = monthsAll
             if year == '2002':
@@ -58,6 +59,10 @@ class OcMeris(Daemon):
                               'month', month ]
                 pm.execute('template-step.py', ['MERIS_L1B'], [polymerName], parameters=polymerParams, logprefix=polymerName)
 
+                # for now because we have not more test-data
+                minDate = datetime.date(int(year), int(month), 1)
+                maxDate = datetime.date(int(year), int(month), 9)
+
                 for singleDay in dateRange(minDate, maxDate):
                     merisDailyName = 'meris-daily-' + str(singleDay)
                     merisDailyParams = ['meris-daily-useIdepix-QAA-\${date}.xml', \
@@ -72,6 +77,15 @@ class OcMeris(Daemon):
                                'year', year, \
                                'month', month ]
                     pm.execute('template-step.py', [merisDailyName], [merisDailyBSName], parameters=merisDailyBSParams, logprefix=merisDailyBSName)
+                    if year >= '2003' and year <= '2007':
+                        biasInputs.append(merisDailyBSName)
+
+
+        biasMapName = 'meris-bias-map'
+        biasMapParams = ['bias-map-\${sensor}.xml', \
+                               'sensor', 'meris', \
+                               'sensorMarker', '10' ]
+        pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
 
         #======================================================
         pm.wait_for_completion()

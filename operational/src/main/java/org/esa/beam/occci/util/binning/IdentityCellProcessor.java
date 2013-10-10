@@ -26,8 +26,8 @@ import org.esa.beam.binning.WritableVector;
 
 public class IdentityCellProcessor extends CellProcessor {
 
-    protected IdentityCellProcessor(String[] features) {
-        super(features);
+    protected IdentityCellProcessor(VariableContext varCtx) {
+        super(createOutputFeatureNames(varCtx));
     }
 
     @Override
@@ -54,16 +54,20 @@ public class IdentityCellProcessor extends CellProcessor {
 
         @Override
         public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
-            String[] features = new String[varCtx.getVariableCount()];
-            for (int i = 0; i < features.length; i++) {
-                features[i] = varCtx.getVariableName(i);
-            }
-            return new IdentityCellProcessor(features);
+            return new IdentityCellProcessor(varCtx);
         }
 
         @Override
         public CellProcessorConfig createConfig() {
             return new Config();
         }
+    }
+
+    private static String[] createOutputFeatureNames(VariableContext varCtx) {
+        String[] features = new String[varCtx.getVariableCount()];
+        for (int i = 0; i < features.length; i++) {
+            features[i] = varCtx.getVariableName(i);
+        }
+        return features;
     }
 }
