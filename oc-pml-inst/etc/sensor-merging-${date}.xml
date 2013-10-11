@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<wps:Execute service="WPS"
+             version="1.0.0"
+             xmlns:wps="http://www.opengis.net/wps/1.0.0"
+             xmlns:ows="http://www.opengis.net/ows/1.1"
+             xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <ows:Identifier>CellL3</ows:Identifier>
+
+    <wps:DataInputs>
+        <wps:Input>
+            <ows:Identifier>productionName</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>OC-sensor merging-${date}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>processorBundleName</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>oc-cci</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>processorBundleVersion</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>0.9</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.output.dir</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>/calvalus/projects/oc-pml/merged/${year}/${month}/${date}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>inputPath</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>/calvalus/projects/oc-pml/{meris,modis,seawifs}/daily-bs/{year}/${month}/${date}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>inputPath</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>/calvalus/projects/oc-pml/{meris,modis,seawifs}/bias-map-parts</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>minDate</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>${date}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>maxDate</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>${date}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.cell.parameters</ows:Identifier>
+            <wps:Data>
+                <wps:ComplexData>
+                    <parameters>
+                        <aggregators>
+                            <aggregator>
+                                <type>SensorMerging</type>
+                                <rrsFeatureNames>Rrs_412,Rrs_443,Rrs_490,Rrs_510,Rrs_555,Rrs_670</rrsFeatureNames>
+                                <mode>1</mode>
+                            </aggregator>
+                        </aggregators>
+                        <!--<postProcessor>-->
+                        <!--<type>MarkSensor</type>-->
+                        <!--<sensor>${sensorMarker}</sensor>-->
+                        <!--</postProcessor>-->
+                    </parameters>
+                </wps:ComplexData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.output.format</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>NetCDF4-BEAM</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>calvalus.output.prefix</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>OC-merged</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+    </wps:DataInputs>
+</wps:Execute>
