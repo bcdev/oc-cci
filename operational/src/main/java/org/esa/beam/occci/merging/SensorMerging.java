@@ -88,24 +88,34 @@ public class SensorMerging extends AbstractAggregator {
 
     @Override
     public void completeTemporal(BinContext ctx, int numTemporalObs, WritableVector temporalVector) {
-        switch (mode) {
-            case 0:
-                // TODO normal
-                break;
-            case 1:
-                // nothing
-                break;
-            case 2:
-                // TODO biasCorrection
-                break;
-        }
+        // nothing
     }
 
     @Override
     public void computeOutput(Vector temporalVector, WritableVector outputVector) {
         switch (mode) {
             case 0:
-                // TODO normal
+                int[] sensor_count = new int[SENSORS.length];
+                for (int rrsI = 0; rrsI < numRrs; rrsI++) {
+                    float[] biasCorrecdRrs = correctBias(temporalVector, rrsI);
+                    double sum = 0;
+                    int count = 0;
+                    for (int sensor = 0; sensor < biasCorrecdRrs.length; sensor++) {
+                        if (!Float.isNaN(biasCorrecdRrs[sensor])) {
+                            sum += biasCorrecdRrs[sensor];
+                            count++;
+                            sensor_count[sensor]++;
+                        }
+                    }
+                    if (count > 0) {
+                        outputVector.set(rrsI, (float) (sum / count));
+                    } else {
+                        outputVector.set(rrsI, Float.NaN);
+                    }
+                }
+                for (int sensor = 0; sensor < sensor_count.length; sensor++) {
+                    outputVector.set(numRrs + sensor, sensor_count[sensor]);
+                }
                 break;
             case 1:
                 for (int i = 0; i < temporalVector.size(); i++) {
@@ -113,9 +123,36 @@ public class SensorMerging extends AbstractAggregator {
                 }
                 break;
             case 2:
-                // TODO biasCorrection
+                for (int rrsI = 0; rrsI < numRrs; rrsI++) {
+                    float[] biasCorrecdRrs = correctBias(temporalVector, rrsI);
+                    for (int i = 0; i < biasCorrecdRrs.length; i++) {
+                        outputVector.set(rrsI * 3 + i, biasCorrecdRrs[i]);
+                    }
+                }
                 break;
         }
+    }
+
+    private float[] correctBias(Vector temporalVector, int rrsI) {
+        float[] biasCorrecdRrs = new float[SENSORS.length];
+        int temporalIndexBiasSeawifs = rrsI * 6 + (SENSORS.length - 1);
+        float biasSeawifs = temporalVector.get(temporalIndexBiasSeawifs);
+
+        // meris and modis
+        for (int sensorI = 0; sensorI < SENSORS.length - 1; sensorI++) {
+            int temporalIndexRrs = rrsI * 6 + sensorI;
+            int temporalIndexBias = rrsI * 6 + sensorI + 3;
+
+            float rrs = temporalVector.get(temporalIndexRrs);
+            float bias = temporalVector.get(temporalIndexBias);
+
+            float value = rrs / (bias / biasSeawifs);
+            biasCorrecdRrs[sensorI] = value;
+        }
+        // seawifs
+        int temporalIndexRrs = rrsI * 6 + 2;
+        biasCorrecdRrs[SENSORS.length - 1] = temporalVector.get(temporalIndexRrs);
+        return biasCorrecdRrs;
     }
 
     public static class Config extends AggregatorConfig {
