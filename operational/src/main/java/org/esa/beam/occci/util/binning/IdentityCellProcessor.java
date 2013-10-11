@@ -26,7 +26,9 @@ import org.esa.beam.binning.WritableVector;
 
 public class IdentityCellProcessor extends CellProcessor {
 
-    protected IdentityCellProcessor(VariableContext varCtx) {
+    public static final String NAME = "Identity";
+
+    public IdentityCellProcessor(VariableContext varCtx) {
         super(createOutputFeatureNames(varCtx));
     }
 
@@ -39,13 +41,11 @@ public class IdentityCellProcessor extends CellProcessor {
 
     public static class Config extends CellProcessorConfig {
         public Config() {
-            super(Descriptor.NAME);
+            super(NAME);
         }
     }
 
     public static class Descriptor implements CellProcessorDescriptor {
-
-        public static final String NAME = "Identity";
 
         @Override
         public String getName() {
