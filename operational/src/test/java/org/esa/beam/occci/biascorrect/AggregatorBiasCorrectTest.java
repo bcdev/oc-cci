@@ -114,9 +114,9 @@ public class AggregatorBiasCorrectTest {
         final String[] featureNames = AggregatorBiasCorrect.Descriptor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
         assertEquals(3, featureNames.length);
-        assertEquals("rrs_0_mean", featureNames[0]);
-        assertEquals("rrs_1_mean", featureNames[1]);
-        assertEquals("rrs_2_mean", featureNames[2]);
+        assertEquals("rrs_0", featureNames[0]);
+        assertEquals("rrs_1", featureNames[1]);
+        assertEquals("rrs_2", featureNames[2]);
     }
 
     @Test(expected = IllegalArgumentException.class)

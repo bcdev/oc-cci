@@ -228,12 +228,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         }
 
         static String[] createOutputFeatureNames(Config config) {
-            final String[] varNames = config.getVarNames();
-            final String[] outputFeatureNames = new String[varNames.length];
-            for (int i = 0; i < outputFeatureNames.length; i++) {
-                outputFeatureNames[i] = varNames[i].concat("_mean");
-            }
-            return outputFeatureNames;
+            return config.getVarNames();
         }
 
         static DateIndexCalculator createDateIndexCalculator(Config config) {
