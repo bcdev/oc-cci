@@ -10,6 +10,7 @@ import org.esa.beam.occci.qaa.SensorConfig;
 import org.esa.beam.occci.qaa.SensorConfigFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class QaaDescriptor implements CellProcessorDescriptor {
 
@@ -56,6 +57,10 @@ public class QaaDescriptor implements CellProcessorDescriptor {
         final int[] bb_spm_out_indices = config.getBbSpmOutIndices();
         for (int bb_spm_out_index : bb_spm_out_indices) {
             featureNameList.add("bb_spm_" + getWavelengthInt(wavelengths, bb_spm_out_index));
+        }
+
+        if (config.isRrsOut()) {
+            Collections.addAll(featureNameList, config.getBandNames());
         }
 
         return featureNameList.toArray(new String[featureNameList.size()]);

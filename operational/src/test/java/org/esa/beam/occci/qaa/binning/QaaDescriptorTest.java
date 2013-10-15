@@ -101,6 +101,24 @@ public class QaaDescriptorTest {
     }
 
     @Test
+        public void testCreateOutputFeatureNames_SEAWIFS_no_a_total_plus_rrs() {
+            final QaaConfig config = new QaaConfig();
+            config.setSensorName(QaaConstants.SEAWIFS);
+            config.setAPigOutIndices(new int[]{0, 1, 5});
+            config.setATotalOutIndices(new int[0]);
+            config.setAYsOutIndices(new int[]{4});
+            config.setBbSpmOutIndices(new int[]{3, 4, 5});
+            config.setBandNames(new String[]{"rrs_1", "rrs_2"});
+            config.setRrsOut(true);
+
+            final String[] featureNames = QaaDescriptor.createOutputFeatureNames(config);
+            assertNotNull(featureNames);
+
+            final String[] expected = {"a_pig_412", "a_pig_443", "a_pig_667", "a_ys_555", "bb_spm_510", "bb_spm_555", "bb_spm_667", "rrs_1", "rrs_2"};
+            assertArrayEquals(expected, featureNames);
+        }
+
+    @Test
     public void testGetWavelengthInt() {
         double[] wavelengths = new double[]{12.9, 13.5, 14.3};
 

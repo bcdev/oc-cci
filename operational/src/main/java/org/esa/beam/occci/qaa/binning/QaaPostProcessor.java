@@ -31,18 +31,18 @@ public class QaaPostProcessor extends CellProcessor {
     }
 
     @Override
-    public void compute(Vector outputVector, WritableVector postVector) {
+    public void compute(Vector inputVector, WritableVector outputVector) {
         for (int i = 0; i < rrs.length; i++) {
-            rrs[i] = outputVector.get(bandIndices[i]);
+            rrs[i] = inputVector.get(bandIndices[i]);
         }
 
         try {
             qaaResult = qaaAlgorithm.process(rrs, qaaResult);
         } catch (ImaginaryNumberException e) {
-            BinningUtils.setToInvalid(postVector);
+            BinningUtils.setToInvalid(outputVector);
             return;
         }
 
-        resultMapper.assign(qaaResult, postVector);
+        resultMapper.assign(qaaResult, rrs, outputVector);
     }
 }

@@ -18,6 +18,9 @@ class ResultMapper {
     private final int[] bb_spm_src;
     private final int[] bb_spm_dest;
 
+    private final int numIOPs;
+    private final boolean copyRrsToOutput;
+
     ResultMapper(QaaConfig config) {
         int outIndex = 0;
 
@@ -48,31 +51,39 @@ class ResultMapper {
             bb_spm_dest[i] = outIndex;
             ++outIndex;
         }
+        numIOPs = outIndex;
+        copyRrsToOutput = config.isRrsOut();
     }
 
-    void assign(QaaResult result, WritableVector vector) {
+    void assign(QaaResult result, float[] rrs, WritableVector outVector) {
         final float[] a_pig = result.getA_PIG();
         for (int i = 0; i < a_pig_src.length; i++) {
             final float value = a_pig[a_pig_src[i]];
-            vector.set(a_pig_dest[i], value);
+            outVector.set(a_pig_dest[i], value);
         }
 
         final float[] a_total = result.getA_Total();
         for (int i = 0; i < a_total_src.length; i++) {
             final float value = a_total[a_total_src[i]];
-            vector.set(a_total_dest[i], value);
+            outVector.set(a_total_dest[i], value);
         }
 
         final float[] a_ys = result.getA_YS();
         for (int i = 0; i < a_ys_src.length; i++) {
             final float value = a_ys[a_ys_src[i]];
-            vector.set(a_ys_dest[i], value);
+            outVector.set(a_ys_dest[i], value);
         }
 
         final float[] bb_spm = result.getBB_SPM();
         for (int i = 0; i < bb_spm_src.length; i++) {
             final float value = bb_spm[bb_spm_src[i]];
-            vector.set(bb_spm_dest[i], value);
+            outVector.set(bb_spm_dest[i], value);
+        }
+
+        if (copyRrsToOutput) {
+            for (int i = 0; i < rrs.length; i++) {
+                outVector.set(numIOPs + i, rrs[i]);
+            }
         }
     }
 }
