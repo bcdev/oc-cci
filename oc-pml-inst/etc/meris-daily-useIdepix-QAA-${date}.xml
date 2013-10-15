@@ -146,21 +146,21 @@
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>a_pig_413</varName>
+                                <varName>a_pig_443</varName>
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>a_ys_413</varName>
+                                <varName>a_ys_443</varName>
                             </aggregator>
                             <aggregator>
                                 <type>AVG</type>
-                                <varName>bb_spm_413</varName>
+                                <varName>bb_spm_443</varName>
                             </aggregator>
                         </aggregators>
                         <!--TODO replace postprocessor with AVG.outputSums = false when switching to BEAM 5-->
                         <postProcessor>
                             <type>Selection</type>
-                            <varNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,a_pig_413_mean,a_ys_413_mean,bb_spm_413_mean</varNames>
+                            <varNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,a_pig_443_mean,a_ys_443_mean,bb_spm_443_mean</varNames>
                         </postProcessor>
                     </parameters>
                 </wps:ComplexData>
