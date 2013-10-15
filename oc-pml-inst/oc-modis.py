@@ -17,7 +17,7 @@ monthsAll = [ '01' ]
 months2002 = [ '06', '07', '08', '09', '10', '11', '12' ]
 months2012 = [ '01', '02', '03', '04' ]
 
-inputs = ['SEAWIFS_L3_daily']
+inputs = ['MODIS_L3_daily']
 hosts  = [('localhost',12)]
 types  = [('template-step.py',12)]
 ################################################################################
@@ -39,7 +39,7 @@ def getMinMaxDate(year, month):
 
 class OcMeris(Daemon):
     def run(self):
-        pm = PMonitor(inputs, request='oc-seawifs', logdir='log', hosts=hosts, types=types)
+        pm = PMonitor(inputs, request='oc-modis', logdir='log', hosts=hosts, types=types)
 
         biasInputs = []
         for year in years:
@@ -57,20 +57,20 @@ class OcMeris(Daemon):
                 maxDate = datetime.date(int(year), int(month), 9)
 
                 for singleDay in dateRange(minDate, maxDate):
-                    seawifsDailyBSName = 'seawifs-daily-bs-' + str(singleDay)
-                    seawifsDailyBSParams = ['seawifs-daily-bs-\${date}.xml', \
+                    modisDailyBSName = 'modis-daily-bs-' + str(singleDay)
+                    modisDailyBSParams = ['modis-daily-bs-\${date}.xml', \
                                'date', str(singleDay), \
                                'year', year, \
                                'month', month ,\
                                'doy', '%03d' % (singleDay.timetuple().tm_yday)  ]
-                    pm.execute('template-step.py', ['SEAWIFS_L3_daily'], [seawifsDailyBSName], parameters=seawifsDailyBSParams, logprefix=seawifsDailyBSName)
+                    pm.execute('template-step.py', ['MODIS_L3_daily'], [modisDailyBSName], parameters=modisDailyBSParams, logprefix=modisDailyBSName)
                     if year >= '2003' and year <= '2007':
-                        biasInputs.append(seawifsDailyBSName)
+                        biasInputs.append(modisDailyBSName)
 
 
-        biasMapName = 'seawifs-bias-map'
+        biasMapName = 'modis-bias-map'
         biasMapParams = ['bias-map-\${sensor}.xml', \
-                               'sensor', 'seawifs', \
+                               'sensor', 'modis', \
                                'sensorMarker', '12' ]
         pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
 
