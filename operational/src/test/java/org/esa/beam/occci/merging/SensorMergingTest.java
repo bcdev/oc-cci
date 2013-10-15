@@ -17,10 +17,14 @@
 package org.esa.beam.occci.merging;
 
 
+import org.esa.beam.binning.Vector;
+import org.esa.beam.binning.WritableVector;
+import org.esa.beam.binning.support.VectorImpl;
 import org.junit.Test;
 
 import java.util.Arrays;
 
+import static java.lang.Float.NaN;
 import static org.junit.Assert.*;
 
 public class SensorMergingTest {
@@ -36,8 +40,8 @@ public class SensorMergingTest {
                 "rrs_4_meris", "rrs_4_modis", "rrs_4_seawifs",
                 "rrs_4_meris_biasmap", "rrs_4_modis_biasmap", "rrs_4_seawifs_biasmap"
         };
-        String[] output0 = {"rrs_2", "rrs_4", "sensor_0", "sensor_1", "sensor_2"};
-        String[] output2 = {
+        String[] outputMerging = {"rrs_2", "rrs_4", "sensor_0", "sensor_1", "sensor_2"};
+        String[] outputBiasCorr = {
                 "rrs_2_meris",
                 "rrs_2_modis",
                 "rrs_2_seawifs",
@@ -46,20 +50,51 @@ public class SensorMergingTest {
                 "rrs_4_seawifs"
         };
 
-        SensorMerging sensorMerging = new SensorMerging(null, 0, "rrs_2", "rrs_4");
+        SensorMerging sensorMerging = new SensorMerging(null, SensorMerging.Mode.MERGING, "rrs_2", "rrs_4");
         assertArrayEquals(spatial, sensorMerging.getSpatialFeatureNames());
         assertArrayEquals(temporal, sensorMerging.getTemporalFeatureNames());
-        assertArrayEquals(output0, sensorMerging.getOutputFeatureNames());
+        assertArrayEquals(outputMerging, sensorMerging.getOutputFeatureNames());
 
-        sensorMerging = new SensorMerging(null, 1, "rrs_2", "rrs_4");
+        sensorMerging = new SensorMerging(null, SensorMerging.Mode.AGGREGATION, "rrs_2", "rrs_4");
         assertArrayEquals(spatial, sensorMerging.getSpatialFeatureNames());
         assertArrayEquals(temporal, sensorMerging.getTemporalFeatureNames());
         assertArrayEquals(temporal, sensorMerging.getOutputFeatureNames());
 
-        sensorMerging = new SensorMerging(null, 2, "rrs_2", "rrs_4");
+        sensorMerging = new SensorMerging(null, SensorMerging.Mode.BIAS_CORRECTION, "rrs_2", "rrs_4");
         assertArrayEquals(spatial, sensorMerging.getSpatialFeatureNames());
         assertArrayEquals(temporal, sensorMerging.getTemporalFeatureNames());
-        assertArrayEquals(output2, sensorMerging.getOutputFeatureNames());
+        assertArrayEquals(outputBiasCorr, sensorMerging.getOutputFeatureNames());
+    }
 
+    @Test
+    public void testTemporalAggregation() throws Exception {
+        SensorMerging sensorMerging = new SensorMerging(null, SensorMerging.Mode.AGGREGATION, "rrs_2", "rrs_4");
+        float[] temporalElems = new float[sensorMerging.getTemporalFeatureNames().length];
+        final WritableVector temporalVector = new VectorImpl(temporalElems);
+        sensorMerging.initTemporal(null, temporalVector);
+
+        sensorMerging.aggregateTemporal(null, new VectorImpl(new float[]{1, 2, 0}), 1, temporalVector);
+        assertArrayEquals(new float[]{1, NaN, NaN, NaN, NaN, NaN, 2, NaN, NaN, NaN, NaN, NaN}, temporalElems, 1e-6f);
+
+        sensorMerging.aggregateTemporal(null, new VectorImpl(new float[]{3, 4, 1}), 1, temporalVector);
+        assertArrayEquals(new float[]{1, 3, NaN, NaN, NaN, NaN, 2, 4, NaN, NaN, NaN, NaN}, temporalElems, 1e-6f);
+
+        sensorMerging.aggregateTemporal(null, new VectorImpl(new float[]{5, 6, 2}), 1, temporalVector);
+        assertArrayEquals(new float[]{1, 3, 5, NaN, NaN, NaN, 2, 4, 6, NaN, NaN, NaN}, temporalElems, 1e-6f);
+
+
+        sensorMerging.aggregateTemporal(null, new VectorImpl(new float[]{11, 12, 10}), 1, temporalVector);
+        assertArrayEquals(new float[]{1, 3, 5, 11, NaN, NaN, 2, 4, 6, 12, NaN, NaN}, temporalElems, 1e-6f);
+
+        sensorMerging.aggregateTemporal(null, new VectorImpl(new float[]{13, 14, 11}), 1, temporalVector);
+        assertArrayEquals(new float[]{1, 3, 5, 11, 13, NaN, 2, 4, 6, 12, 14, NaN}, temporalElems, 1e-6f);
+
+        sensorMerging.aggregateTemporal(null, new VectorImpl(new float[]{15, 16, 12}), 1, temporalVector);
+        assertArrayEquals(new float[]{1, 3, 5, 11, 13, 15, 2, 4, 6, 12, 14, 16}, temporalElems, 1e-6f);
+
+        float[] outputElems = new float[sensorMerging.getOutputFeatureNames().length];
+        final WritableVector outputVector = new VectorImpl(outputElems);
+        sensorMerging.computeOutput(temporalVector, outputVector);
+        assertArrayEquals(new float[]{1, 3, 5, 11, 13, 15, 2, 4, 6, 12, 14, 16}, outputElems, 1e-6f);
     }
 }

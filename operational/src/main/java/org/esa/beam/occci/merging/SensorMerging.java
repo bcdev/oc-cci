@@ -34,13 +34,15 @@ import java.util.Arrays;
  */
 public class SensorMerging extends AbstractAggregator {
 
+    public enum Mode {AGGREGATION, BIAS_CORRECTION, MERGING}
+
     public static final String NAME = "SensorMerging";
     public static final String[] SENSORS = {"meris", "modis", "seawifs"};
 
-    private final int mode;
+    private final Mode mode;
     private final int numRrs;
 
-    public SensorMerging(VariableContext varCtx, int mode, String... rrsFeatureNames) {
+    public SensorMerging(VariableContext varCtx, Mode mode, String... rrsFeatureNames) {
         super(NAME,
               createSpatialFeatureNames(rrsFeatureNames),
               createTemporalFeatureNames(rrsFeatureNames),
@@ -80,7 +82,7 @@ public class SensorMerging extends AbstractAggregator {
         if (!Float.isNaN(sensorRaw)) {
             int sensor = (int) sensorRaw;
             for (int rrs = 0; rrs < numRrs; rrs++) {
-                int temporalIndex = rrs * 6 + (sensor < 10 ? sensor : (sensor - 10 + 3));
+                int temporalIndex = rrs * SENSORS.length * 2 + (sensor < 10 ? sensor : (sensor - 10 + SENSORS.length));
                 temporalVector.set(temporalIndex, spatialVector.get(rrs));
             }
         }
@@ -94,7 +96,20 @@ public class SensorMerging extends AbstractAggregator {
     @Override
     public void computeOutput(Vector temporalVector, WritableVector outputVector) {
         switch (mode) {
-            case 0:
+            case AGGREGATION:
+                for (int i = 0; i < temporalVector.size(); i++) {
+                    outputVector.set(i, temporalVector.get(i));
+                }
+                break;
+            case BIAS_CORRECTION:
+                for (int rrsI = 0; rrsI < numRrs; rrsI++) {
+                    float[] biasCorrecdRrs = correctBias(temporalVector, rrsI);
+                    for (int i = 0; i < biasCorrecdRrs.length; i++) {
+                        outputVector.set(rrsI * SENSORS.length + i, biasCorrecdRrs[i]);
+                    }
+                }
+                break;
+            case MERGING:
                 int[] sensor_count = new int[SENSORS.length];
                 for (int rrsI = 0; rrsI < numRrs; rrsI++) {
                     float[] biasCorrecdRrs = correctBias(temporalVector, rrsI);
@@ -117,40 +132,27 @@ public class SensorMerging extends AbstractAggregator {
                     outputVector.set(numRrs + sensor, sensor_count[sensor]);
                 }
                 break;
-            case 1:
-                for (int i = 0; i < temporalVector.size(); i++) {
-                    outputVector.set(i, temporalVector.get(i));
-                }
-                break;
-            case 2:
-                for (int rrsI = 0; rrsI < numRrs; rrsI++) {
-                    float[] biasCorrecdRrs = correctBias(temporalVector, rrsI);
-                    for (int i = 0; i < biasCorrecdRrs.length; i++) {
-                        outputVector.set(rrsI * 3 + i, biasCorrecdRrs[i]);
-                    }
-                }
-                break;
         }
     }
 
     private float[] correctBias(Vector temporalVector, int rrsI) {
         float[] biasCorrecdRrs = new float[SENSORS.length];
-        int temporalIndexBiasSeawifs = rrsI * 6 + (SENSORS.length - 1);
-        float biasSeawifs = temporalVector.get(temporalIndexBiasSeawifs);
+        int temporalIndexBiasSeawifs = rrsI * SENSORS.length * 2 + (SENSORS.length - 1);
+        float seawifsBias = temporalVector.get(temporalIndexBiasSeawifs);
 
         // meris and modis
         for (int sensorI = 0; sensorI < SENSORS.length - 1; sensorI++) {
-            int temporalIndexRrs = rrsI * 6 + sensorI;
-            int temporalIndexBias = rrsI * 6 + sensorI + 3;
+            int temporalIndexRrs = rrsI * SENSORS.length * 2 + sensorI;
+            int temporalIndexBias = rrsI * SENSORS.length * 2 + sensorI + SENSORS.length;
 
-            float rrs = temporalVector.get(temporalIndexRrs);
-            float bias = temporalVector.get(temporalIndexBias);
+            float sensorRrs = temporalVector.get(temporalIndexRrs);
+            float sensorBias = temporalVector.get(temporalIndexBias);
 
-            float value = rrs / (bias / biasSeawifs);
+            float value = sensorRrs / (sensorBias / seawifsBias);
             biasCorrecdRrs[sensorI] = value;
         }
         // seawifs
-        int temporalIndexRrs = rrsI * 6 + 2;
+        int temporalIndexRrs = rrsI * SENSORS.length * 2 + 2;
         biasCorrecdRrs[SENSORS.length - 1] = temporalVector.get(temporalIndexRrs);
         return biasCorrecdRrs;
     }
@@ -160,10 +162,9 @@ public class SensorMerging extends AbstractAggregator {
         @Parameter(description = "Name rrs features", notNull = true, notEmpty = true)
         private String[] rrsFeatureNames;
 
-        @Parameter(description = "Processing mode. 0:normal, 1:temporal, 2:biasCorrection",
-                   valueSet = {"0,1,2"},
-                   defaultValue = "0")
-        public int mode;
+        @Parameter(description = "Processing mode.",
+                   defaultValue = "MERGING")
+        public Mode mode;
 
         public Config() {
             super(NAME);
@@ -216,18 +217,11 @@ public class SensorMerging extends AbstractAggregator {
         return features;
     }
 
-    private static String[] createOutputFeatureNames(int mode, String[] rrsFeatureNames) {
+    private static String[] createOutputFeatureNames(Mode mode, String[] rrsFeatureNames) {
         switch (mode) {
-            case 0: {
-                String[] features = Arrays.copyOf(rrsFeatureNames, rrsFeatureNames.length + 3);
-                features[rrsFeatureNames.length] = "sensor_0";
-                features[rrsFeatureNames.length + 1] = "sensor_1";
-                features[rrsFeatureNames.length + 2] = "sensor_2";
-                return features;
-            }
-            case 1:
+            case AGGREGATION:
                 return createTemporalFeatureNames(rrsFeatureNames);
-            case 2: {
+            case BIAS_CORRECTION: {
                 String[] features = new String[rrsFeatureNames.length * SENSORS.length];
                 int index = 0;
                 for (String rrsFeatureName : rrsFeatureNames) {
@@ -235,6 +229,13 @@ public class SensorMerging extends AbstractAggregator {
                         features[index++] = rrsFeatureName + "_" + sensor;
                     }
                 }
+                return features;
+            }
+            case MERGING: {
+                String[] features = Arrays.copyOf(rrsFeatureNames, rrsFeatureNames.length + 3);
+                features[rrsFeatureNames.length] = "sensor_0";
+                features[rrsFeatureNames.length + 1] = "sensor_1";
+                features[rrsFeatureNames.length + 2] = "sensor_2";
                 return features;
             }
         }
