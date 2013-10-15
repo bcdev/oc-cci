@@ -71,7 +71,7 @@ class OcMeris(Daemon):
         biasMapName = 'modis-bias-map'
         biasMapParams = ['bias-map-\${sensor}.xml', \
                                'sensor', 'modis', \
-                               'sensorMarker', '12' ]
+                               'sensorMarker', '11' ]
         pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
 
         #======================================================
