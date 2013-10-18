@@ -37,7 +37,7 @@ def getMinMaxDate(year, month):
 
 ################################################################################
 
-class OcMeris(Daemon):
+class OcModis(Daemon):
     def run(self):
         pm = PMonitor(inputs, request='oc-modis', logdir='log', hosts=hosts, types=types)
 
@@ -77,4 +77,4 @@ class OcMeris(Daemon):
         #======================================================
         pm.wait_for_completion()
 #======================================================
-daemon = OcMeris.setup(sys.argv)        
+daemon = OcModis.setup(sys.argv)

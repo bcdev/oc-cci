@@ -71,7 +71,7 @@
                             <aggregator>
                                 <type>SensorMerging</type>
                                 <rrsFeatureNames>Rrs_412,Rrs_443,Rrs_490,Rrs_510,Rrs_555,Rrs_670</rrsFeatureNames>
-                                <mode>0</mode>
+                                <mode>MERGING</mode>
                             </aggregator>
                         </aggregators>
                         <!--<postProcessor>-->

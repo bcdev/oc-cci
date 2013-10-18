@@ -17,7 +17,7 @@ monthsAll = [ '01' ]
 months2002 = [ '06', '07', '08', '09', '10', '11', '12' ]
 months2012 = [ '01', '02', '03', '04' ]
 
-inputs = ['SEAWIFS_L3_daily']
+inputs = ['input']
 hosts  = [('localhost',12)]
 types  = [('template-step.py',12)]
 ################################################################################
@@ -37,9 +37,9 @@ def getMinMaxDate(year, month):
 
 ################################################################################
 
-class OcSeawifs(Daemon):
+class OcMerging(Daemon):
     def run(self):
-        pm = PMonitor(inputs, request='oc-seawifs', logdir='log', hosts=hosts, types=types)
+        pm = PMonitor(inputs, request='oc-merging', logdir='log', hosts=hosts, types=types)
 
         biasInputs = []
         for year in years:
@@ -57,24 +57,14 @@ class OcSeawifs(Daemon):
                 maxDate = datetime.date(int(year), int(month), 9)
 
                 for singleDay in dateRange(minDate, maxDate):
-                    seawifsDailyBSName = 'seawifs-daily-bs-' + str(singleDay)
-                    seawifsDailyBSParams = ['seawifs-daily-bs-\${date}.xml', \
+                    mergedName = 'merged-daily-' + str(singleDay)
+                    mergedParams = ['sensor-merging-\${date}.xml', \
                                'date', str(singleDay), \
                                'year', year, \
-                               'month', month ,\
-                               'doy', '%03d' % (singleDay.timetuple().tm_yday)  ]
-                    pm.execute('template-step.py', ['SEAWIFS_L3_daily'], [seawifsDailyBSName], parameters=seawifsDailyBSParams, logprefix=seawifsDailyBSName)
-                    if year >= '2003' and year <= '2007':
-                        biasInputs.append(seawifsDailyBSName)
-
-
-        biasMapName = 'seawifs-bias-map'
-        biasMapParams = ['bias-map-\${sensor}.xml', \
-                               'sensor', 'seawifs', \
-                               'sensorMarker', '12' ]
-        pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
+                               'month', month  ]
+                    pm.execute('template-step.py', ['input'], [mergedName], parameters=mergedParams, logprefix=mergedName)
 
         #======================================================
         pm.wait_for_completion()
 #======================================================
-daemon = OcSeawifs.setup(sys.argv)
+daemon = OcMerging.setup(sys.argv)
