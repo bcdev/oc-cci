@@ -110,7 +110,7 @@ public class SensorMerging extends AbstractAggregator {
                 }
                 break;
             case MERGING:
-                int[] sensor_count = new int[SENSORS.length];
+                boolean[] sensorContribution = new boolean[SENSORS.length];
                 for (int rrsI = 0; rrsI < numRrs; rrsI++) {
                     float[] biasCorrecdRrs = correctBias(temporalVector, rrsI);
                     double sum = 0;
@@ -119,7 +119,7 @@ public class SensorMerging extends AbstractAggregator {
                         if (!Float.isNaN(biasCorrecdRrs[sensor])) {
                             sum += biasCorrecdRrs[sensor];
                             count++;
-                            sensor_count[sensor]++;
+                            sensorContribution[sensor] = true;
                         }
                     }
                     if (count > 0) {
@@ -128,8 +128,8 @@ public class SensorMerging extends AbstractAggregator {
                         outputVector.set(rrsI, Float.NaN);
                     }
                 }
-                for (int sensor = 0; sensor < sensor_count.length; sensor++) {
-                    outputVector.set(numRrs + sensor, sensor_count[sensor]);
+                for (int sensor = 0; sensor < sensorContribution.length; sensor++) {
+                    outputVector.set(numRrs + sensor, sensorContribution[sensor] ? 1 : 0);
                 }
                 break;
         }
