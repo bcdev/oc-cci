@@ -34,7 +34,7 @@ public class QaaDescriptor implements CellProcessorDescriptor {
     }
 
     // package access for testing only tb 2013-04-23
-    static String[] createOutputFeatureNames(QaaConfig config) {
+    public static String[] createOutputFeatureNames(QaaConfig config) {
         final SensorConfig sensorConfig = SensorConfigFactory.get(config.getSensorName());
         final ArrayList<String> featureNameList = new ArrayList<String>();
 
