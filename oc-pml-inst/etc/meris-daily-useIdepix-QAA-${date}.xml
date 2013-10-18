@@ -84,7 +84,7 @@
                 <wps:ComplexData>
                     <parameters>
                         <numRows>4320</numRows>
-                        <maskExpr>not(l1_flags.INVALID or cloud_classif_flags.F_CLOUD or cloud_classif_flags.F_LAND) and ( (bitmask &amp; 31) == 0 ) and (Rw412 &lt;= 0.12)</maskExpr>
+                        <maskExpr>not(l1_flags.INVALID or cloud_classif_flags.F_CLOUD or cloud_classif_flags.F_LAND or cloud_classif_flags.F_SNOW_ICE) and ( (bitmask &amp; 31) == 0 ) and (Rw412 &lt;= 0.12) and (sun_zenith_band &lt;= 80.0)</maskExpr>
                         <variables>
                             <variable>
                                 <name>Rrs412</name>

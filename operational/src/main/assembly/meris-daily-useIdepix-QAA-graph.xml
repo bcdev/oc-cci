@@ -9,11 +9,27 @@
       <source name="idepix">$parameters.getProperty("idepixDir")/L2_of_${filename}.seq</source>
     </header>
 
+    <node id="sunZenithTiepointToBandNode">
+        <operator>BandMaths</operator>
+        <sources>
+            <sourceProducts>idepix</sourceProducts>
+        </sources>
+        <parameters>
+            <targetBands>
+                <targetBand>
+                    <name>sun_zenith_band</name>
+                    <expression>sun_zenith</expression>
+                    <type>float32</type>
+                </targetBand>
+            </targetBands>
+        </parameters>
+    </node>
+
     <node id="polymerPlusIdepix">
         <operator>Merge</operator>
         <sources>
             <masterProduct>polymer</masterProduct>
-            <sourceProducts>idepix</sourceProducts>
+            <sourceProducts>idepix,sunZenithTiepointToBandNode</sourceProducts>
         </sources>
 
         <parameters>
@@ -25,6 +41,10 @@
                 <include>
                     <productId>sourceProducts0</productId>
                     <name>cloud_classif_flags</name>
+                </include>
+                <include>
+                    <productId>sourceProducts1</productId>
+                    <name>sun_zenith_band</name>
                 </include>
             </includes>
             <geographicError>0.01</geographicError>
@@ -40,7 +60,7 @@
         <parameters>
             <reflectanceBandNames>Rw412,Rw443,Rw490,Rw510,Rw560,Rw620</reflectanceBandNames>
             <sensorName>MERIS</sensorName>
-            <validPixelExpression>not(l1_flags.INVALID or cloud_classif_flags.F_CLOUD or cloud_classif_flags.F_LAND) and ( (bitmask &amp; 31) == 0 ) and (Rw412 &lt;= 0.12)</validPixelExpression>
+            <validPixelExpression>not(l1_flags.INVALID or cloud_classif_flags.F_CLOUD or cloud_classif_flags.F_LAND or cloud_classif_flags.F_SNOW_ICE) and ( (bitmask &amp; 31) == 0 ) and (Rw412 &lt;= 0.12) and (sun_zenith_band &lt;= 80.0)</validPixelExpression>
             <divideByPI>true</divideByPI>
         </parameters>
     </node>
