@@ -10,6 +10,7 @@
     <files>
         <file>
             <source>src/main/assembly/meris-daily-useIdepix-QAA-graph.xml</source>
+            <source>src/main/assembly/meris-daily-useIdepix-2002-QAA-graph.xml</source>
         </file>
     </files>
 
