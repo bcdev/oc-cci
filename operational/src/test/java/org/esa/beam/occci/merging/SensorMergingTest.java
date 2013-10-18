@@ -97,4 +97,25 @@ public class SensorMergingTest {
         sensorMerging.computeOutput(temporalVector, outputVector);
         assertArrayEquals(new float[]{1, 3, 5, 11, 13, 15, 2, 4, 6, 12, 14, 16}, outputElems, 1e-6f);
     }
+
+    @Test
+    public void testCorrectBias() throws Exception {
+        float[] correctedRrs = SensorMerging.correctBias(new VectorImpl(new float[]{1, 2, 3, 4, 5, 6}), 0);
+        assertArrayEquals(new float[]{1f * 6 / 4, 2f * 6 / 5, 3f}, correctedRrs, 1e-6f);
+
+        correctedRrs = SensorMerging.correctBias(new VectorImpl(new float[]{NaN, 2, 3, 4, 5, 6}), 0);
+        assertArrayEquals(new float[]{NaN, 2f * 6 / 5, 3f}, correctedRrs, 1e-6f);
+        correctedRrs = SensorMerging.correctBias(new VectorImpl(new float[]{1, NaN, 3, 4, 5, 6}), 0);
+        assertArrayEquals(new float[]{1f * 6 / 4, NaN, 3f}, correctedRrs, 1e-6f);
+        correctedRrs = SensorMerging.correctBias(new VectorImpl(new float[]{1, 2, NaN, 4, 5, 6}), 0);
+        assertArrayEquals(new float[]{1f * 6 / 4, 2f * 6 / 5, NaN}, correctedRrs, 1e-6f);
+
+
+        correctedRrs = SensorMerging.correctBias(new VectorImpl(new float[]{1, 2, 3, NaN, 5, 6}), 0);
+        assertArrayEquals(new float[]{NaN, 2f * 6 / 5, 3}, correctedRrs, 1e-6f);
+        correctedRrs = SensorMerging.correctBias(new VectorImpl(new float[]{1, 2, 3, 4, NaN, 6}), 0);
+        assertArrayEquals(new float[]{1f * 6 / 4, NaN, 3f}, correctedRrs, 1e-6f);
+        correctedRrs = SensorMerging.correctBias(new VectorImpl(new float[]{1, 2, 3, 4, 5, NaN}), 0);
+        assertArrayEquals(new float[]{NaN, NaN, 3}, correctedRrs, 1e-6f);
+    }
 }

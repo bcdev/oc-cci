@@ -135,9 +135,9 @@ public class SensorMerging extends AbstractAggregator {
         }
     }
 
-    private float[] correctBias(Vector temporalVector, int rrsI) {
+    static float[] correctBias(Vector temporalVector, int rrsI) {
         float[] biasCorrecdRrs = new float[SENSORS.length];
-        int temporalIndexBiasSeawifs = rrsI * SENSORS.length * 2 + (SENSORS.length - 1);
+        int temporalIndexBiasSeawifs = rrsI * SENSORS.length * 2 + (SENSORS.length + SENSORS.length - 1);
         float seawifsBias = temporalVector.get(temporalIndexBiasSeawifs);
 
         // meris and modis
@@ -152,7 +152,7 @@ public class SensorMerging extends AbstractAggregator {
             biasCorrecdRrs[sensorI] = value;
         }
         // seawifs
-        int temporalIndexRrs = rrsI * SENSORS.length * 2 + 2;
+        int temporalIndexRrs = rrsI * SENSORS.length * 2 + SENSORS.length - 1;
         biasCorrecdRrs[SENSORS.length - 1] = temporalVector.get(temporalIndexRrs);
         return biasCorrecdRrs;
     }
