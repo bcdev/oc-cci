@@ -43,9 +43,12 @@ class OcMeris(Daemon):
 
         biasInputs = []
         for year in years:
+            merisDailyTemplate = 'meris-daily-useIdepix-QAA-\${date}.xml'
             months = monthsAll
             if year == '2002':
                 months = months2002
+                # in 2002 the current version of idepix is not correct because of sensor re-programming
+                merisDailyTemplate = 'meris-daily-useIdepix-QAA-2002-\${date}.xml'
             elif year == '2012':
                 months = months2012
 
@@ -65,7 +68,7 @@ class OcMeris(Daemon):
 
                 for singleDay in dateRange(minDate, maxDate):
                     merisDailyName = 'meris-daily-' + str(singleDay)
-                    merisDailyParams = ['meris-daily-useIdepix-QAA-\${date}.xml', \
+                    merisDailyParams = [merisDailyTemplate, \
                               'date', str(singleDay), \
                               'year', year, \
                               'month', month ]
