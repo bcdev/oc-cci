@@ -39,7 +39,7 @@
         <wps:Input>
             <ows:Identifier>inputPath</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/{meris,modis,seawifs}/daily-bs/{year}/${month}/${date}</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/{meris,modis,seawifs}/daily-bs/${year}/${month}/${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
@@ -75,8 +75,9 @@
                             </aggregator>
                         </aggregators>
                         <!--<postProcessor>-->
-                        <!--<type>MarkSensor</type>-->
-                        <!--<sensor>${sensorMarker}</sensor>-->
+                            <!--<type>QAA</type>-->
+                            <!--<sensorName>SEAWIFS</sensorName>-->
+                            <!--<bandNames>SEAWIFS</bandNames>-->
                         <!--</postProcessor>-->
                     </parameters>
                 </wps:ComplexData>
