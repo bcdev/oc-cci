@@ -74,11 +74,9 @@
                                 <mode>MERGING</mode>
                             </aggregator>
                         </aggregators>
-                        <!--<postProcessor>-->
-                            <!--<type>QAA</type>-->
-                            <!--<sensorName>SEAWIFS</sensorName>-->
-                            <!--<bandNames>SEAWIFS</bandNames>-->
-                        <!--</postProcessor>-->
+                        <postProcessor>
+                            <type>PostMerging</type>
+                        </postProcessor>
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
