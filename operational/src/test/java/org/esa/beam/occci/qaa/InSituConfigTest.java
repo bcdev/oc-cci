@@ -3,15 +3,13 @@ package org.esa.beam.occci.qaa;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class InSituConfigTest {
 
     @Test
     public void testGetAwCoefficients() {
-        final InSituConfig config= new InSituConfig(new double[0]);
+        final InSituConfig config = new InSituConfig(new double[0]);
 
         final double[] aw_coeffs = config.getAwCoefficients();
         assertEquals(3, aw_coeffs.length);
@@ -38,7 +36,7 @@ public class InSituConfigTest {
 
     @Test
     public void testGetAbsorptions() {
-        final double[] expectedAbsorptions = new double[] {0.0045136, 0.006838, 0.015432, 0.044128, 0.057732, 0.43672};
+        final double[] expectedAbsorptions = new double[]{0.0045136, 0.006838, 0.015432, 0.044128, 0.057732, 0.43672};
         final double[] wavelengths = {412.7, 442.0, 490.9, 531.4, 551.1, 668.1};
         final InSituConfig inSituConfig = new InSituConfig(wavelengths);
 
@@ -49,14 +47,14 @@ public class InSituConfigTest {
 
     @Test
     public void testGetAwAtWavelength() {
-         assertEquals(0.00473, InSituConfig.getAwAtWavelength(410.0), 1e-8);  // lower bound
+        assertEquals(0.00473, InSituConfig.getAwAtWavelength(410.0), 1e-8);  // lower bound
 
-         assertEquals(0.0619, InSituConfig.getAwAtWavelength(560.0), 1e-8);
-         assertEquals(0.06274, InSituConfig.getAwAtWavelength(561.0), 1e-8);
-         assertEquals(0.06358, InSituConfig.getAwAtWavelength(562.0), 1e-8);
-         assertEquals(0.064, InSituConfig.getAwAtWavelength(562.5), 1e-8);
+        assertEquals(0.0619, InSituConfig.getAwAtWavelength(560.0), 1e-8);
+        assertEquals(0.06274, InSituConfig.getAwAtWavelength(561.0), 1e-8);
+        assertEquals(0.06358, InSituConfig.getAwAtWavelength(562.0), 1e-8);
+        assertEquals(0.064, InSituConfig.getAwAtWavelength(562.5), 1e-8);
 
-         assertEquals(0.516, InSituConfig.getAwAtWavelength(690.0), 1e-8);    // upper bound
+        assertEquals(0.516, InSituConfig.getAwAtWavelength(690.0), 1e-8);    // upper bound
 
         // and to be sure, check against the SeaWIFS config supplied by PML
         assertEquals(0.004562, InSituConfig.getAwAtWavelength(412.0), 1e-8);
@@ -81,5 +79,25 @@ public class InSituConfigTest {
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
+    }
+
+    @Test
+    public void testGetBbwAtWavelength() {
+        assertEquals(0.0059145, InSituConfig.getBbwAtWavelength(410.0), 1e-8);  // lower bound
+
+        assertEquals(0.015, InSituConfig.getAwAtWavelength(490.0), 1e-8);
+        assertEquals(0.01548, InSituConfig.getAwAtWavelength(491.0), 1e-8);
+        assertEquals(0.01596, InSituConfig.getAwAtWavelength(492.0), 1e-8);
+        assertEquals(0.0162, InSituConfig.getAwAtWavelength(492.5), 1e-8);
+
+        assertEquals(0.0006626, InSituConfig.getBbwAtWavelength(690.0), 1e-8);    // upper bound
+
+        // and to be sure, check against the MERIS config supplied by PML
+        assertEquals(0.00573196, InSituConfig.getBbwAtWavelength(413.0), 1e-6);
+        assertEquals(0.00424592, InSituConfig.getBbwAtWavelength(443.0), 1e-6);
+        assertEquals(0.00276835, InSituConfig.getBbwAtWavelength(490.0), 1e-7);
+        assertEquals(0.00233870, InSituConfig.getBbwAtWavelength(510.0), 1e-7);
+        assertEquals(0.00157958, InSituConfig.getBbwAtWavelength(560.0), 1e-7);
+        assertEquals(0.000772104, InSituConfig.getBbwAtWavelength(665.0), 1e-8);
     }
 }
