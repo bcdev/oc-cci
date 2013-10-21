@@ -41,7 +41,11 @@ public class PostMergingProcessor extends CellProcessor {
 
     private final QaaAlgorithm qaaAlgorithm;
     private final int[] rrsBandIndices;
+    private final int[] sensorBandIndices;
     private final float[] rrs;
+    private final float[] sensor;
+    private final int rrsOffset;
+    private final int sensorOffset;
     QaaResult qaaResult;
     private final ResultMapper resultMapper;
 
@@ -50,11 +54,15 @@ public class PostMergingProcessor extends CellProcessor {
 
         final SensorConfig sensorConfig = SensorConfigFactory.get(qaaConfig.getSensorName());
         qaaAlgorithm = new QaaAlgorithm(sensorConfig);
+        rrsOffset = 4 * 6;
+        sensorOffset = 4 * 6 + 6;
 
         final String[] bandNames = qaaConfig.getBandNames();
         rrsBandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
+        sensorBandIndices = BinningUtils.getBandIndices(varCtx, new String[]{"sensor_0", "sensor_1", "sensor_2"});
 
-        rrs = new float[bandNames.length];
+        rrs = new float[rrsBandIndices.length];
+        sensor = new float[sensorBandIndices.length];
         qaaResult = new QaaResult();
         resultMapper = new ResultMapper(qaaConfig);
     }
@@ -63,16 +71,55 @@ public class PostMergingProcessor extends CellProcessor {
     public void compute(Vector inputVector, WritableVector outputVector) {
         for (int i = 0; i < rrs.length; i++) {
             rrs[i] = inputVector.get(rrsBandIndices[i]);
+            if (Float.isNaN(rrs[i])) {
+                BinningUtils.setToInvalid(outputVector);
+                return;
+            }
         }
-
+        for (int i = 0; i < rrs.length; i++) {
+            sensor[i] = inputVector.get(sensorBandIndices[i]);
+        }
         try {
             qaaResult = qaaAlgorithm.process(rrs, qaaResult);
         } catch (ImaginaryNumberException e) {
             BinningUtils.setToInvalid(outputVector);
+            copyRRS(rrs, outputVector);
+            copySensorContribution(sensor, outputVector);
             return;
         }
-
+        if (containsInvalid(qaaResult.getA_PIG()) ||
+                containsInvalid(qaaResult.getA_Total()) ||
+                containsInvalid(qaaResult.getA_YS()) ||
+                containsInvalid(qaaResult.getBB_SPM())) {
+            BinningUtils.setToInvalid(outputVector);
+            copyRRS(rrs, outputVector);
+            copySensorContribution(sensor, outputVector);
+            return;
+        }
         resultMapper.assign(qaaResult, rrs, outputVector);
+        copyRRS(rrs, outputVector);
+        copySensorContribution(sensor, outputVector);
+    }
+
+    private void copyRRS(float[] rrs, WritableVector outputVector) {
+        for (int i = 0; i < rrs.length; i++) {
+            outputVector.set(rrsOffset + i, rrs[i]);
+        }
+    }
+
+    private void copySensorContribution(float[] sensors, WritableVector outputVector) {
+        for (int i = 0; i < sensors.length; i++) {
+            outputVector.set(sensorOffset + i, sensors[i]);
+        }
+    }
+
+    private static boolean containsInvalid(float[] values) {
+        for (float value : values) {
+            if (Float.isNaN(value) || Float.isInfinite(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static class Config extends CellProcessorConfig {
@@ -86,6 +133,7 @@ public class PostMergingProcessor extends CellProcessor {
     public static class Descriptor implements CellProcessorDescriptor {
 
         public static final String NAME = "PostMerging";
+        private static final int[] ALL_IOPS = new int[]{0, 1, 2, 3, 4, 5};
 
         @Override
         public String getName() {
@@ -96,12 +144,12 @@ public class PostMergingProcessor extends CellProcessor {
         public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
             QaaConfig qaaConfig = new QaaConfig();
             qaaConfig.setSensorName(QaaConstants.SEAWIFS);
-            qaaConfig.setBandNames(new String[]{"Rrs_412","Rrs_443","Rrs_490","Rrs_510","Rrs_555","Rrs_670"});
-            qaaConfig.setATotalOutIndices(new int[]{0, 1, 2, 3, 4});
-            qaaConfig.setBbSpmOutIndices(new int[]{0, 1, 2, 3, 4});
-            qaaConfig.setAPigOutIndices(new int[]{0, 1, 2});
-            qaaConfig.setAYsOutIndices(new int[]{0, 1, 2});
-            qaaConfig.setRrsOut(true);
+            qaaConfig.setBandNames(new String[]{"Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670"});
+            qaaConfig.setATotalOutIndices(ALL_IOPS);
+            qaaConfig.setBbSpmOutIndices(ALL_IOPS);
+            qaaConfig.setAPigOutIndices(ALL_IOPS);
+            qaaConfig.setAYsOutIndices(ALL_IOPS);
+            qaaConfig.setRrsOut(false);
             return new PostMergingProcessor(varCtx, qaaConfig);
         }
 
@@ -115,6 +163,7 @@ public class PostMergingProcessor extends CellProcessor {
         String[] outputFeatureNames = QaaDescriptor.createOutputFeatureNames(qaaConfig);
         final ArrayList<String> featureNameList = new ArrayList<String>();
         Collections.addAll(featureNameList, outputFeatureNames);
+        Collections.addAll(featureNameList, qaaConfig.getBandNames());
 
         for (int i = 0; i < SensorMerging.SENSORS.length; i++) {
             featureNameList.add("sensor_" + i);
