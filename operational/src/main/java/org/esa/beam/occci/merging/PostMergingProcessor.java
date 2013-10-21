@@ -76,7 +76,7 @@ public class PostMergingProcessor extends CellProcessor {
                 return;
             }
         }
-        for (int i = 0; i < rrs.length; i++) {
+        for (int i = 0; i < sensor.length; i++) {
             sensor[i] = inputVector.get(sensorBandIndices[i]);
         }
         try {
