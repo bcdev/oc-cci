@@ -9,10 +9,10 @@ public class QaaResult {
     private int flags;
 
     public QaaResult() {
-        A_Total = new float[QaaConstants.NUM_A_TOTAL_BANDS];
-        BB_SPM = new float[QaaConstants.NUM_BB_SPM_BANDS];
-        A_PIG = new float[QaaConstants.NUM_A_PIG_BANDS];
-        A_YS = new float[QaaConstants.NUM_A_YS_BANDS];
+        A_Total = new float[QaaConstants.NUM_IOP_BANDS];
+        BB_SPM = new float[QaaConstants.NUM_IOP_BANDS];
+        A_PIG = new float[QaaConstants.NUM_IOP_BANDS];
+        A_YS = new float[QaaConstants.NUM_IOP_BANDS];
 
         setValid(true);
     }

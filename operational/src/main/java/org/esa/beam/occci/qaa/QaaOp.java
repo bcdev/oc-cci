@@ -82,21 +82,21 @@ public class QaaOp extends PixelOperator {
     protected void configureTargetProduct(ProductConfigurer configurer) {
         super.configureTargetProduct(configurer);
         double[] wavelengths = sensorConfig.getWavelengths();
-        for (int i = 0; i < QaaConstants.NUM_A_TOTAL_BANDS; i++) {
+        for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
             addBand(configurer, A_TOTAL_PATTERN, wavelengths[i],
                     "Total absorption coefficient of all water constituents at %d nm.");
         }
-        for (int i = 0; i < QaaConstants.NUM_BB_SPM_BANDS; i++) {
+        for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
             addBand(configurer, BB_SPM_PATTERN, wavelengths[i],
                     "Backscattering of suspended particulate matter at %d nm.");
         }
 
-        for (int i = 0; i < QaaConstants.NUM_A_PIG_BANDS; i++) {
+        for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
             addBand(configurer, A_PIG_PATTERN, wavelengths[i],
                     "Pigment absorption coefficient at %d nm.");
         }
 
-        for (int i = 0; i < QaaConstants.NUM_A_YS_BANDS; i++) {
+        for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
             addBand(configurer, A_YS_PATTERN, wavelengths[i],
                     "Yellow substance absorption coefficient at %d nm.");
         }

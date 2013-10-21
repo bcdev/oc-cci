@@ -26,7 +26,12 @@ public class QaaOpTest {
         Product targetProduct = qaaOp.getTargetProduct();
         assertNotNull(targetProduct);
 
-        String[] expectedBandNames = {"a_total_413", "a_total_443", "a_total_490", "a_total_510", "a_total_560", "bb_spm_413", "bb_spm_443", "bb_spm_490", "bb_spm_510", "bb_spm_560", "a_pig_413", "a_pig_443", "a_pig_490", "a_ys_413", "a_ys_443", "a_ys_490"};
+        String[] expectedBandNames = {
+                "a_total_413", "a_total_443", "a_total_490", "a_total_510", "a_total_560", "a_total_665",
+                "bb_spm_413", "bb_spm_443", "bb_spm_490", "bb_spm_510", "bb_spm_560", "bb_spm_665",
+                "a_pig_413", "a_pig_443", "a_pig_490", "a_pig_510", "a_pig_560", "a_pig_665",
+                "a_ys_413", "a_ys_443", "a_ys_490", "a_ys_510", "a_ys_560", "a_ys_665"
+        };
         assertEquals(expectedBandNames.length, targetProduct.getNumBands());
         assertArrayEquals(expectedBandNames, targetProduct.getBandNames());
 
@@ -35,20 +40,28 @@ public class QaaOpTest {
         assertEquals(0.0289172, getSample(targetProduct, "a_total_490"), 1e-6);
         assertEquals(0.0455736, getSample(targetProduct, "a_total_510"), 1e-6);
         assertEquals(0.0657829, getSample(targetProduct, "a_total_560"), 1e-6);
+        assertEquals(0.109646804, getSample(targetProduct, "a_total_665"), 1e-6);
 
         assertEquals(0.0205040, getSample(targetProduct, "bb_spm_413"), 1e-6);
         assertEquals(0.0171448, getSample(targetProduct, "bb_spm_443"), 1e-6);
         assertEquals(0.0133822, getSample(targetProduct, "bb_spm_490"), 1e-6);
         assertEquals(0.0121625, getSample(targetProduct, "bb_spm_510"), 1e-6);
         assertEquals(0.00977813, getSample(targetProduct, "bb_spm_560"), 1e-6);
+        assertEquals(0.00665269, getSample(targetProduct, "bb_spm_665"), 1e-6);
 
         assertEquals(0.00263956, getSample(targetProduct, "a_pig_413"), 1e-6);
         assertEquals(0.00337634, getSample(targetProduct, "a_pig_443"), 1e-6);
         assertEquals(0.00614989, getSample(targetProduct, "a_pig_490"), 1e-6);
+        assertEquals(0.00736940, getSample(targetProduct, "a_pig_510"), 1e-6);
+        assertEquals(0.00124655, getSample(targetProduct, "a_pig_560"), 1e-6);
+        assertEquals(-0.3198745, getSample(targetProduct, "a_pig_665"), 1e-6);
 
         assertEquals(0.0254953, getSample(targetProduct, "a_ys_413"), 1e-6);
         assertEquals(0.0160453, getSample(targetProduct, "a_ys_443"), 1e-6);
         assertEquals(0.0077673, getSample(targetProduct, "a_ys_490"), 1e-6);
+        assertEquals(0.0057041, getSample(targetProduct, "a_ys_510"), 1e-6);
+        assertEquals(0.0026363, getSample(targetProduct, "a_ys_560"), 1e-6);
+        assertEquals(0.0005213, getSample(targetProduct, "a_ys_665"), 1e-6);
     }
 
     @Test

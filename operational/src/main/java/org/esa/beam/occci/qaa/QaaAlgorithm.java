@@ -119,12 +119,12 @@ public class QaaAlgorithm {
             aph[i] = a[i] - aw[i] - adg[i];
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
             result.setA_Total((float) a[i], i);
             result.setBB_SPM((float) bb[i], i);
         }
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
             result.setA_PIG((float) aph[i], i);
             result.setA_YS((float) adg[i], i);
         }

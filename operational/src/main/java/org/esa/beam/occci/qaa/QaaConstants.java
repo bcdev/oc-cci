@@ -12,10 +12,7 @@ public final class QaaConstants {
     public static final String MODIS = "MODIS";
     public static final String SEAWIFS = "SEAWIFS";
 
-    static final int NUM_A_TOTAL_BANDS = 5;
-    static final int NUM_BB_SPM_BANDS = 5;
-    static final int NUM_A_PIG_BANDS = 3;
-    static final int NUM_A_YS_BANDS = 3;
+    static final int NUM_IOP_BANDS = 6;
 
     static final int FLAG_MASK_VALID = 0x0001;
     static final int FLAG_MASK_IMAGINARY = 0x0002;

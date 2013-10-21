@@ -23,22 +23,22 @@ public class QaaConfig extends CellProcessorConfig {
     private String[] bandNames;
 
     @Parameter(description = "A comma separated list of band indices defining the output total absorption" +
-            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 4.",
+            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 5.",
             defaultValue = "0,1,2,3,4")
     private int[] aTotalOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output suspended matter" +
-            "backscattering bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 4.",
+            "backscattering bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 5.",
             defaultValue = "0,1,2,3,4")
     private int[] bbSpmOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output pigment absorption" +
-            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 2.",
+            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 5.",
             defaultValue = "0,1,2")
     private int[] aPigOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output yellow substance absorption" +
-            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 2.",
+            "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 5.",
             defaultValue = "0,1,2")
     private int[] aYsOutIndices;
 
