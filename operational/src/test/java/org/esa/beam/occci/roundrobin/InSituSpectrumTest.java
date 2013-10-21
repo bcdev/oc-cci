@@ -4,9 +4,7 @@ package org.esa.beam.occci.roundrobin;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -77,5 +75,38 @@ public class InSituSpectrumTest {
             inSituSpectrum.setSpectralValue(spectralMeasurement, i);
         }
         assertTrue(inSituSpectrum.isComplete());
+    }
+
+    @Test
+    public void testGetWavelengths() {
+        addSpectralMeasurement(10.0, 0);
+        addSpectralMeasurement(11.0, 1);
+        addSpectralMeasurement(12.0, 2);
+        addSpectralMeasurement(13.0, 3);
+        addSpectralMeasurement(14.0, 4);
+        addSpectralMeasurement(15.0, 5);
+
+        final double[] wavelengths = inSituSpectrum.getWavelengths();
+        assertNotNull(wavelengths);
+        assertEquals(6, wavelengths.length);
+
+        for (int i = 0; i < 6; i++) {
+            assertEquals(10.0 + i, wavelengths[i], 1e-8);
+        }
+    }
+
+    @Test
+    public void testGetWavelengths_incompleteSpectrum() {
+        try {
+            inSituSpectrum.getWavelengths();
+            fail("IllegalStateException expected");
+        } catch (IllegalStateException expected) {
+        }
+    }
+
+    private void addSpectralMeasurement(double wavelength, int index) {
+        final SpectralMeasurement spectralMeasurement = new SpectralMeasurement();
+        spectralMeasurement.setWavelength(wavelength);
+        inSituSpectrum.setSpectralValue(spectralMeasurement, index);
     }
 }
