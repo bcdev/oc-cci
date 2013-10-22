@@ -28,6 +28,10 @@ class SpectrumBuilder {
     public static InSituSpectrum create(String[] csvRecord) {
         final InSituSpectrum spectrum = new InSituSpectrum();
 
+        spectrum.setDateTime(csvRecord[0]);
+        spectrum.setLat(csvRecord[1]);
+        spectrum.setLon(csvRecord[2]);
+
         SpectralMeasurement spectralMeasurement = getSpectralMeasurement_412(csvRecord);
         spectrum.setSpectralValue(spectralMeasurement, 0);
 

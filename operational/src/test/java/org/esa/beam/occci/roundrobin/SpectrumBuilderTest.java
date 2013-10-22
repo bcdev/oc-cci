@@ -85,6 +85,33 @@ public class SpectrumBuilderTest {
         assertEquals(443.5, spectralValue.getWavelength(), 1e-8);
     }
 
+    @Test
+    public void testParseDateTime() {
+        final String[] csvRecord = createEmptyStringArray(3);
+        csvRecord[0] = "1998-03-08T22:41:01Z";
+
+        final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
+        assertEquals(csvRecord[0], spectrum.getDateTime());
+    }
+
+    @Test
+    public void testParseLat() {
+        final String[] csvRecord = createEmptyStringArray(3);
+        csvRecord[1] = "-19.087";
+
+        final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
+        assertEquals(csvRecord[1], spectrum.getLat());
+    }
+
+    @Test
+    public void testParseLon() {
+        final String[] csvRecord = createEmptyStringArray(3);
+        csvRecord[2] = "65.998";
+
+        final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
+        assertEquals(csvRecord[2], spectrum.getLon());
+    }
+
     private String[] createEmptyStringArray(int size) {
         final String[] strings = new String[size];
         for (int i = 0; i < strings.length; i++) {
