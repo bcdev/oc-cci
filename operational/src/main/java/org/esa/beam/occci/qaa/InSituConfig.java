@@ -3,9 +3,10 @@ package org.esa.beam.occci.qaa;
 
 class InSituConfig implements SensorConfig {
 
-    private static final double[] awCoefficients = {-1.146, -1.366, -0.469};
+    private static final double[] AW_COEFFICIENTS = {-1.146, -1.366, -0.469};
+
     // absorption coefficients of pure water (Poe & Fry 1997) start at 410 nm step 2.5 nm
-    private static final double[] awPopeFry = {
+    private static final double[] AW_POPE_FRY = {
             0.0000473, 0.0000452, 0.0000444, 0.0000442, 0.0000454, 0.0000474, 0.0000478, 0.0000482, 0.0000495, 0.0000504,
             0.000053, 0.000058, 0.0000635, 0.0000696, 0.0000751, 0.000083, 0.0000922, 0.0000969, 0.0000962, 0.0000957,
             0.0000979, 0.0001005, 0.0001011, 0.000102, 0.000106, 0.000109, 0.000114, 0.000121, 0.000127, 0.000131, 0.000136,
@@ -19,7 +20,7 @@ class InSituConfig implements SensorConfig {
             0.00486, 0.00502, 0.00516, 0.00538};
 
     // backscatter coefficients of pure water (Zhand & Hu, 2009) start at 410 nm step 2.5 nm
-    private static final double[] bbwZhangHu = {0.0059145, 0.0057619, 0.0056142, 0.0054713, 0.0053329, 0.0051989, 0.0050692,
+    private static final double[] BBW_ZHANG_HU = {0.0059145, 0.0057619, 0.0056142, 0.0054713, 0.0053329, 0.0051989, 0.0050692,
             0.0049435, 0.0048217, 0.0047037, 0.0045892, 0.0044783, 0.0043707, 0.0042664, 0.0041652, 0.0040670, 0.0039717,
             0.0038791, 0.0037893, 0.0037021, 0.0036174, 0.0035351, 0.0034552, 0.0033775, 0.0033020, 0.0032286, 0.0031573,
             0.0030879, 0.0030204, 0.0029548, 0.0028909, 0.0028288, 0.0027684, 0.0027095, 0.0026522, 0.0025965, 0.0025422,
@@ -32,8 +33,9 @@ class InSituConfig implements SensorConfig {
             0.0008354, 0.0008222, 0.0008093, 0.0007967, 0.0007843, 0.0007721, 0.0007602, 0.0007485, 0.0007370, 0.0007258,
             0.0007147, 0.0007039, 0.0006933, 0.0006828, 0.0006726, 0.0006626, 0.0006527};
 
-    private static final double lambda0 = 410.0;
-    private static final double lambdaHigh = 690.0;
+    private static final double LAMBDA_LOW = 410.0;
+    private static final double LAMBDA_HIGH = 690.0;
+    private static final double SPECTRAL_STEP = 2.5;
 
     private final double[] wavelengths;
 
@@ -43,7 +45,7 @@ class InSituConfig implements SensorConfig {
 
     @Override
     public double[] getAwCoefficients() {
-        return awCoefficients;
+        return AW_COEFFICIENTS;
     }
 
     @Override
@@ -81,23 +83,23 @@ class InSituConfig implements SensorConfig {
 
     // package access for testing only tb 2013-10-21
     static double getAwAtWavelength(double lambda) {
-        final double awPerCm = interpolateAtWavelength(lambda, awPopeFry);
+        final double awPerCm = interpolateAtWavelength(lambda, AW_POPE_FRY);
         return awPerCm * 100.0;
     }
 
     static double getBbwAtWavelength(double lambda) {
-        return interpolateAtWavelength(lambda, bbwZhangHu);
+        return interpolateAtWavelength(lambda, BBW_ZHANG_HU);
     }
 
     private static double interpolateAtWavelength(double lambda, double[] dataArray) {
-        if (lambda < lambda0 || lambda > lambdaHigh) {
+        if (lambda < LAMBDA_LOW || lambda > LAMBDA_HIGH) {
             throw new IllegalArgumentException("wavelength out of valid range: " + lambda);
         }
 
-        final int lowIndex = (int) Math.floor((lambda - lambda0) / 2.5);
+        final int lowIndex = (int) Math.floor((lambda - LAMBDA_LOW) / SPECTRAL_STEP);
         final int highIndex = lowIndex + 1;
-        final double wlAtLowIndex = lowIndex * 2.5 + lambda0;
-        final double k = (lambda - wlAtLowIndex) / 2.5;
+        final double wlAtLowIndex = lowIndex * SPECTRAL_STEP + LAMBDA_LOW;
+        final double k = (lambda - wlAtLowIndex) / SPECTRAL_STEP;
         return dataArray[lowIndex] * (1.0 - k) + dataArray[highIndex] * k;
     }
 }
