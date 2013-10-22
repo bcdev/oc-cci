@@ -18,6 +18,7 @@ class InSituConfig implements SensorConfig {
             0.00371, 0.00393, 0.0041, 0.00424, 0.00429, 0.00436, 0.00439, 0.00448, 0.00448, 0.00461, 0.00465, 0.00478,
             0.00486, 0.00502, 0.00516, 0.00538};
 
+    // backscatter coefficients of pure water (Zhand & Hu, 2009) start at 410 nm step 2.5 nm
     private static final double[] bbwZhangHu = {0.0059145, 0.0057619, 0.0056142, 0.0054713, 0.0053329, 0.0051989, 0.0050692,
             0.0049435, 0.0048217, 0.0047037, 0.0045892, 0.0044783, 0.0043707, 0.0042664, 0.0041652, 0.0040670, 0.0039717,
             0.0038791, 0.0037893, 0.0037021, 0.0036174, 0.0035351, 0.0034552, 0.0033775, 0.0033020, 0.0032286, 0.0031573,
@@ -69,11 +70,26 @@ class InSituConfig implements SensorConfig {
 
     @Override
     public double[] getSpecficBackscatters() {
-        return new double[0];  //To change body of implemented methods use File | Settings | File Templates.
+        final double[] specificBackscatter = new double[6];
+
+        for (int i = 0; i < wavelengths.length; i++) {
+            specificBackscatter[i] = getBbwAtWavelength(wavelengths[i]);
+
+        }
+        return specificBackscatter;
     }
 
     // package access for testing only tb 2013-10-21
     static double getAwAtWavelength(double lambda) {
+        final double awPerCm = interpolateAtWavelength(lambda, awPopeFry);
+        return awPerCm * 100.0;
+    }
+
+    static double getBbwAtWavelength(double lambda) {
+        return interpolateAtWavelength(lambda, bbwZhangHu);
+    }
+
+    private static double interpolateAtWavelength(double lambda, double[] dataArray) {
         if (lambda < lambda0 || lambda > lambdaHigh) {
             throw new IllegalArgumentException("wavelength out of valid range: " + lambda);
         }
@@ -82,15 +98,6 @@ class InSituConfig implements SensorConfig {
         final int highIndex = lowIndex + 1;
         final double wlAtLowIndex = lowIndex * 2.5 + lambda0;
         final double k = (lambda - wlAtLowIndex) / 2.5;
-        final double awPerCm = awPopeFry[lowIndex] * (1.0 - k) + awPopeFry[highIndex] * k;
-        return awPerCm * 100.0;
-    }
-
-    public static double getBbwAtWavelength(double lambda) {
-        final int lowIndex = (int) Math.floor((lambda - lambda0) / 2.5);
-        final int highIndex = lowIndex + 1;
-        final double wlAtLowIndex = lowIndex * 2.5 + lambda0;
-        final double k = (lambda - wlAtLowIndex) / 2.5;
-        return bbwZhangHu[lowIndex] * (1.0 - k) + bbwZhangHu[highIndex] * k;
+        return dataArray[lowIndex] * (1.0 - k) + dataArray[highIndex] * k;
     }
 }

@@ -35,7 +35,7 @@ public class InSituConfigTest {
     }
 
     @Test
-    public void testGetAbsorptions() {
+    public void testGetSpecificAbsorptions() {
         final double[] expectedAbsorptions = new double[]{0.0045136, 0.006838, 0.015432, 0.044128, 0.057732, 0.43672};
         final double[] wavelengths = {412.7, 442.0, 490.9, 531.4, 551.1, 668.1};
         final InSituConfig inSituConfig = new InSituConfig(wavelengths);
@@ -99,5 +99,31 @@ public class InSituConfigTest {
         assertEquals(0.00233870, InSituConfig.getBbwAtWavelength(510.0), 1e-7);
         assertEquals(0.00157958, InSituConfig.getBbwAtWavelength(560.0), 1e-7);
         assertEquals(0.000772104, InSituConfig.getBbwAtWavelength(665.0), 1e-8);
+    }
+
+    @Test
+    public void testGetBbwAtWavelength_outOfBounds() {
+        try {
+            InSituConfig.getBbwAtWavelength(407.0);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            InSituConfig.getBbwAtWavelength(692.0);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testGetSpecificBackscatters() {
+        final double[] expectedBackscatters = new double[]{0.005750084, 0.00428726, 0.002747196, 0.001967716, 0.00168922, 0.000757392};
+        final double[] wavelengths = {412.7, 442.0, 490.9, 531.4, 551.1, 668.1};
+        final InSituConfig inSituConfig = new InSituConfig(wavelengths);
+
+        final double[] specficBackscatters = inSituConfig.getSpecficBackscatters();
+
+        assertArrayEquals(expectedBackscatters, specficBackscatters, 1e-8);
     }
 }
