@@ -39,9 +39,9 @@ public class BandShiftMain {
             qaaAt443[1] = qaaResult.getA_YS()[1];
             qaaAt443[2] = qaaResult.getBB_SPM()[1];
 
-            final double[] merisBS_rrs = bsMeris.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443, 0.0, 5.0);
-            final double[] modisBS_rrs = bsModis.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443, 0.0, 5.0);
-            final double[] seawifsBS_rrs = bsSeaWiFS.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443, 0.0, 5.0);
+            final double[] merisBS_rrs = bsMeris.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443);
+            final double[] modisBS_rrs = bsModis.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443);
+            final double[] seawifsBS_rrs = bsSeaWiFS.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443);
         }
     }
 }

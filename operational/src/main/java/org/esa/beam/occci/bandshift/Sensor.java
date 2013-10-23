@@ -21,6 +21,8 @@ package org.esa.beam.occci.bandshift;
  * @author MarcoZ
  */
 public enum Sensor {
+    // seawifs satellite wl: 412, 443, 490, 510, 555, 670
+
     // example: [412,443,488,531,547,667]
 
     SEAWIFS(new double[]{412., 490., 510., 555., 555., 555., 667., 667.},
@@ -43,6 +45,8 @@ public enum Sensor {
             new double[]{413., 510., 490., 560., 555., 665., 670.},
             547.0,
             new int[]{1, 3});
+
+
 
     private final double[] lambdaI;
     private final double[] lambdaO;

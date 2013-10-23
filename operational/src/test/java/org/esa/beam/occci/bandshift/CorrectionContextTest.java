@@ -128,6 +128,9 @@ public class CorrectionContextTest {
         assertEquals(443.0, correctionContext.getSpec_model_start(), 1e-8);
         assertEquals(0.0394, correctionContext.getSmsA(), 1e-8);
         assertEquals(0.3435, correctionContext.getSmsB(), 1e-8);
+
+        assertEquals(0.0, correctionContext.getQaaMin(), 1e-8);
+        assertEquals(5.0, correctionContext.getQaaMax(), 1e-8);
     }
 
     @Test
@@ -235,6 +238,9 @@ public class CorrectionContextTest {
         assertEquals(443.0, correctionContext.getSpec_model_start(), 1e-8);
         assertEquals(0.0394, correctionContext.getSmsA(), 1e-8);
         assertEquals(0.3435, correctionContext.getSmsB(), 1e-8);
+
+        assertEquals(0.0, correctionContext.getQaaMin(), 1e-8);
+        assertEquals(5.0, correctionContext.getQaaMax(), 1e-8);
     }
 
     @Test
@@ -342,5 +348,8 @@ public class CorrectionContextTest {
         assertEquals(443.0, correctionContext.getSpec_model_start(), 1e-8);
         assertEquals(0.0394, correctionContext.getSmsA(), 1e-8);
         assertEquals(0.3435, correctionContext.getSmsB(), 1e-8);
+
+        assertEquals(0.0, correctionContext.getQaaMin(), 1e-8);
+        assertEquals(5.0, correctionContext.getQaaMax(), 1e-8);
     }
 }

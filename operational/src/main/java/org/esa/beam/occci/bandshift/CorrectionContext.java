@@ -154,4 +154,12 @@ public class CorrectionContext {
     public double getSpec_model_start() {
         return spec_model_start;
     }
+
+    public double getQaaMin() {
+        return 0.0;
+    }
+
+    public double getQaaMax() {
+        return 5.0;
+    }
 }

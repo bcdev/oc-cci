@@ -42,13 +42,15 @@ public class BandShiftCorrection {
         this.context = context;
     }
 
-    public double[] correctBandshift(double[] rrs, double[] rrs_wavelengths, double[] qaa, double qaa_min, double qaa_max) {
+    public double[] correctBandshift(double[] rrs, double[] rrs_wavelengths, double[] qaa) {
         int number_correction = context.getLambdaI().length;
         Assert.argument(qaa.length == 3, "qaa must have dimension equal to 3");
 
         // Conversion routine needs RRS at blue and green wavelengths. The blue wavelength
         // is always 443, however the green wavelength differs according to the sensor.
-        int blue_index = ArrayUtils.indexOf(rrs_wavelengths, 443.0);
+        // Note: for processing in-situ data, we have a varying blue center wavelength, therefore we read it from the
+        // spec_model_start context variable tb 2013-10-23
+        int blue_index = ArrayUtils.indexOf(rrs_wavelengths, context.getSpec_model_start());
         if (blue_index == ArrayUtils.INDEX_NOT_FOUND) {
             throw new IllegalArgumentException("rrs_wavelengths does not contain blue band at 443");
         }
@@ -70,6 +72,8 @@ public class BandShiftCorrection {
         }
 
         // Determine which intersection bins have valid IOP values (GT MIN and LT MAX)
+        final double qaa_min = context.getQaaMin();
+        final double qaa_max = context.getQaaMax();
         boolean invalid_aph = qaa[APH_INDEX] <= qaa_min || qaa[APH_INDEX] >= qaa_max;
         boolean invalid_acdm = qaa[ACDM_INDEX] <= qaa_min || qaa[ACDM_INDEX] >= qaa_max;
         boolean invalid_bbp = qaa[BBP_INDEX] <= qaa_min || qaa[BBP_INDEX] >= qaa_max;

@@ -47,8 +47,7 @@ public class BandShiftPostProcessor extends CellProcessor {
             qaa[i] = outputVector.get(bandIndices[i + QAA_OFFSET]);
         }
 
-        // @todo 3 tb/tb check if we need to make the thresholds configurable tb 2013-04-22
-        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambdaInterface(), qaa, 0.0, 5.0);
+        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambdaInterface(), qaa);
         if (isCorrected(rrs_corrected)) {
             final double[] rrs_shifted = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
 

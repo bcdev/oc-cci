@@ -10,8 +10,6 @@ import static org.junit.Assert.assertEquals;
 public class BandShiftCorrectionTest_MERIS {
 
     private static final double[] RRS_WAVELENGTHS = new double[]{413.0, 443.0, 490.0, 510.0, 560.0, 665.0 };
-    public static final double QAA_MIN = 0.0;
-    public static final double QAA_MAX = 5.0;
 
     private BandShiftCorrection bandShiftCorrection;
 
@@ -26,7 +24,7 @@ public class BandShiftCorrectionTest_MERIS {
         double[] rrs = new double[]{0.00709421, 0.00560526, 0.00464842, 0.00256442, 0.00196990, 0.00196990};
         double[] qaa = new double[]{0.0189454, 0.00553217, 0.0133541};
 
-        double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, RRS_WAVELENGTHS, qaa, QAA_MIN, QAA_MAX);
+        double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, RRS_WAVELENGTHS, qaa);
         assertEquals(8, rrs_corrected.length);
         assertEquals(0.007140232716, rrs_corrected[0], 1e-6);
         assertEquals(0.004691781010, rrs_corrected[1], 1e-6);
@@ -40,7 +38,7 @@ public class BandShiftCorrectionTest_MERIS {
         rrs = new double[]{0.00711314, 0.00559714, 0.00459386, 0.00249029, 0.00189400, 0.000241144};
         qaa = new double[]{0.0192148, 0.00571175, 0.0138207};
 
-        rrs_corrected = bandShiftCorrection.correctBandshift(rrs, RRS_WAVELENGTHS, qaa, QAA_MIN, QAA_MAX);
+        rrs_corrected = bandShiftCorrection.correctBandshift(rrs, RRS_WAVELENGTHS, qaa);
         assertEquals(8, rrs_corrected.length);
         assertEquals(0.007158774417, rrs_corrected[0], 1e-6);
         assertEquals(0.004635943566, rrs_corrected[1], 1e-6);
