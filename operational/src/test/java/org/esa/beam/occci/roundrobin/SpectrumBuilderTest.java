@@ -2,8 +2,8 @@ package org.esa.beam.occci.roundrobin;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class SpectrumBuilderTest {
 
@@ -14,7 +14,7 @@ public class SpectrumBuilderTest {
         csvRecord[4] = "412.1";
 
         final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
-        final SpectralMeasurement spectralValue = spectrum.getSpectralValue(0);
+        final SpectralMeasurement spectralValue = spectrum.getQaaSpectralValue(0);
         assertNotNull(spectralValue);
         assertEquals(0.4567, spectralValue.getMeasurement(), 1e-8);
         assertEquals(412.1, spectralValue.getWavelength(), 1e-8);
@@ -27,7 +27,7 @@ public class SpectrumBuilderTest {
         csvRecord[6] = "443.1";
 
         final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
-        final SpectralMeasurement spectralValue = spectrum.getSpectralValue(1);
+        final SpectralMeasurement spectralValue = spectrum.getQaaSpectralValue(1);
         assertNotNull(spectralValue);
         assertEquals(0.8662, spectralValue.getMeasurement(), 1e-8);
         assertEquals(443.1, spectralValue.getWavelength(), 1e-8);
@@ -40,7 +40,7 @@ public class SpectrumBuilderTest {
         csvRecord[22] = "412.2";
 
         final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
-        final SpectralMeasurement spectralValue = spectrum.getSpectralValue(0);
+        final SpectralMeasurement spectralValue = spectrum.getQaaSpectralValue(0);
         assertNotNull(spectralValue);
         assertEquals(0.5678, spectralValue.getMeasurement(), 1e-8);
         assertEquals(412.2, spectralValue.getWavelength(), 1e-8);
@@ -53,7 +53,7 @@ public class SpectrumBuilderTest {
         csvRecord[24] = "443.2";
 
         final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
-        final SpectralMeasurement spectralValue = spectrum.getSpectralValue(1);
+        final SpectralMeasurement spectralValue = spectrum.getQaaSpectralValue(1);
         assertNotNull(spectralValue);
         assertEquals(0.6647, spectralValue.getMeasurement(), 1e-8);
         assertEquals(443.2, spectralValue.getWavelength(), 1e-8);
@@ -66,7 +66,7 @@ public class SpectrumBuilderTest {
         csvRecord[36] = "412.3";
 
         final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
-        final SpectralMeasurement spectralValue = spectrum.getSpectralValue(0);
+        final SpectralMeasurement spectralValue = spectrum.getQaaSpectralValue(0);
         assertNotNull(spectralValue);
         assertEquals(0.6789, spectralValue.getMeasurement(), 1e-8);
         assertEquals(412.3, spectralValue.getWavelength(), 1e-8);
@@ -79,7 +79,7 @@ public class SpectrumBuilderTest {
         csvRecord[38] = "443.5";
 
         final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
-        final SpectralMeasurement spectralValue = spectrum.getSpectralValue(1);
+        final SpectralMeasurement spectralValue = spectrum.getQaaSpectralValue(1);
         assertNotNull(spectralValue);
         assertEquals(0.2256, spectralValue.getMeasurement(), 1e-8);
         assertEquals(443.5, spectralValue.getWavelength(), 1e-8);
@@ -110,6 +110,57 @@ public class SpectrumBuilderTest {
 
         final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
         assertEquals(csvRecord[2], spectrum.getLon());
+    }
+
+    @Test
+    public void testParseMerisSpectrum() {
+        final String[] csvRecord = createEmptyStringArray(19);
+        csvRecord[3] = "0.012656";
+        csvRecord[4] = "412";
+        csvRecord[5] = "0.0095722";
+        csvRecord[6] = "443";
+        csvRecord[7] = "0.0060453";
+        csvRecord[8] = "490";
+        csvRecord[9] = "0.0031277";
+        csvRecord[10] = "510";
+        csvRecord[11] = "0.0011844";
+        csvRecord[12] = "560";
+        csvRecord[13] = "0.00011236";
+        csvRecord[14] = "620";
+        csvRecord[15] = "4.2335e-05";
+        csvRecord[16] = "665";
+        csvRecord[17] = "3.6606e-05";
+        csvRecord[18] = "681";
+
+        final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
+        assertNotNull(spectrum);
+        SpectralMeasurement value = spectrum.getMerisSpectralValue(0);
+        assertEquals(0.012656, value.getMeasurement(), 1e-8);
+        assertEquals(412.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getMerisSpectralValue(1);
+        assertEquals(0.0095722, value.getMeasurement(), 1e-8);
+        assertEquals(443.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getMerisSpectralValue(2);
+        assertEquals(0.0060453, value.getMeasurement(), 1e-8);
+        assertEquals(490.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getMerisSpectralValue(3);
+        assertEquals(0.0031277, value.getMeasurement(), 1e-8);
+        assertEquals(510.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getMerisSpectralValue(4);
+        assertEquals(0.0011844, value.getMeasurement(), 1e-8);
+        assertEquals(560.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getMerisSpectralValue(5);
+        assertEquals(0.00011236, value.getMeasurement(), 1e-8);
+        assertEquals(620.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getMerisSpectralValue(6);
+        assertEquals(4.2335e-05, value.getMeasurement(), 1e-8);
+        assertEquals(665.0, value.getWavelength(), 1e-8);
     }
 
     private String[] createEmptyStringArray(int size) {

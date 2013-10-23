@@ -2,67 +2,74 @@ package org.esa.beam.occci.roundrobin;
 
 class InSituSpectrum {
 
-    private static final int NUM_SPECTRAL_VALUES = 6;
+    private static final int NUM_QAA_VALUES = 6;
+    private static final int NUM_MERIS_VALUES = 7;
 
-    private SpectralMeasurement[] spectralMeasurements;
+    private SpectralMeasurement[] qaaMeasurements;
+    private SpectralMeasurement[] merisMeasurements;
     private String dateTime;
     private String lat;
     private String lon;
 
     InSituSpectrum() {
-        spectralMeasurements = new SpectralMeasurement[NUM_SPECTRAL_VALUES];
+        qaaMeasurements = new SpectralMeasurement[NUM_QAA_VALUES];
+        merisMeasurements = new SpectralMeasurement[NUM_MERIS_VALUES];
     }
 
-    SpectralMeasurement getSpectralValue(int index) {
-        if (index < 0 || index >= NUM_SPECTRAL_VALUES) {
-            throw new IllegalArgumentException();
-        }
-        return spectralMeasurements[index];
+    SpectralMeasurement getQaaSpectralValue(int index) {
+        checkValidQaaIndex(index);
+        return qaaMeasurements[index];
     }
 
-    void setSpectralValue(SpectralMeasurement spectralMeasurement, int index) {
-        if (index < 0 || index >= NUM_SPECTRAL_VALUES) {
-            throw new IllegalArgumentException();
-        }
-        spectralMeasurements[index] = spectralMeasurement;
+    void setQaaSpectralValue(SpectralMeasurement spectralMeasurement, int index) {
+        checkValidQaaIndex(index);
+        qaaMeasurements[index] = spectralMeasurement;
     }
 
-    boolean isComplete() {
-        for (SpectralMeasurement spectralMeasurement : spectralMeasurements) {
-            if (spectralMeasurement == null) {
-                return false;
-            }
-        }
+    void setMerisSpectralValue(SpectralMeasurement spectralMeasurement, int index) {
+        checkValidMerisIndex(index);
+        merisMeasurements[index] = spectralMeasurement;
+    }
 
-        return true;
+    SpectralMeasurement getMerisSpectralValue(int index) {
+        checkValidMerisIndex(index);
+        return merisMeasurements[index];
+    }
+
+    boolean isCompleteQaa() {
+        return isCompleteSet(qaaMeasurements);
+    }
+
+    boolean isCompleteMeris() {
+        return isCompleteSet(merisMeasurements);
     }
 
     double[] getWavelengths() {
-        if (!isComplete()) {
+        if (!isCompleteQaa()) {
             throw new IllegalStateException("Incomplete spectrum");
         }
 
-        final double[] wavelengths = new double[NUM_SPECTRAL_VALUES];
-        for (int i = 0; i < NUM_SPECTRAL_VALUES; i++) {
-            wavelengths[i] = spectralMeasurements[i].getWavelength();
+        final double[] wavelengths = new double[NUM_QAA_VALUES];
+        for (int i = 0; i < NUM_QAA_VALUES; i++) {
+            wavelengths[i] = qaaMeasurements[i].getWavelength();
         }
         return wavelengths;
     }
 
     public double[] getMeasurements() {
-        if (!isComplete()) {
+        if (!isCompleteQaa()) {
             throw new IllegalStateException("Incomplete spectrum");
         }
 
-        final double[] measurements = new double[NUM_SPECTRAL_VALUES];
-        for (int i = 0; i < NUM_SPECTRAL_VALUES; i++) {
-            measurements[i] = spectralMeasurements[i].getMeasurement();
+        final double[] measurements = new double[NUM_QAA_VALUES];
+        for (int i = 0; i < NUM_QAA_VALUES; i++) {
+            measurements[i] = qaaMeasurements[i].getMeasurement();
         }
         return measurements;
     }
 
     float[] getMeasurementsFloat() {
-        final float[] measurementsFloat = new float[NUM_SPECTRAL_VALUES];
+        final float[] measurementsFloat = new float[NUM_QAA_VALUES];
         final double[] measurements = getMeasurements();
 
         for (int i = 0; i < measurements.length; i++) {
@@ -79,19 +86,41 @@ class InSituSpectrum {
         this.dateTime = dateTime;
     }
 
-    public String getLat() {
+    String getLat() {
         return lat;
     }
 
-    public void setLat(String lat) {
+    void setLat(String lat) {
         this.lat = lat;
     }
 
-    public String getLon() {
+    String getLon() {
         return lon;
     }
 
-    public void setLon(String lon) {
+    void setLon(String lon) {
         this.lon = lon;
+    }
+
+    private void checkValidQaaIndex(int index) {
+        if (index < 0 || index >= NUM_QAA_VALUES) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkValidMerisIndex(int index) {
+        if (index < 0 || index >= NUM_MERIS_VALUES) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean isCompleteSet(SpectralMeasurement[] spectralMeasurements) {
+        for (SpectralMeasurement spectralMeasurement : spectralMeasurements) {
+            if (spectralMeasurement == null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -26,7 +26,7 @@ public class BandShiftMain {
         String[] record;
         while ((record = csvReader.readRecord()) != null) {
             final InSituSpectrum spectrum = SpectrumBuilder.create(record);
-            if (!spectrum.isComplete()) {
+            if (!spectrum.isCompleteQaa()) {
                 continue;
             }
 

@@ -24,7 +24,7 @@ public class InSituCheckerMain {
 
         while ((record = csvReader.readRecord()) != null) {
             final InSituSpectrum spectrum = SpectrumBuilder.create(record);
-            if (spectrum.isComplete()) {
+            if (spectrum.isCompleteQaa()) {
                 ++countComplete;
                 final String csvLine = StringUtils.arrayToCsv(record);
                 printWriter.println(csvLine);

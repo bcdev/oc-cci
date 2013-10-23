@@ -18,71 +18,124 @@ public class InSituSpectrumTest {
     }
 
     @Test
-    public void testSetGetSpectralValue() {
+    public void testSetGetQaaSpectralValue() {
         final double wavelength = 517.4;
         final double measurementValue = 1.8;
         addSpectralMeasurement(wavelength, measurementValue, 2);
 
-        final SpectralMeasurement value = inSituSpectrum.getSpectralValue(2);
+        final SpectralMeasurement value = inSituSpectrum.getQaaSpectralValue(2);
         assertNotNull(value);
         assertEquals(measurementValue, value.getMeasurement(), 1e-8);
         assertEquals(wavelength, value.getWavelength(), 1e-8);
     }
 
     @Test
-    public void testSetSpectralValue_invalidIndex() {
+    public void testSetQaaSpectralValue_invalidIndex() {
         final SpectralMeasurement spectralMeasurement = new SpectralMeasurement();
 
         try {
-            inSituSpectrum.setSpectralValue(spectralMeasurement, -1);
+            inSituSpectrum.setQaaSpectralValue(spectralMeasurement, -1);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
 
         try {
-            inSituSpectrum.setSpectralValue(spectralMeasurement, 6);
+            inSituSpectrum.setQaaSpectralValue(spectralMeasurement, 6);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
     }
 
     @Test
-    public void testGetSpectralValue_invalidIndex() {
+    public void testGetQaaSpectralValue_invalidIndex() {
         try {
-            inSituSpectrum.getSpectralValue(-1);
+            inSituSpectrum.getQaaSpectralValue(-1);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
 
         try {
-            inSituSpectrum.getSpectralValue(6);
+            inSituSpectrum.getQaaSpectralValue(6);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
     }
 
     @Test
-    public void testIsComplete() {
-        assertFalse(inSituSpectrum.isComplete());
+    public void testSetGetMerisSpectralValue() {
+        final double wavelength = 560.2;
+        final double measurementValue = 0.8;
+        addMerisMeasurement(wavelength, measurementValue, 3);
+
+        final SpectralMeasurement value = inSituSpectrum.getMerisSpectralValue(3);
+        assertNotNull(value);
+        assertEquals(measurementValue, value.getMeasurement(), 1e-8);
+        assertEquals(wavelength, value.getWavelength(), 1e-8);
+    }
+
+    @Test
+    public void testSetMerisSpectralValue_invalidIndex() {
+        final SpectralMeasurement spectralMeasurement = new SpectralMeasurement();
+
+        try {
+            inSituSpectrum.setMerisSpectralValue(spectralMeasurement, -1);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            inSituSpectrum.setMerisSpectralValue(spectralMeasurement, 7);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testGetMerisSpectralValue_invalidIndex() {
+        try {
+            inSituSpectrum.getMerisSpectralValue(-1);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            inSituSpectrum.getMerisSpectralValue(7);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testIsCompleteQaa() {
+        assertFalse(inSituSpectrum.isCompleteQaa());
 
         addSpectralMeasurement(1.0, 0.0, 0);
-        assertFalse(inSituSpectrum.isComplete());
+        assertFalse(inSituSpectrum.isCompleteQaa());
 
         for (int i = 1; i < 6; i++) {
             addSpectralMeasurement(1.0, 0.0, i);
         }
-        assertTrue(inSituSpectrum.isComplete());
+        assertTrue(inSituSpectrum.isCompleteQaa());
+    }
+
+    @Test
+    public void testIsCompleteMeris() {
+        assertFalse(inSituSpectrum.isCompleteMeris());
+
+        addMerisMeasurement(1.0, 0.0, 3);
+        assertFalse(inSituSpectrum.isCompleteMeris());
+
+        for (int i = 0; i < 7; i++) {
+            addMerisMeasurement(1.0, i, i);
+        }
+        assertTrue(inSituSpectrum.isCompleteMeris());
     }
 
     @Test
     public void testGetWavelengths() {
-        // @todo 4 tb/tb make loop
-        addSpectralMeasurement(10.0, 0, 0);
-        addSpectralMeasurement(11.0, 0, 1);
-        addSpectralMeasurement(12.0, 0, 2);
-        addSpectralMeasurement(13.0, 0, 3);
-        addSpectralMeasurement(14.0, 0, 4);
-        addSpectralMeasurement(15.0, 0, 5);
+        for (int i = 0; i < 6; i++) {
+            addSpectralMeasurement(10.0 + i, 0, i);
+        }
 
         final double[] wavelengths = inSituSpectrum.getWavelengths();
         assertNotNull(wavelengths);
@@ -151,9 +204,19 @@ public class InSituSpectrumTest {
     }
 
     private void addSpectralMeasurement(double wavelength, double value, int index) {
+        final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);
+        inSituSpectrum.setQaaSpectralValue(spectralMeasurement, index);
+    }
+
+    private void addMerisMeasurement(double wavelength, double value, int index) {
+        final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);
+        inSituSpectrum.setMerisSpectralValue(spectralMeasurement, index);
+    }
+
+    private SpectralMeasurement createSpectralMeasurement(double wavelength, double value) {
         final SpectralMeasurement spectralMeasurement = new SpectralMeasurement();
         spectralMeasurement.setWavelength(wavelength);
         spectralMeasurement.setMeasurement(value);
-        inSituSpectrum.setSpectralValue(spectralMeasurement, index);
+        return spectralMeasurement;
     }
 }
