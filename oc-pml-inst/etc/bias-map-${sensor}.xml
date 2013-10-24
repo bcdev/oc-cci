@@ -78,18 +78,5 @@
             </wps:Data>
         </wps:Input>
 
-        <wps:Input>
-            <ows:Identifier>calvalus.output.format</ows:Identifier>
-            <wps:Data>
-                <wps:LiteralData>NetCDF4-BEAM</wps:LiteralData>
-            </wps:Data>
-        </wps:Input>
-        <wps:Input>
-            <ows:Identifier>calvalus.output.prefix</ows:Identifier>
-            <wps:Data>
-                <wps:LiteralData>OC-${sensor}-bias</wps:LiteralData>
-            </wps:Data>
-        </wps:Input>
-
     </wps:DataInputs>
 </wps:Execute>

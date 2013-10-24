@@ -50,6 +50,7 @@ class OcModis(Daemon):
                 months = months2012
 
             for month in months:
+                formatInputs = []
                 (minDate, maxDate) = getMinMaxDate(year, month)
 
                 # for now because we have not more test-data
@@ -64,15 +65,32 @@ class OcModis(Daemon):
                                'month', month ,\
                                'doy', '%03d' % (singleDay.timetuple().tm_yday)  ]
                     pm.execute('template-step.py', ['MODIS_L3_daily'], [modisDailyBSName], parameters=modisDailyBSParams, logprefix=modisDailyBSName)
+
+                    formatInputs.append(modisDailyBSName)
                     if year >= '2003' and year <= '2007':
                         biasInputs.append(modisDailyBSName)
 
+                modisFormatBSName = 'modis-daily-bs-format-' + month + '-' + year
+                modisFormatBSParams = ['l3format-\${prefix}-\${date}.xml', \
+                               'date', month + '-' + year, \
+                               'inputPath', 'modis/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
+                               'outputPath', 'modis/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
+                               'prefix', 'OC-modis-daily-bs' ]
+                pm.execute('template-step.py', formatInputs, [modisFormatBSName], parameters=modisFormatBSParams, logprefix=modisFormatBSName)
 
         biasMapName = 'modis-bias-map'
         biasMapParams = ['bias-map-\${sensor}.xml', \
                                'sensor', 'modis', \
                                'sensorMarker', '11' ]
         pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
+
+        biasFormatName = 'modis-bias-map-format'
+        biasFormatParams = ['l3format-\${prefix}-\${date}.xml', \
+                       'date', '5years', \
+                       'inputPath', 'modis/bias-map-parts/part-*', \
+                       'outputPath', 'modis/bias-map-netcdf-mapped', \
+                       'prefix', 'OC-modis-bias' ]
+        pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
 
         #======================================================
         pm.wait_for_completion()

@@ -53,6 +53,8 @@ class OcMeris(Daemon):
                 months = months2012
 
             for month in months:
+                formatInputs = []
+                formatBSInputs = []
                 (minDate, maxDate) = getMinMaxDate(year, month)
                 polymerName = 'polymer-' + str(minDate)
                 polymerParams = ['polymer-\${year}-\${month}.xml', \
@@ -73,6 +75,7 @@ class OcMeris(Daemon):
                               'year', year, \
                               'month', month ]
                     pm.execute('template-step.py', [polymerName], [merisDailyName], parameters=merisDailyParams, logprefix=merisDailyName)
+                    formatInputs.append(merisDailyName)
 
                     merisDailyBSName = 'meris-daily-bs-' + str(singleDay)
                     merisDailyBSParams = ['meris-daily-bs-\${date}.xml', \
@@ -80,15 +83,40 @@ class OcMeris(Daemon):
                                'year', year, \
                                'month', month ]
                     pm.execute('template-step.py', [merisDailyName], [merisDailyBSName], parameters=merisDailyBSParams, logprefix=merisDailyBSName)
+
+                    formatBSInputs.append(merisDailyBSName)
                     if year >= '2003' and year <= '2007':
                         biasInputs.append(merisDailyBSName)
 
+                merisFormatName = 'meris-daily-format-' + month + '-' + year
+                merisFormatParams = ['l3format-\${prefix}-\${date}.xml', \
+                               'date', month + '-' + year, \
+                               'inputPath', 'meris/daily/' + year + '/' + month + '/????-??-??-L3-1/part-*', \
+                               'outputPath', 'meris/daily/' + year + '/' + month + '/netcdf-mapped', \
+                               'prefix', 'OC-meris-daily' ]
+                pm.execute('template-step.py', formatInputs, [merisFormatName], parameters=merisFormatParams, logprefix=merisFormatName)
+
+                merisFormatBSName = 'meris-daily-bs-format-' + month + '-' + year
+                merisFormatBSParams = ['l3format-\${prefix}-\${date}.xml', \
+                               'date', month + '-' + year, \
+                               'inputPath', 'meris/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
+                               'outputPath', 'meris/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
+                               'prefix', 'OC-meris-daily-bs' ]
+                pm.execute('template-step.py', formatBSInputs, [merisFormatBSName], parameters=merisFormatBSParams, logprefix=merisFormatBSName)
 
         biasMapName = 'meris-bias-map'
         biasMapParams = ['bias-map-\${sensor}.xml', \
                                'sensor', 'meris', \
                                'sensorMarker', '10' ]
         pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
+
+        biasFormatName = 'meris-bias-map-format'
+        biasFormatParams = ['l3format-\${prefix}-\${date}.xml', \
+                       'date', '5years', \
+                       'inputPath', 'meris/bias-map-parts/part-*', \
+                       'outputPath', 'meris/bias-map-netcdf-mapped', \
+                       'prefix', 'OC-meris-bias' ]
+        pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
 
         #======================================================
         pm.wait_for_completion()

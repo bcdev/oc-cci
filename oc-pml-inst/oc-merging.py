@@ -50,6 +50,7 @@ class OcMerging(Daemon):
                 months = months2012
 
             for month in months:
+                formatInputs = []
                 (minDate, maxDate) = getMinMaxDate(year, month)
 
                 # for now because we have not more test-data
@@ -63,6 +64,15 @@ class OcMerging(Daemon):
                                'year', year, \
                                'month', month  ]
                     pm.execute('template-step.py', ['input'], [mergedName], parameters=mergedParams, logprefix=mergedName)
+                    formatInputs.append(mergedName)
+
+                mergedFormatName = 'merged-daily-format-' + month + '-' + year
+                mergedFormatParams = ['l3format-\${prefix}-\${date}.xml', \
+                               'date', month + '-' + year, \
+                               'inputPath', 'merged-daily/' + year + '/' + month + '/????-??-??-parts/part-*', \
+                               'outputPath', 'merged-daily/' + year + '/' + month + '/netcdf-mapped', \
+                               'prefix', 'OC-merged-daily' ]
+                pm.execute('template-step.py', formatInputs, [mergedFormatName], parameters=mergedFormatParams, logprefix=mergedFormatName)
 
         #======================================================
         pm.wait_for_completion()

@@ -32,7 +32,7 @@
         <wps:Input>
             <ows:Identifier>calvalus.output.dir</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/merged/${year}/${month}/${date}</wps:LiteralData>
+                <wps:LiteralData>/calvalus/projects/oc-pml/merged-daily/${year}/${month}/${date}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -79,19 +79,6 @@
                         </postProcessor>
                     </parameters>
                 </wps:ComplexData>
-            </wps:Data>
-        </wps:Input>
-
-        <wps:Input>
-            <ows:Identifier>calvalus.output.format</ows:Identifier>
-            <wps:Data>
-                <wps:LiteralData>NetCDF4-BEAM</wps:LiteralData>
-            </wps:Data>
-        </wps:Input>
-        <wps:Input>
-            <ows:Identifier>calvalus.output.prefix</ows:Identifier>
-            <wps:Data>
-                <wps:LiteralData>OC-merged</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 

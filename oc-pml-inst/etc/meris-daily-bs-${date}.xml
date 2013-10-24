@@ -56,19 +56,6 @@
             </wps:Data>
         </wps:Input>
 
-        <wps:Input>
-            <ows:Identifier>outputFormat</ows:Identifier>
-            <wps:Data>
-                <wps:LiteralData>NetCDF4-BEAM</wps:LiteralData>
-            </wps:Data>
-        </wps:Input>
-        <wps:Input>
-            <ows:Identifier>calvalus.output.prefix</ows:Identifier>
-            <wps:Data>
-                <wps:LiteralData>OC-meris-daily-bs</wps:LiteralData>
-            </wps:Data>
-        </wps:Input>
-
     </wps:DataInputs>
 </wps:Execute>
 
