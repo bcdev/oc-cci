@@ -4,9 +4,11 @@ class InSituSpectrum {
 
     private static final int NUM_QAA_VALUES = 6;
     private static final int NUM_MERIS_VALUES = 7;
+    private static final int NUM_MODIS_VALUES = 7;
 
     private SpectralMeasurement[] qaaMeasurements;
     private SpectralMeasurement[] merisMeasurements;
+    private SpectralMeasurement[] modisMeasurements;
     private String dateTime;
     private String lat;
     private String lon;
@@ -14,6 +16,7 @@ class InSituSpectrum {
     InSituSpectrum() {
         qaaMeasurements = new SpectralMeasurement[NUM_QAA_VALUES];
         merisMeasurements = new SpectralMeasurement[NUM_MERIS_VALUES];
+        modisMeasurements = new SpectralMeasurement[NUM_MODIS_VALUES];
     }
 
     SpectralMeasurement getQaaSpectralValue(int index) {
@@ -34,6 +37,16 @@ class InSituSpectrum {
     SpectralMeasurement getMerisSpectralValue(int index) {
         checkValidMerisIndex(index);
         return merisMeasurements[index];
+    }
+
+    void setModisSpectralValue(SpectralMeasurement spectralMeasurement, int index) {
+        checkValidModisIndex(index);
+        modisMeasurements[index] = spectralMeasurement;
+    }
+
+    SpectralMeasurement getModisSpectralValue(int index) {
+        checkValidModisIndex(index);
+        return modisMeasurements[index];
     }
 
     boolean isCompleteQaa() {
@@ -110,6 +123,12 @@ class InSituSpectrum {
 
     private void checkValidMerisIndex(int index) {
         if (index < 0 || index >= NUM_MERIS_VALUES) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkValidModisIndex(int index) {
+        if (index < 0 || index >= NUM_MODIS_VALUES) {
             throw new IllegalArgumentException();
         }
     }

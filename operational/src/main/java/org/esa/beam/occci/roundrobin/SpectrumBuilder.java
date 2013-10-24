@@ -19,6 +19,7 @@ class SpectrumBuilder {
     private static final int MODIS_BAND_531_IDX = 27;
     private static final int MODIS_BAND_547_IDX = 29;
     private static final int MODIS_BAND_667_IDX = 31;
+    private static final int MODIS_BAND_678_IDX = 33;
 
     private static final int SEAWIFS_BAND_412_IDX = 35;
     private static final int SEAWIFS_BAND_443_IDX = 37;
@@ -33,8 +34,19 @@ class SpectrumBuilder {
         parseTimeAndLocation(csvRecords, spectrum);
         parseQaaSpectrum(csvRecords, spectrum);
         parseMerisSpectrum(csvRecords, spectrum);
+        parseModisSpectrum(csvRecords, spectrum);
 
         return spectrum;
+    }
+
+    private static void parseModisSpectrum(String[] csvRecords, InSituSpectrum spectrum) {
+        spectrum.setModisSpectralValue(getMeasurement(csvRecords, MODIS_BAND_412_IDX), 0);
+        spectrum.setModisSpectralValue(getMeasurement(csvRecords, MODIS_BAND_443_IDX), 1);
+        spectrum.setModisSpectralValue(getMeasurement(csvRecords, MODIS_BAND_488_IDX), 2);
+        spectrum.setModisSpectralValue(getMeasurement(csvRecords, MODIS_BAND_531_IDX), 3);
+        spectrum.setModisSpectralValue(getMeasurement(csvRecords, MODIS_BAND_547_IDX), 4);
+        spectrum.setModisSpectralValue(getMeasurement(csvRecords, MODIS_BAND_667_IDX), 5);
+        spectrum.setModisSpectralValue(getMeasurement(csvRecords, MODIS_BAND_678_IDX), 6);
     }
 
     private static void parseMerisSpectrum(String[] csvRecords, InSituSpectrum spectrum) {
@@ -114,13 +126,12 @@ class SpectrumBuilder {
     }
 
     private static SpectralMeasurement getSpectralMeasurement_510(String[] csvRecords) {
-        SpectralMeasurement spectralMeasurement = null;
-        if (isBandPresent(csvRecords, MERIS_BAND_510_IDX)) {
-            spectralMeasurement = parseSpectralMeasurement(csvRecords, MERIS_BAND_510_IDX);
-        } else if (isBandPresent(csvRecords, MODIS_BAND_531_IDX)) {
-            spectralMeasurement = parseSpectralMeasurement(csvRecords, MODIS_BAND_531_IDX);
-        } else if (isBandPresent(csvRecords, SEAWIFS_BAND_510_IDX)) {
-            spectralMeasurement = parseSpectralMeasurement(csvRecords, SEAWIFS_BAND_510_IDX);
+        SpectralMeasurement spectralMeasurement = getMeasurement(csvRecords, MERIS_BAND_510_IDX);
+        if (spectralMeasurement == null) {
+            spectralMeasurement = getMeasurement(csvRecords, MODIS_BAND_531_IDX);
+            if (spectralMeasurement == null) {
+                spectralMeasurement = getMeasurement(csvRecords, SEAWIFS_BAND_510_IDX);
+            }
         }
         return spectralMeasurement;
     }

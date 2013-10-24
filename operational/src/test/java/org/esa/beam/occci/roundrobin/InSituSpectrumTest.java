@@ -106,6 +106,50 @@ public class InSituSpectrumTest {
     }
 
     @Test
+    public void testSetGetModisSpectralValue() {
+        final double wavelength = 531.5;
+        final double measurementValue = 0.092;
+        addModisMeasurement(wavelength, measurementValue, 4);
+
+        final SpectralMeasurement value = inSituSpectrum.getModisSpectralValue(4);
+        assertNotNull(value);
+        assertEquals(measurementValue, value.getMeasurement(), 1e-8);
+        assertEquals(wavelength, value.getWavelength(), 1e-8);
+    }
+
+    @Test
+    public void testSetModisSpectralValue_invalidIndex() {
+        final SpectralMeasurement spectralMeasurement = new SpectralMeasurement();
+
+        try {
+            inSituSpectrum.setModisSpectralValue(spectralMeasurement, -1);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            inSituSpectrum.setModisSpectralValue(spectralMeasurement, 7);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testGetModisSpectralValue_invalidIndex() {
+        try {
+            inSituSpectrum.getModisSpectralValue(-1);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            inSituSpectrum.getModisSpectralValue(7);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
     public void testIsCompleteQaa() {
         assertFalse(inSituSpectrum.isCompleteQaa());
 
@@ -211,6 +255,11 @@ public class InSituSpectrumTest {
     private void addMerisMeasurement(double wavelength, double value, int index) {
         final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);
         inSituSpectrum.setMerisSpectralValue(spectralMeasurement, index);
+    }
+
+    private void addModisMeasurement(double wavelength, double value, int index) {
+        final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);
+        inSituSpectrum.setModisSpectralValue(spectralMeasurement, index);
     }
 
     private SpectralMeasurement createSpectralMeasurement(double wavelength, double value) {

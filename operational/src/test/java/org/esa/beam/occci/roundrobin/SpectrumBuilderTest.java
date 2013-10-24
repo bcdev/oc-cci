@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class SpectrumBuilderTest {
 
@@ -161,6 +162,54 @@ public class SpectrumBuilderTest {
         value = spectrum.getMerisSpectralValue(6);
         assertEquals(4.2335e-05, value.getMeasurement(), 1e-8);
         assertEquals(665.0, value.getWavelength(), 1e-8);
+    }
+
+    @Test
+    public void testParseModisSpectrum() {
+        final String[] csvRecord = createEmptyStringArray(35);
+        csvRecord[21] = "0.011445";
+        csvRecord[22] = "412";
+        csvRecord[23] = "0.008856";
+        csvRecord[24] = "443";
+        csvRecord[25] = "0.0064771";
+        csvRecord[26] = "490";
+        csvRecord[27] = "";
+        csvRecord[28] = "";
+        csvRecord[29] = "";
+        csvRecord[30] = "";
+        csvRecord[31] = "0.00010887";
+        csvRecord[32] = "667";
+        csvRecord[33] = "0.00012887";
+        csvRecord[34] = "678";
+
+        final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
+        assertNotNull(spectrum);
+
+        SpectralMeasurement value = spectrum.getModisSpectralValue(0);
+        assertEquals(0.011445, value.getMeasurement(), 1e-8);
+        assertEquals(412.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getModisSpectralValue(1);
+        assertEquals(0.008856, value.getMeasurement(), 1e-8);
+        assertEquals(443.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getModisSpectralValue(2);
+        assertEquals(0.0064771, value.getMeasurement(), 1e-8);
+        assertEquals(490.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getModisSpectralValue(3);
+        assertNull(value);
+
+        value = spectrum.getModisSpectralValue(4);
+        assertNull(value);
+
+        value = spectrum.getModisSpectralValue(5);
+        assertEquals(0.00010887, value.getMeasurement(), 1e-8);
+        assertEquals(667.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getModisSpectralValue(6);
+        assertEquals(0.00012887, value.getMeasurement(), 1e-8);
+        assertEquals(678.0, value.getWavelength(), 1e-8);
     }
 
     private String[] createEmptyStringArray(int size) {
