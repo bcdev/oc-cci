@@ -76,7 +76,7 @@ class OcSeawifs(Daemon):
                                'inputPath', 'seawifs/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
                                'outputPath', 'seawifs/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
                                'prefix', 'OC-seawifs-daily-bs' ]
-                pm.execute('template-step.py', formatInputs, [seawifsFormatBSName], parameters=seawifsFormatBSParams, logprefix=seawifsFormatBSName)
+                #pm.execute('template-step.py', formatInputs, [seawifsFormatBSName], parameters=seawifsFormatBSParams, logprefix=seawifsFormatBSName)
 
         biasMapName = 'seawifs-bias-map'
         biasMapParams = ['bias-map-\${sensor}.xml', \
@@ -90,7 +90,7 @@ class OcSeawifs(Daemon):
                        'inputPath', 'seawifs/bias-map-parts/part-*', \
                        'outputPath', 'seawifs/bias-map-netcdf-mapped', \
                        'prefix', 'OC-seawifs-bias' ]
-        pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
+        #pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
 
         #======================================================
         pm.wait_for_completion()

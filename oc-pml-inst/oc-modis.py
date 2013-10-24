@@ -76,7 +76,7 @@ class OcModis(Daemon):
                                'inputPath', 'modis/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
                                'outputPath', 'modis/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
                                'prefix', 'OC-modis-daily-bs' ]
-                pm.execute('template-step.py', formatInputs, [modisFormatBSName], parameters=modisFormatBSParams, logprefix=modisFormatBSName)
+                #pm.execute('template-step.py', formatInputs, [modisFormatBSName], parameters=modisFormatBSParams, logprefix=modisFormatBSName)
 
         biasMapName = 'modis-bias-map'
         biasMapParams = ['bias-map-\${sensor}.xml', \
@@ -90,7 +90,7 @@ class OcModis(Daemon):
                        'inputPath', 'modis/bias-map-parts/part-*', \
                        'outputPath', 'modis/bias-map-netcdf-mapped', \
                        'prefix', 'OC-modis-bias' ]
-        pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
+        #pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
 
         #======================================================
         pm.wait_for_completion()

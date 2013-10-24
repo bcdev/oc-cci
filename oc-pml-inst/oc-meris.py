@@ -94,7 +94,7 @@ class OcMeris(Daemon):
                                'inputPath', 'meris/daily/' + year + '/' + month + '/????-??-??-L3-1/part-*', \
                                'outputPath', 'meris/daily/' + year + '/' + month + '/netcdf-mapped', \
                                'prefix', 'OC-meris-daily' ]
-                pm.execute('template-step.py', formatInputs, [merisFormatName], parameters=merisFormatParams, logprefix=merisFormatName)
+                #pm.execute('template-step.py', formatInputs, [merisFormatName], parameters=merisFormatParams, logprefix=merisFormatName)
 
                 merisFormatBSName = 'meris-daily-bs-format-' + month + '-' + year
                 merisFormatBSParams = ['l3format-\${prefix}-\${date}.xml', \
@@ -102,7 +102,7 @@ class OcMeris(Daemon):
                                'inputPath', 'meris/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
                                'outputPath', 'meris/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
                                'prefix', 'OC-meris-daily-bs' ]
-                pm.execute('template-step.py', formatBSInputs, [merisFormatBSName], parameters=merisFormatBSParams, logprefix=merisFormatBSName)
+                #pm.execute('template-step.py', formatBSInputs, [merisFormatBSName], parameters=merisFormatBSParams, logprefix=merisFormatBSName)
 
         biasMapName = 'meris-bias-map'
         biasMapParams = ['bias-map-\${sensor}.xml', \
@@ -116,7 +116,7 @@ class OcMeris(Daemon):
                        'inputPath', 'meris/bias-map-parts/part-*', \
                        'outputPath', 'meris/bias-map-netcdf-mapped', \
                        'prefix', 'OC-meris-bias' ]
-        pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
+        #pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
 
         #======================================================
         pm.wait_for_completion()
