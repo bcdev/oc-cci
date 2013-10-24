@@ -1,10 +1,12 @@
 package org.esa.beam.occci.roundrobin;
 
+import org.esa.beam.util.io.CsvReader;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import java.io.CharArrayReader;
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 public class SpectrumBuilderTest {
 
@@ -210,6 +212,123 @@ public class SpectrumBuilderTest {
         value = spectrum.getModisSpectralValue(6);
         assertEquals(0.00012887, value.getMeasurement(), 1e-8);
         assertEquals(678.0, value.getWavelength(), 1e-8);
+    }
+
+    @Test
+    public void testParseSeawifsSpectrum() {
+        final String[] csvRecord = createEmptyStringArray(47);
+        csvRecord[35] = "0.0027205";
+        csvRecord[36] = "412";
+        csvRecord[37] = "0.0035186";
+        csvRecord[38] = "443";
+        csvRecord[39] = "0.0049938";
+        csvRecord[40] = "490";
+        csvRecord[41] = "0.0045968";
+        csvRecord[42] = "510";
+        csvRecord[43] = "0.003919";
+        csvRecord[44] = "555";
+        csvRecord[45] = "0.00055774";
+        csvRecord[46] = "670";
+
+        final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
+        assertNotNull(spectrum);
+
+        SpectralMeasurement value = spectrum.getSeaWiFSSpectralValue(0);
+        assertEquals(0.0027205, value.getMeasurement(), 1e-8);
+        assertEquals(412.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getSeaWiFSSpectralValue(1);
+        assertEquals(0.0035186, value.getMeasurement(), 1e-8);
+        assertEquals(443.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getSeaWiFSSpectralValue(2);
+        assertEquals(0.0049938, value.getMeasurement(), 1e-8);
+        assertEquals(490.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getSeaWiFSSpectralValue(3);
+        assertEquals(0.0045968, value.getMeasurement(), 1e-8);
+        assertEquals(510.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getSeaWiFSSpectralValue(4);
+        assertEquals(0.003919, value.getMeasurement(), 1e-8);
+        assertEquals(555.0, value.getWavelength(), 1e-8);
+
+        value = spectrum.getSeaWiFSSpectralValue(5);
+        assertEquals(0.00055774, value.getMeasurement(), 1e-8);
+        assertEquals(670.0, value.getWavelength(), 1e-8);
+    }
+
+    @Test
+    public void testReadCompleteLine() throws IOException {
+        final String line = "2009-08-24T19:18:22Z,41.300000,-70.550000,0.0037194,412.7,0.0045512,442,0.0068333,490.9,,,,,,,0.00228,668.1,,,,,0.0037194,412.7,0.0045512,442,0.0068333,490.9,0.008975,531.4,0.0089148,551.1,0.00228,668.1,,,0.0037194,412.7,0.0045512,442,0.0068333,490.9,,,0.0089148,551.1,0.00228,668.1,1.939545,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,aoc_MVCO,aoc_MVCO,Hui_Feng_and_Heidi_M._Sosik,,,,0,,,,,,,0,,,,,,,,0";
+        final CharArrayReader reader = new CharArrayReader(line.toCharArray());
+        final CsvReader csvReader = new CsvReader(reader, new char[]{','});
+        final String[] record = csvReader.readRecord();
+
+        final InSituSpectrum spectrum = SpectrumBuilder.create(record);
+        assertNotNull(spectrum);
+
+        assertEquals("2009-08-24T19:18:22Z", spectrum.getDateTime());
+        assertEquals("41.300000", spectrum.getLat());
+        assertEquals("-70.550000", spectrum.getLon());
+
+        SpectralMeasurement value = spectrum.getMerisSpectralValue(0);
+        assertEquals(0.0037194, value.getMeasurement(), 1e-8);
+        assertEquals(412.7, value.getWavelength(), 1e-8);
+        value = spectrum.getMerisSpectralValue(1);
+        assertEquals(0.0045512, value.getMeasurement(), 1e-8);
+        assertEquals(442, value.getWavelength(), 1e-8);
+        value = spectrum.getMerisSpectralValue(2);
+        assertEquals(0.0068333, value.getMeasurement(), 1e-8);
+        assertEquals(490.9, value.getWavelength(), 1e-8);
+        value = spectrum.getMerisSpectralValue(3);
+        assertNull(value);
+        value = spectrum.getMerisSpectralValue(4);
+        assertNull(value);
+        value = spectrum.getMerisSpectralValue(5);
+        assertNull(value);
+        value = spectrum.getMerisSpectralValue(6);
+        assertEquals(0.00228, value.getMeasurement(), 1e-8);
+        assertEquals(668.1, value.getWavelength(), 1e-8);
+
+        value = spectrum.getModisSpectralValue(0);
+        assertEquals(0.0037194, value.getMeasurement(), 1e-8);
+        assertEquals(412.7, value.getWavelength(), 1e-8);
+        value = spectrum.getModisSpectralValue(1);
+        assertEquals(0.0045512, value.getMeasurement(), 1e-8);
+        assertEquals(442, value.getWavelength(), 1e-8);
+        value = spectrum.getModisSpectralValue(2);
+        assertEquals(0.0068333, value.getMeasurement(), 1e-8);
+        assertEquals(490.9, value.getWavelength(), 1e-8);
+        value = spectrum.getModisSpectralValue(3);
+        assertEquals(0.008975, value.getMeasurement(), 1e-8);
+        assertEquals(531.4, value.getWavelength(), 1e-8);
+        value = spectrum.getModisSpectralValue(4);
+        assertEquals(0.0089148, value.getMeasurement(), 1e-8);
+        assertEquals(551.1, value.getWavelength(), 1e-8);
+        value = spectrum.getModisSpectralValue(5);
+        assertEquals(0.00228, value.getMeasurement(), 1e-8);
+        assertEquals(668.1, value.getWavelength(), 1e-8);
+        value = spectrum.getModisSpectralValue(6);
+        assertNull(value);
+
+        value = spectrum.getSeaWiFSSpectralValue(0);
+        assertEquals(0.0037194, value.getMeasurement(), 1e-8);
+        assertEquals(412.7, value.getWavelength(), 1e-8);
+        value = spectrum.getSeaWiFSSpectralValue(1);
+        assertEquals(0.0045512, value.getMeasurement(), 1e-8);
+        assertEquals(442.0, value.getWavelength(), 1e-8);
+        value = spectrum.getSeaWiFSSpectralValue(2);
+        assertEquals(0.0068333, value.getMeasurement(), 1e-8);
+        assertEquals(490.9, value.getWavelength(), 1e-8);
+        value = spectrum.getSeaWiFSSpectralValue(3);
+        assertNull(value);
+        value = spectrum.getSeaWiFSSpectralValue(4);
+        assertEquals(0.0089148, value.getMeasurement(), 1e-8);
+        assertEquals(551.1, value.getWavelength(), 1e-8);
+        value = spectrum.getSeaWiFSSpectralValue(5);
+        assertEquals(0.00228, value.getMeasurement(), 1e-8);
+        assertEquals(668.1, value.getWavelength(), 1e-8);
     }
 
     private String[] createEmptyStringArray(int size) {

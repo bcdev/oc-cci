@@ -150,6 +150,50 @@ public class InSituSpectrumTest {
     }
 
     @Test
+    public void testSetGetSeawifsSpectralValue() {
+        final double wavelength = 555.6;
+        final double measurementValue = 0.052;
+        addSeawifsMeasurement(wavelength, measurementValue, 5);
+
+        final SpectralMeasurement value = inSituSpectrum.getSeaWiFSSpectralValue(5);
+        assertNotNull(value);
+        assertEquals(measurementValue, value.getMeasurement(), 1e-8);
+        assertEquals(wavelength, value.getWavelength(), 1e-8);
+    }
+
+    @Test
+    public void testSetSeawifsSpectralValue_invalidIndex() {
+        final SpectralMeasurement spectralMeasurement = new SpectralMeasurement();
+
+        try {
+            inSituSpectrum.setSeaWiFSSpectralValue(spectralMeasurement, -1);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            inSituSpectrum.setSeaWiFSSpectralValue(spectralMeasurement, 6);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testGetSeawifsSpectralValue_invalidIndex() {
+        try {
+            inSituSpectrum.getSeaWiFSSpectralValue(-1);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            inSituSpectrum.getSeaWiFSSpectralValue(6);
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
     public void testIsCompleteQaa() {
         assertFalse(inSituSpectrum.isCompleteQaa());
 
@@ -173,6 +217,19 @@ public class InSituSpectrumTest {
             addMerisMeasurement(1.0, i, i);
         }
         assertTrue(inSituSpectrum.isCompleteMeris());
+    }
+
+    @Test
+    public void testIsCompleteModis() {
+        assertFalse(inSituSpectrum.isCompleteModis());
+
+        addModisMeasurement(2.0, 0.0, 4);
+        assertFalse(inSituSpectrum.isCompleteModis());
+
+        for (int i = 0; i < 7; i++) {
+            addModisMeasurement(1.0, i, i);
+        }
+        assertTrue(inSituSpectrum.isCompleteModis());
     }
 
     @Test
@@ -260,6 +317,11 @@ public class InSituSpectrumTest {
     private void addModisMeasurement(double wavelength, double value, int index) {
         final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);
         inSituSpectrum.setModisSpectralValue(spectralMeasurement, index);
+    }
+
+    private void addSeawifsMeasurement(double wavelength, double value, int index) {
+        final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);
+        inSituSpectrum.setSeaWiFSSpectralValue(spectralMeasurement, index);
     }
 
     private SpectralMeasurement createSpectralMeasurement(double wavelength, double value) {
