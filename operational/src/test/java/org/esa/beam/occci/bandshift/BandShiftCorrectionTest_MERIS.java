@@ -21,19 +21,20 @@ public class BandShiftCorrectionTest_MERIS {
 
     @Test
     public void testCorrectBandshift() throws Exception {
+        //          wavelength      413          443          490         510        560         665
         double[] rrs = new double[]{0.00709421, 0.00560526, 0.00464842, 0.00256442, 0.00196990, 0.00196990};
         double[] qaa = new double[]{0.0189454, 0.00553217, 0.0133541};
 
         double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, RRS_WAVELENGTHS, qaa);
         assertEquals(8, rrs_corrected.length);
-        assertEquals(0.007140232716, rrs_corrected[0], 1e-6);
-        assertEquals(0.004691781010, rrs_corrected[1], 1e-6);
-        assertEquals(0.002003765898, rrs_corrected[2], 1e-6);
-        assertEquals(0.002889874624, rrs_corrected[3], 1e-6);
-        assertEquals(0.002351620235, rrs_corrected[4], 1e-6);
-        assertEquals(0.002069674199, rrs_corrected[5], 1e-6);
-        assertEquals(0.001929065329, rrs_corrected[6], 1e-6);
-        assertEquals(0.001890795655, rrs_corrected[7], 1e-6);
+        assertEquals(0.007140232716, rrs_corrected[0], 1e-6);   // 412nm
+        assertEquals(0.004691781010, rrs_corrected[1], 1e-6);   // 488nm
+        assertEquals(0.002003765898, rrs_corrected[2], 1e-6);   // 531nm
+        assertEquals(0.002889874624, rrs_corrected[3], 1e-6);   // 531nm
+        assertEquals(0.002351620235, rrs_corrected[4], 1e-6);   // 547nm
+        assertEquals(0.002069674199, rrs_corrected[5], 1e-6);   // 555nm
+        assertEquals(0.001929065329, rrs_corrected[6], 1e-6);   // 667nm
+        assertEquals(0.001890795655, rrs_corrected[7], 1e-6);   // 670nm
 
         rrs = new double[]{0.00711314, 0.00559714, 0.00459386, 0.00249029, 0.00189400, 0.000241144};
         qaa = new double[]{0.0192148, 0.00571175, 0.0138207};

@@ -233,6 +233,19 @@ public class InSituSpectrumTest {
     }
 
     @Test
+    public void testIsCompleteSeawifs() {
+        assertFalse(inSituSpectrum.isCompleteSeaWiFS());
+
+        addSeawifsMeasurement(2.0, 0.0, 4);
+        assertFalse(inSituSpectrum.isCompleteSeaWiFS());
+
+        for (int i = 0; i < 6; i++) {
+            addSeawifsMeasurement(1.0, i, i);
+        }
+        assertTrue(inSituSpectrum.isCompleteSeaWiFS());
+    }
+
+    @Test
     public void testGetWavelengths() {
         for (int i = 0; i < 6; i++) {
             addSpectralMeasurement(10.0 + i, 0, i);

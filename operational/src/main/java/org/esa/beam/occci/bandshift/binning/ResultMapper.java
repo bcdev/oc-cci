@@ -14,7 +14,7 @@ class ResultMapper {
     private final int[] lambdaShiftedDest;
 
     public ResultMapper(BandShiftConfig config) {
-        final Sensor sensor = Sensor.valueOf(config.getSensorName());
+        final Sensor sensor = Sensor.byName(config.getSensorName());
 
         final ArrayList<Integer> lambdaInSrcList = new ArrayList<Integer>();
         final ArrayList<Integer> lambdaInDestList = new ArrayList<Integer>();

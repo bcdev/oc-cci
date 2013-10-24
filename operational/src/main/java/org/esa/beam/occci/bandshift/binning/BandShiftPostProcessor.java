@@ -26,7 +26,7 @@ public class BandShiftPostProcessor extends CellProcessor {
     protected BandShiftPostProcessor(String[] outputFeatureNames, BandShiftConfig config, VariableContext varCtx) throws IOException {
         super(outputFeatureNames);
 
-        sensor = Sensor.valueOf(config.getSensorName());
+        sensor = Sensor.byName(config.getSensorName());
         final CorrectionContext correctionContext = new CorrectionContext(sensor);
         bandShiftCorrection = new BandShiftCorrection(correctionContext);
         rrs = new double[6];

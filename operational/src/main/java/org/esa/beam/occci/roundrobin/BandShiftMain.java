@@ -1,8 +1,5 @@
 package org.esa.beam.occci.roundrobin;
 
-import org.esa.beam.occci.bandshift.BandShiftCorrection;
-import org.esa.beam.occci.bandshift.CorrectionContext;
-import org.esa.beam.occci.bandshift.Sensor;
 import org.esa.beam.occci.qaa.*;
 import org.esa.beam.util.io.CsvReader;
 
@@ -18,10 +15,6 @@ public class BandShiftMain {
 
         final CsvReader csvReader = new CsvReader(fileReader, new char[]{','});
         csvReader.readRecord(); // skip heading line
-
-        final BandShiftCorrection bsModis = new BandShiftCorrection(new CorrectionContext(Sensor.MODISA));
-        final BandShiftCorrection bsMeris = new BandShiftCorrection(new CorrectionContext(Sensor.MERIS));
-        final BandShiftCorrection bsSeaWiFS= new BandShiftCorrection(new CorrectionContext(Sensor.SEAWIFS));
 
         String[] record;
         while ((record = csvReader.readRecord()) != null) {
@@ -39,9 +32,31 @@ public class BandShiftMain {
             qaaAt443[1] = qaaResult.getA_YS()[1];
             qaaAt443[2] = qaaResult.getBB_SPM()[1];
 
-            final double[] merisBS_rrs = bsMeris.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443);
-            final double[] modisBS_rrs = bsModis.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443);
-            final double[] seawifsBS_rrs = bsSeaWiFS.correctBandshift(spectrum.getMeasurements(), spectrum.getWavelengths(), qaaAt443);
+            if (spectrum.isCompleteMeris()) {
+                shiftFromMerisLike(spectrum, qaaAt443);
+            } else if (spectrum.isCompleteModis()) {
+                shiftFromModisLike(spectrum, qaaAt443);
+            } else if (spectrum.isCompleteSeaWiFS()) {
+                shiftFromSeawifsLike(spectrum, qaaAt443);
+            } else {
+                shiftFromQaa(spectrum, qaaAt443);
+            }
         }
+    }
+
+    private static void shiftFromMerisLike(InSituSpectrum spectrum, double[] qaaAt443) {
+        System.out.println("shiftFromMerisLike() - TO BE IMPLEMENTED");
+    }
+
+    private static void shiftFromModisLike(InSituSpectrum spectrum, double[] qaaAt443) {
+        System.out.println("shiftFromModisLike() - TO BE IMPLEMENTED");
+    }
+
+    private static void shiftFromSeawifsLike(InSituSpectrum spectrum, double[] qaaAt443) {
+        System.out.println("shiftFromSeawifsLike() - TO BE IMPLEMENTED");
+    }
+
+    private static void shiftFromQaa(InSituSpectrum spectrum, double[] qaaAt443) {
+        System.out.println("shiftFromQaa() - TO BE IMPLEMENTED");
     }
 }

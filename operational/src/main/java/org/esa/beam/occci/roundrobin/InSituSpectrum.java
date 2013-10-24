@@ -74,6 +74,10 @@ class InSituSpectrum {
         return isCompleteSet(modisMeasurements);
     }
 
+    boolean isCompleteSeaWiFS() {
+        return isCompleteSet(seaWiFSMeasurements);
+    }
+
     double[] getWavelengths() {
         if (!isCompleteQaa()) {
             throw new IllegalStateException("Incomplete spectrum");

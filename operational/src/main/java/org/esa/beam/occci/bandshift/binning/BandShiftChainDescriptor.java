@@ -53,7 +53,7 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
 
             BandShiftDescriptor bandShiftDescriptor = new BandShiftDescriptor();
             BandShiftConfig bandShiftConfig = (BandShiftConfig) bandShiftDescriptor.createConfig();
-            bandShiftConfig.setSensorName(Sensor.MERIS.name());
+            bandShiftConfig.setSensorName(Sensor.MERIS_NAME);
             bandShiftConfig.setBandNames(bsInputFeatures);
             bandShiftConfig.setOutputCenterWavelengths(BS_OUTPUT_CENTER_WAVELENGTHS);
             CellProcessor bandshiftProcessor = bandShiftDescriptor.createCellProcessor(varCtx, bandShiftConfig);
@@ -86,7 +86,7 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
 
             BandShiftDescriptor bandShiftDescriptor = new BandShiftDescriptor();
             BandShiftConfig bandShiftConfig = (BandShiftConfig) bandShiftDescriptor.createConfig();
-            bandShiftConfig.setSensorName(Sensor.MODISA.name());
+            bandShiftConfig.setSensorName(Sensor.MODISA_NAME);
             bandShiftConfig.setBandNames(bsInputFeatures);
             bandShiftConfig.setOutputCenterWavelengths(BS_OUTPUT_CENTER_WAVELENGTHS);
             CellProcessor bandshiftProcessor = bandShiftDescriptor.createCellProcessor(bandShiftVarCtx, bandShiftConfig);
