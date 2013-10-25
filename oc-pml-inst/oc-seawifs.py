@@ -41,7 +41,7 @@ class OcSeawifs(Daemon):
     def run(self):
         pm = PMonitor(inputs, request='oc-seawifs', logdir='log', hosts=hosts, types=types)
 
-        biasInputs = []
+        seawifsBiasInputs = []
         for year in years:
             months = monthsAll
             if year == '2002':
@@ -50,7 +50,7 @@ class OcSeawifs(Daemon):
                 months = months2012
 
             for month in months:
-                formatInputs = []
+                seawifsFormatInputs = []
                 (minDate, maxDate) = getMinMaxDate(year, month)
 
                 # for now because we have not more test-data
@@ -59,38 +59,38 @@ class OcSeawifs(Daemon):
 
                 for singleDay in dateRange(minDate, maxDate):
                     seawifsDailyBSName = 'seawifs-daily-bs-' + str(singleDay)
-                    seawifsDailyBSParams = ['seawifs-daily-bs-\${date}.xml', \
+                    params = ['seawifs-daily-bs-\${date}.xml', \
                                'date', str(singleDay), \
                                'year', year, \
                                'month', month ,\
                                'doy', '%03d' % (singleDay.timetuple().tm_yday)  ]
-                    pm.execute('template-step.py', ['SEAWIFS_L3_daily'], [seawifsDailyBSName], parameters=seawifsDailyBSParams, logprefix=seawifsDailyBSName)
+                    pm.execute('template-step.py', ['SEAWIFS_L3_daily'], [seawifsDailyBSName], parameters=params, logprefix=seawifsDailyBSName)
 
-                    formatInputs.append(seawifsDailyBSName)
+                    seawifsFormatInputs.append(seawifsDailyBSName)
                     if year >= '2003' and year <= '2007':
-                        biasInputs.append(seawifsDailyBSName)
+                        seawifsBiasInputs.append(seawifsDailyBSName)
 
                 seawifsFormatBSName = 'seawifs-daily-bs-format-' + month + '-' + year
-                seawifsFormatBSParams = ['l3format-\${prefix}-\${date}.xml', \
+                params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'seawifs/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
                                'outputPath', 'seawifs/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
                                'prefix', 'OC-seawifs-daily-bs' ]
-                #pm.execute('template-step.py', formatInputs, [seawifsFormatBSName], parameters=seawifsFormatBSParams, logprefix=seawifsFormatBSName)
+                #pm.execute('template-step.py', seawifsFormatInputs, [seawifsFormatBSName], parameters=params, logprefix=seawifsFormatBSName)
 
-        biasMapName = 'seawifs-bias-map'
-        biasMapParams = ['bias-map-\${sensor}.xml', \
+        seawifsBiasMapName = 'seawifs-bias-map'
+        params = ['bias-map-\${sensor}.xml', \
                                'sensor', 'seawifs', \
                                'sensorMarker', '12' ]
-        pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
+        pm.execute('template-step.py', seawifsBiasInputs, [seawifsBiasMapName], parameters=params, logprefix=seawifsBiasMapName)
 
-        biasFormatName = 'seawifs-bias-map-format'
-        biasFormatParams = ['l3format-\${prefix}-\${date}.xml', \
+        seawifsBiasFormatName = 'seawifs-bias-map-format'
+        params = ['l3format-\${prefix}-\${date}.xml', \
                        'date', '5years', \
                        'inputPath', 'seawifs/bias-map-parts/part-*', \
                        'outputPath', 'seawifs/bias-map-netcdf-mapped', \
                        'prefix', 'OC-seawifs-bias' ]
-        #pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
+        #pm.execute('template-step.py', [seawifsBiasMapName], [seawifsBiasFormatName], parameters=params, logprefix=seawifsBiasFormatName)
 
         #======================================================
         pm.wait_for_completion()

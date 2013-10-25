@@ -50,7 +50,7 @@ class OcMerging(Daemon):
                 months = months2012
 
             for month in months:
-                formatInputs = []
+                formatMergedInputs = []
                 (minDate, maxDate) = getMinMaxDate(year, month)
 
                 # for now because we have not more test-data
@@ -59,20 +59,20 @@ class OcMerging(Daemon):
 
                 for singleDay in dateRange(minDate, maxDate):
                     mergedName = 'merged-daily-' + str(singleDay)
-                    mergedParams = ['sensor-merging-\${date}.xml', \
+                    params = ['sensor-merging-\${date}.xml', \
                                'date', str(singleDay), \
                                'year', year, \
                                'month', month  ]
-                    pm.execute('template-step.py', ['input'], [mergedName], parameters=mergedParams, logprefix=mergedName)
-                    formatInputs.append(mergedName)
+                    pm.execute('template-step.py', ['input'], [mergedName], parameters=params, logprefix=mergedName)
+                    formatMergedInputs.append(mergedName)
 
                 mergedFormatName = 'merged-daily-format-' + month + '-' + year
-                mergedFormatParams = ['l3format-\${prefix}-\${date}.xml', \
+                params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'merged-daily/' + year + '/' + month + '/????-??-??-parts/part-*', \
                                'outputPath', 'merged-daily/' + year + '/' + month + '/netcdf-mapped', \
                                'prefix', 'OC-merged-daily' ]
-                pm.execute('template-step.py', formatInputs, [mergedFormatName], parameters=mergedFormatParams, logprefix=mergedFormatName)
+                pm.execute('template-step.py', formatMergedInputs, [mergedFormatName], parameters=params, logprefix=mergedFormatName)
 
         #======================================================
         pm.wait_for_completion()

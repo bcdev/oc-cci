@@ -41,7 +41,7 @@ class OcModis(Daemon):
     def run(self):
         pm = PMonitor(inputs, request='oc-modis', logdir='log', hosts=hosts, types=types)
 
-        biasInputs = []
+        modisBiasInputs = []
         for year in years:
             months = monthsAll
             if year == '2002':
@@ -50,7 +50,7 @@ class OcModis(Daemon):
                 months = months2012
 
             for month in months:
-                formatInputs = []
+                modisFormatInputs = []
                 (minDate, maxDate) = getMinMaxDate(year, month)
 
                 # for now because we have not more test-data
@@ -59,38 +59,38 @@ class OcModis(Daemon):
 
                 for singleDay in dateRange(minDate, maxDate):
                     modisDailyBSName = 'modis-daily-bs-' + str(singleDay)
-                    modisDailyBSParams = ['modis-daily-bs-\${date}.xml', \
+                    params = ['modis-daily-bs-\${date}.xml', \
                                'date', str(singleDay), \
                                'year', year, \
                                'month', month ,\
                                'doy', '%03d' % (singleDay.timetuple().tm_yday)  ]
-                    pm.execute('template-step.py', ['MODIS_L3_daily'], [modisDailyBSName], parameters=modisDailyBSParams, logprefix=modisDailyBSName)
+                    pm.execute('template-step.py', ['MODIS_L3_daily'], [modisDailyBSName], parameters=params, logprefix=modisDailyBSName)
 
-                    formatInputs.append(modisDailyBSName)
+                    modisFormatInputs.append(modisDailyBSName)
                     if year >= '2003' and year <= '2007':
-                        biasInputs.append(modisDailyBSName)
+                        modisBiasInputs.append(modisDailyBSName)
 
                 modisFormatBSName = 'modis-daily-bs-format-' + month + '-' + year
-                modisFormatBSParams = ['l3format-\${prefix}-\${date}.xml', \
+                params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'modis/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
                                'outputPath', 'modis/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
                                'prefix', 'OC-modis-daily-bs' ]
-                #pm.execute('template-step.py', formatInputs, [modisFormatBSName], parameters=modisFormatBSParams, logprefix=modisFormatBSName)
+                #pm.execute('template-step.py', modisFormatInputs, [modisFormatBSName], parameters=params, logprefix=modisFormatBSName)
 
-        biasMapName = 'modis-bias-map'
-        biasMapParams = ['bias-map-\${sensor}.xml', \
+        modisBiasMapName = 'modis-bias-map'
+        params = ['bias-map-\${sensor}.xml', \
                                'sensor', 'modis', \
                                'sensorMarker', '11' ]
-        pm.execute('template-step.py', biasInputs, [biasMapName], parameters=biasMapParams, logprefix=biasMapName)
+        pm.execute('template-step.py', modisBiasInputs, [modisBiasMapName], parameters=params, logprefix=modisBiasMapName)
 
-        biasFormatName = 'modis-bias-map-format'
-        biasFormatParams = ['l3format-\${prefix}-\${date}.xml', \
+        modisBiasFormatName = 'modis-bias-map-format'
+        params = ['l3format-\${prefix}-\${date}.xml', \
                        'date', '5years', \
                        'inputPath', 'modis/bias-map-parts/part-*', \
                        'outputPath', 'modis/bias-map-netcdf-mapped', \
                        'prefix', 'OC-modis-bias' ]
-        #pm.execute('template-step.py', [biasMapName], [biasFormatName], parameters=biasFormatParams, logprefix=biasFormatName)
+        #pm.execute('template-step.py', [modisBiasMapName], [modisBiasFormatName], parameters=params, logprefix=modisBiasFormatName)
 
         #======================================================
         pm.wait_for_completion()
