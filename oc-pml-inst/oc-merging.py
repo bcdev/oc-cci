@@ -41,7 +41,6 @@ class OcMerging(Daemon):
     def run(self):
         pm = PMonitor(inputs, request='oc-merging', logdir='log', hosts=hosts, types=types)
 
-        biasInputs = []
         for year in years:
             months = monthsAll
             if year == '2002':
