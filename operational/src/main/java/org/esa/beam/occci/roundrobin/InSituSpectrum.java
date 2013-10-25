@@ -94,6 +94,14 @@ class InSituSpectrum {
         return getWavelengthsArray(merisMeasurements);
     }
 
+    double[] getModisWavelengths() {
+        if (!isCompleteModis()) {
+            throw new IllegalStateException("Incomplete spectrum");
+        }
+
+        return getWavelengthsArray(modisMeasurements);
+    }
+
     public double[] getQaaMeasurements() {
         if (!isCompleteQaa()) {
             throw new IllegalStateException("Incomplete spectrum");

@@ -292,6 +292,30 @@ public class InSituSpectrumTest {
     }
 
     @Test
+    public void testGetModisWavelengths() {
+        for (int i = 0; i < 7; i++) {
+            addModisMeasurement(12.0 + i, 0, i);
+        }
+
+        final double[] wavelengths = inSituSpectrum.getModisWavelengths();
+        assertNotNull(wavelengths);
+        assertEquals(7, wavelengths.length);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(12.0 + i, wavelengths[i], 1e-8);
+        }
+    }
+
+    @Test
+    public void testGetModisWavelengths_incompleteSpectrum() {
+        try {
+            inSituSpectrum.getModisWavelengths();
+            fail("IllegalStateException expected");
+        } catch (IllegalStateException expected) {
+        }
+    }
+
+    @Test
     public void testGetMeasurementsFloat() {
         for (int i = 0; i < 6; i++) {
             addSpectralMeasurement(10.0, 4 + i, i);
@@ -362,7 +386,6 @@ public class InSituSpectrumTest {
         } catch (IllegalStateException expected) {
         }
     }
-
 
     private void addSpectralMeasurement(double wavelength, double value, int index) {
         final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);
