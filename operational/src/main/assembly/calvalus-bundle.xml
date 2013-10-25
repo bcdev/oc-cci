@@ -22,6 +22,7 @@
             <scope>runtime</scope>
             <includes>
                 <include>org.esa.cci.oc:oc-cci</include>
+                <include>org.esa.beam.coastcolour:coastcolour-fuzzy-classification</include>
             </includes>
         </dependencySet>
     </dependencySets>
