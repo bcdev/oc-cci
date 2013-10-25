@@ -35,15 +35,18 @@ class SpectrumBuilder {
         parseQaaSpectrum(csvRecords, spectrum);
         parseMerisSpectrum(csvRecords, spectrum);
         parseModisSpectrum(csvRecords, spectrum);
+        parseSeaWiFSSpectrum(csvRecords, spectrum);
 
+        return spectrum;
+    }
+
+    private static void parseSeaWiFSSpectrum(String[] csvRecords, InSituSpectrum spectrum) {
         spectrum.setSeaWiFSSpectralValue(getMeasurement(csvRecords, SEAWIFS_BAND_412_IDX), 0);
         spectrum.setSeaWiFSSpectralValue(getMeasurement(csvRecords, SEAWIFS_BAND_443_IDX), 1);
         spectrum.setSeaWiFSSpectralValue(getMeasurement(csvRecords, SEAWIFS_BAND_490_IDX), 2);
         spectrum.setSeaWiFSSpectralValue(getMeasurement(csvRecords, SEAWIFS_BAND_510_IDX), 3);
         spectrum.setSeaWiFSSpectralValue(getMeasurement(csvRecords, SEAWIFS_BAND_555_IDX), 4);
         spectrum.setSeaWiFSSpectralValue(getMeasurement(csvRecords, SEAWIFS_BAND_670_IDX), 5);
-
-        return spectrum;
     }
 
     private static void parseModisSpectrum(String[] csvRecords, InSituSpectrum spectrum) {

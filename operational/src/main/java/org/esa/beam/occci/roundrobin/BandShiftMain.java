@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class BandShiftMain {
 
+    private static int count = 0;
+
     public static void main(String[] args) throws IOException, ImaginaryNumberException {
         final File inSituCsv = new File(args[0]);
         final FileReader fileReader = new FileReader(inSituCsv);
@@ -45,7 +47,10 @@ public class BandShiftMain {
     }
 
     private static void shiftFromMerisLike(InSituSpectrum spectrum, double[] qaaAt443) {
-        System.out.println("shiftFromMerisLike() - TO BE IMPLEMENTED");
+        ++count;
+        if (count == 1272) {
+            System.out.println("shiftFromMerisLike() - TO BE IMPLEMENTED");
+        }
     }
 
     private static void shiftFromModisLike(InSituSpectrum spectrum, double[] qaaAt443) {

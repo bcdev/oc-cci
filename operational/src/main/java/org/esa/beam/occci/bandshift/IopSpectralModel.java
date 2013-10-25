@@ -37,6 +37,7 @@ public class IopSpectralModel {
     static {
         BRICAUD_A = new HashMap<String, Double>();
         BRICAUD_A.put("412", 0.0323);
+        BRICAUD_A.put("413", 0.032775);
         BRICAUD_A.put("443", 0.0394);
         BRICAUD_A.put("488", 0.0279);
         BRICAUD_A.put("510", 0.0180);
@@ -45,14 +46,15 @@ public class IopSpectralModel {
         BRICAUD_A.put("620", 0.0065);
         BRICAUD_A.put("667", 0.01685);
         BRICAUD_A.put("665", 0.0152);
-        BRICAUD_A.put("413", 0.032775);
         BRICAUD_A.put("490", 0.0274);
         BRICAUD_A.put("560", 0.0062);
         BRICAUD_A.put("555", 0.007);
         BRICAUD_A.put("670", 0.0189);
+        BRICAUD_A.put("678", 0.0193);
 
         BRICAUD_B = new HashMap<String, Double>();
         BRICAUD_B.put("412", 0.286);
+        BRICAUD_B.put("413", 0.28775);
         BRICAUD_B.put("443", 0.3435);
         BRICAUD_B.put("488", 0.369);
         BRICAUD_B.put("510", 0.260);
@@ -61,11 +63,11 @@ public class IopSpectralModel {
         BRICAUD_B.put("620", 0.064);
         BRICAUD_B.put("667", 0.140);
         BRICAUD_B.put("665", 0.134);
-        BRICAUD_B.put("413", 0.28775);
         BRICAUD_B.put("490", 0.361);
         BRICAUD_B.put("560", 0.016);
         BRICAUD_B.put("555", 0.0315);
         BRICAUD_B.put("670", 0.149);
+        BRICAUD_B.put("678", 0.158);
     }
 
     /**
@@ -75,6 +77,7 @@ public class IopSpectralModel {
         // a and b at 443 derived from values previously in a_bb_prediction
         // a_443 = 0.0394 and k (= 1/(1-b))= 1.52323
         String wavelengthAsString = Integer.toString((int)wl);
+//        System.out.println("wavelengthAsString = " + wavelengthAsString);
         double aBricaud = BRICAUD_A.get(wavelengthAsString);
         double bBricaud = BRICAUD_B.get(wavelengthAsString);
         return new double[]{aBricaud, bBricaud};
