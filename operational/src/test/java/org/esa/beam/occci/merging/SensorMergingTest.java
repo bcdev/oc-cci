@@ -17,12 +17,9 @@
 package org.esa.beam.occci.merging;
 
 
-import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.binning.support.VectorImpl;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 import static java.lang.Float.NaN;
 import static org.junit.Assert.*;

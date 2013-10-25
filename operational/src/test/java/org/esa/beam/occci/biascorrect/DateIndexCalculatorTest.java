@@ -2,7 +2,7 @@ package org.esa.beam.occci.biascorrect;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DateIndexCalculatorTest {
 

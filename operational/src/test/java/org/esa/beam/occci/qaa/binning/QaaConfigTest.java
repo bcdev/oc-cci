@@ -3,8 +3,7 @@ package org.esa.beam.occci.qaa.binning;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class QaaConfigTest {
 

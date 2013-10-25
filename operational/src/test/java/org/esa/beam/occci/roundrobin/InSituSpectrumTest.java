@@ -4,8 +4,6 @@ package org.esa.beam.occci.roundrobin;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 public class InSituSpectrumTest {

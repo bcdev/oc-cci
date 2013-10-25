@@ -10,9 +10,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.*;
 
 public class AggregatorBiasCorrectTest {
 

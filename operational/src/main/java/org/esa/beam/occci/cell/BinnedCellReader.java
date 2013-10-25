@@ -38,7 +38,7 @@ public class BinnedCellReader {
         final ArrayList<String> bandNames = new ArrayList<String>();
         int largestDimensionSize = getLargestDimensionSize(netcdfFile);
         for (Variable variable : netcdfFile.getVariables()) {
-            final String bandName = variable.getName();
+            final String bandName = variable.getFullName();
             if (variable.getDimensions().get(0).getLength() == largestDimensionSize) {
                 bandNames.add(bandName);
             }

@@ -4,10 +4,7 @@ package org.esa.beam.occci.qaa;
 import org.esa.beam.framework.gpf.OperatorException;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class SensorConfigFactoryTest {
 
