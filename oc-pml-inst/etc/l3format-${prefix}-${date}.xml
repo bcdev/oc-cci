@@ -43,5 +43,14 @@
             </wps:Data>
         </wps:Input>
 
+        <wps:Input>
+            <!--to circumvent OOM when especially on the merged product with 43 float bands -->
+            <ows:Identifier>calvalus.hadoop.mapred.child.java.opts</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>-Xmx1500M</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+
     </wps:DataInputs>
 </wps:Execute>
