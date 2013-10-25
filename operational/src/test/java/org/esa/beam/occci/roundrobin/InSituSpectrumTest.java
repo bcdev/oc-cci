@@ -244,12 +244,12 @@ public class InSituSpectrumTest {
     }
 
     @Test
-    public void testGetWavelengths() {
+    public void testGetQaaWavelengths() {
         for (int i = 0; i < 6; i++) {
             addSpectralMeasurement(10.0 + i, 0, i);
         }
 
-        final double[] wavelengths = inSituSpectrum.getWavelengths();
+        final double[] wavelengths = inSituSpectrum.getQaaWavelengths();
         assertNotNull(wavelengths);
         assertEquals(6, wavelengths.length);
 
@@ -259,9 +259,33 @@ public class InSituSpectrumTest {
     }
 
     @Test
-    public void testGetWavelengths_incompleteSpectrum() {
+    public void testGetQaaWavelengths_incompleteSpectrum() {
         try {
-            inSituSpectrum.getWavelengths();
+            inSituSpectrum.getQaaWavelengths();
+            fail("IllegalStateException expected");
+        } catch (IllegalStateException expected) {
+        }
+    }
+
+    @Test
+    public void testGetMerisWavelengths() {
+        for (int i = 0; i < 7; i++) {
+            addMerisMeasurement(11.0 + i, 0, i);
+        }
+
+        final double[] wavelengths = inSituSpectrum.getMerisWavelengths();
+        assertNotNull(wavelengths);
+        assertEquals(7, wavelengths.length);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(11.0 + i, wavelengths[i], 1e-8);
+        }
+    }
+
+    @Test
+    public void testGetMerisWavelengths_incompleteSpectrum() {
+        try {
+            inSituSpectrum.getMerisWavelengths();
             fail("IllegalStateException expected");
         } catch (IllegalStateException expected) {
         }
@@ -292,12 +316,12 @@ public class InSituSpectrumTest {
     }
 
     @Test
-    public void testGetMeasurements() {
+    public void testGetQaaMeasurements() {
         for (int i = 0; i < 6; i++) {
             addSpectralMeasurement(10.0, 6 + i, i);
         }
 
-        final double[] measurements = inSituSpectrum.getMeasurements();
+        final double[] measurements = inSituSpectrum.getQaaMeasurements();
         assertNotNull(measurements);
         assertEquals(6, measurements.length);
 
@@ -307,13 +331,38 @@ public class InSituSpectrumTest {
     }
 
     @Test
-    public void testGetMeasurements_incompleteSpectrum() {
+    public void testGetQaaMeasurements_incompleteSpectrum() {
         try {
-            inSituSpectrum.getMeasurements();
+            inSituSpectrum.getQaaMeasurements();
             fail("IllegalStateException expected");
         } catch (IllegalStateException expected) {
         }
     }
+
+    @Test
+    public void testGetMerisMeasurements() {
+        for (int i = 0; i < 7; i++) {
+            addMerisMeasurement(11.0, 7 + i, i);
+        }
+
+        final double[] measurements = inSituSpectrum.getMerisMeasurements();
+        assertNotNull(measurements);
+        assertEquals(7, measurements.length);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(7 + i, measurements[i], 1e-8);
+        }
+    }
+
+    @Test
+    public void testGetMerisMeasurements_incompleteSpectrum() {
+        try {
+            inSituSpectrum.getMerisMeasurements();
+            fail("IllegalStateException expected");
+        } catch (IllegalStateException expected) {
+        }
+    }
+
 
     private void addSpectralMeasurement(double wavelength, double value, int index) {
         final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);

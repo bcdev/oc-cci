@@ -29,8 +29,20 @@ public class IopSpectralModelTest {
         double[] abBricaud = IopSpectralModel.getABBricaud(443.0);
         assertNotNull(abBricaud);
         assertEquals(2, abBricaud.length);
-        assertEquals(0.0394, abBricaud[0], 1e-10);
-        assertEquals(0.3435, abBricaud[1], 1e-10);
+        assertEquals(0.0394, abBricaud[0], 1e-8);
+        assertEquals(0.3435, abBricaud[1], 1e-8);
+
+        abBricaud = IopSpectralModel.getABBricaud(547.0);
+        assertNotNull(abBricaud);
+        assertEquals(2, abBricaud.length);
+        assertEquals(0.00845, abBricaud[0], 1e-8);
+        assertEquals(0.0625, abBricaud[1], 1e-8);
+
+        abBricaud = IopSpectralModel.getABBricaud(620.0);
+        assertNotNull(abBricaud);
+        assertEquals(2, abBricaud.length);
+        assertEquals(0.0065, abBricaud[0], 1e-8);
+        assertEquals(0.064, abBricaud[1], 1e-8);
     }
 
     @Test

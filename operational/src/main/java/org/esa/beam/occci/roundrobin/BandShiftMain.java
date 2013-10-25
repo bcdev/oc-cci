@@ -23,7 +23,7 @@ public class BandShiftMain {
                 continue;
             }
 
-            final SensorConfig sensorConfig = SensorConfigFactory.get(spectrum.getWavelengths());
+            final SensorConfig sensorConfig = SensorConfigFactory.get(spectrum.getQaaWavelengths());
             final QaaAlgorithm qaaAlgorithm = new QaaAlgorithm(sensorConfig);
             final QaaResult qaaResult = qaaAlgorithm.process(spectrum.getMeasurementsFloat(), null);
 

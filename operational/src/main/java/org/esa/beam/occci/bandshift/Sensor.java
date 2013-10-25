@@ -37,7 +37,6 @@ public class Sensor {
     private final double greenWavelength;
     private final int[] averageIndices;
 
-    // @todo 3 tb/tb write test tb 2013-10-24
     public static Sensor byName(String name) {
         if (SEAWIFS_NAME.equalsIgnoreCase(name)) {
             return SEAWIFS;

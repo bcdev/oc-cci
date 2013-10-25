@@ -78,33 +78,41 @@ class InSituSpectrum {
         return isCompleteSet(seaWiFSMeasurements);
     }
 
-    double[] getWavelengths() {
+    double[] getQaaWavelengths() {
         if (!isCompleteQaa()) {
             throw new IllegalStateException("Incomplete spectrum");
         }
 
-        final double[] wavelengths = new double[NUM_QAA_VALUES];
-        for (int i = 0; i < NUM_QAA_VALUES; i++) {
-            wavelengths[i] = qaaMeasurements[i].getWavelength();
-        }
-        return wavelengths;
+        return getWavelengthsArray(qaaMeasurements);
     }
 
-    public double[] getMeasurements() {
+    double[] getMerisWavelengths() {
+        if (!isCompleteMeris()) {
+            throw new IllegalStateException("Incomplete spectrum");
+        }
+
+        return getWavelengthsArray(merisMeasurements);
+    }
+
+    public double[] getQaaMeasurements() {
         if (!isCompleteQaa()) {
             throw new IllegalStateException("Incomplete spectrum");
         }
 
-        final double[] measurements = new double[NUM_QAA_VALUES];
-        for (int i = 0; i < NUM_QAA_VALUES; i++) {
-            measurements[i] = qaaMeasurements[i].getMeasurement();
-        }
-        return measurements;
+        return getMeasurementsArray(qaaMeasurements);
     }
+
+    public double[] getMerisMeasurements() {
+        if (!isCompleteMeris()) {
+            throw new IllegalStateException("Incomplete spectrum");
+        }
+        return getMeasurementsArray(merisMeasurements);
+    }
+
 
     float[] getMeasurementsFloat() {
         final float[] measurementsFloat = new float[NUM_QAA_VALUES];
-        final double[] measurements = getMeasurements();
+        final double[] measurements = getQaaMeasurements();
 
         for (int i = 0; i < measurements.length; i++) {
             measurementsFloat[i] = (float) measurements[i];
@@ -168,5 +176,21 @@ class InSituSpectrum {
         }
 
         return true;
+    }
+
+    private double[] getWavelengthsArray(SpectralMeasurement[] spectralMeasurements) {
+        final double[] wavelengths = new double[spectralMeasurements.length];
+        for (int i = 0; i < spectralMeasurements.length; i++) {
+            wavelengths[i] = spectralMeasurements[i].getWavelength();
+        }
+        return wavelengths;
+    }
+
+    private double[] getMeasurementsArray(SpectralMeasurement[] spectralMeasurements) {
+        final double[] measurements = new double[spectralMeasurements.length];
+        for (int i = 0; i < spectralMeasurements.length; i++) {
+            measurements[i] = spectralMeasurements[i].getMeasurement();
+        }
+        return measurements;
     }
 }

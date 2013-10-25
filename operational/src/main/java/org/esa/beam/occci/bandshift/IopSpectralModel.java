@@ -42,6 +42,7 @@ public class IopSpectralModel {
         BRICAUD_A.put("510", 0.0180);
         BRICAUD_A.put("531", 0.0115);
         BRICAUD_A.put("547", 0.00845);
+        BRICAUD_A.put("620", 0.0065);
         BRICAUD_A.put("667", 0.01685);
         BRICAUD_A.put("665", 0.0152);
         BRICAUD_A.put("413", 0.032775);
@@ -57,6 +58,7 @@ public class IopSpectralModel {
         BRICAUD_B.put("510", 0.260);
         BRICAUD_B.put("531", 0.134);
         BRICAUD_B.put("547", 0.0625);
+        BRICAUD_B.put("620", 0.064);
         BRICAUD_B.put("667", 0.140);
         BRICAUD_B.put("665", 0.134);
         BRICAUD_B.put("413", 0.28775);
