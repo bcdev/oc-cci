@@ -18,7 +18,12 @@ class BandShifter {
         final Sensor toMeris = SensorFactory.createToMeris(spectrum);
         final CorrectionContext context = new CorrectionContext(toMeris);
         final BandShiftCorrection bandShiftCorrection = new BandShiftCorrection(context);
-        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(spectrum.getMerisMeasurements(), spectrum.getMerisWavelengths(), qaaAt443);
+        double[] rrs_corrected = null;
+        if (spectrum.isCompleteMeris()) {
+            rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
+        } else if (spectrum.isCompleteModis()) {
+            rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
+        }
         return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
     }
 
@@ -28,10 +33,15 @@ class BandShifter {
      * @return rrs at {412, 443, 488, 531, 547, 667, 678}
      */
     static double[] toModis(InSituSpectrum spectrum, double[] qaaAt443) throws IOException {
-        final Sensor toMeris = SensorFactory.createToModis(spectrum);
-        final CorrectionContext context = new CorrectionContext(toMeris);
+        final Sensor toModis = SensorFactory.createToModis(spectrum);
+        final CorrectionContext context = new CorrectionContext(toModis);
         final BandShiftCorrection bandShiftCorrection = new BandShiftCorrection(context);
-        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(spectrum.getMerisMeasurements(), spectrum.getMerisWavelengths(), qaaAt443);
+        double[] rrs_corrected = null;
+        if (spectrum.isCompleteMeris()) {
+            rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
+        } else if (spectrum.isCompleteModis()) {
+            rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
+        }
         return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
     }
 
@@ -44,8 +54,16 @@ class BandShifter {
         final Sensor toMeris = SensorFactory.createToSeaWifs(spectrum);
         final CorrectionContext context = new CorrectionContext(toMeris);
         final BandShiftCorrection bandShiftCorrection = new BandShiftCorrection(context);
-        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(spectrum.getMerisMeasurements(), spectrum.getMerisWavelengths(), qaaAt443);
+        final double[] rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
         final double[] correcteAveraged = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
         return Arrays.copyOf(correcteAveraged, correcteAveraged.length - 1);
+    }
+
+    private static double[] correctFromModis(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
+        return bandShiftCorrection.correctBandshift(spectrum.getModisMeasurements(), spectrum.getModisWavelengths(), qaaAt443);
+    }
+
+    private static double[] correctFromMeris(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
+        return bandShiftCorrection.correctBandshift(spectrum.getMerisMeasurements(), spectrum.getMerisWavelengths(), qaaAt443);
     }
 }

@@ -52,7 +52,7 @@ public class BandShiftMain {
 
     private static void shiftFromModisLike(InSituSpectrum spectrum, double[] qaaAt443) {
         ++count;
-        if (count == 519) {
+        if (count == 549) {
             System.out.println("shiftFromModisLike() - TO BE IMPLEMENTED");
         }
     }

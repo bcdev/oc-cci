@@ -117,6 +117,12 @@ class InSituSpectrum {
         return getMeasurementsArray(merisMeasurements);
     }
 
+    double[] getModisMeasurements() {
+        if (!isCompleteModis()) {
+            throw new IllegalStateException("Incomplete spectrum");
+        }
+        return getMeasurementsArray(modisMeasurements);
+    }
 
     float[] getMeasurementsFloat() {
         final float[] measurementsFloat = new float[NUM_QAA_VALUES];

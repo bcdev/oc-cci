@@ -387,6 +387,30 @@ public class InSituSpectrumTest {
         }
     }
 
+    @Test
+    public void testGetModisMeasurements() {
+        for (int i = 0; i < 7; i++) {
+            addModisMeasurement(12.0, 8 + i, i);
+        }
+
+        final double[] measurements = inSituSpectrum.getModisMeasurements();
+        assertNotNull(measurements);
+        assertEquals(7, measurements.length);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(8 + i, measurements[i], 1e-8);
+        }
+    }
+
+    @Test
+    public void testGetModisMeasurements_incompleteSpectrum() {
+        try {
+            inSituSpectrum.getModisMeasurements();
+            fail("IllegalStateException expected");
+        } catch (IllegalStateException expected) {
+        }
+    }
+
     private void addSpectralMeasurement(double wavelength, double value, int index) {
         final SpectralMeasurement spectralMeasurement = createSpectralMeasurement(wavelength, value);
         inSituSpectrum.setQaaSpectralValue(spectralMeasurement, index);
