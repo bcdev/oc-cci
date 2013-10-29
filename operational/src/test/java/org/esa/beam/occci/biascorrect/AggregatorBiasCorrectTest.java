@@ -34,7 +34,7 @@ public class AggregatorBiasCorrectTest {
         config.startYear = 2011;
         config.endYear = 2014;
 
-        final DateIndexCalculator dateIndexCalculator = AggregatorBiasCorrect.Descriptor.createDateIndexCalculator(config);
+        final DateIndexCalculator dateIndexCalculator = AggregatorBiasCorrect.createDateIndexCalculator(config);
         assertNotNull(dateIndexCalculator);
         assertEquals(2011, dateIndexCalculator.getStartYear());
         assertEquals(2014, dateIndexCalculator.getStopYear());
@@ -46,7 +46,7 @@ public class AggregatorBiasCorrectTest {
         config.endYear = 2011;
 
         try {
-            AggregatorBiasCorrect.Descriptor.createDateIndexCalculator(config);
+            AggregatorBiasCorrect.createDateIndexCalculator(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
@@ -54,7 +54,7 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testCreateSpatialFeatureNames_empty() {
-        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createSpatialFeatureNames(config);
+        final String[] featureNames = AggregatorBiasCorrect.createSpatialFeatureNames(config);
         assertNotNull(featureNames);
         assertEquals(0, featureNames.length);
     }
@@ -63,7 +63,7 @@ public class AggregatorBiasCorrectTest {
     public void testCreateSpatialFeatureNames() {
         config.varNames = new String[]{"rrs_0", "rrs_1", "rrs_2"};
 
-        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createSpatialFeatureNames(config);
+        final String[] featureNames = AggregatorBiasCorrect.createSpatialFeatureNames(config);
         assertNotNull(featureNames);
         assertEquals(4, featureNames.length);
         assertEquals("rrs_0", featureNames[0]);
@@ -75,7 +75,7 @@ public class AggregatorBiasCorrectTest {
     @Test
     public void testCreateTemporalFeatureNames_empty() {
         final DateIndexCalculator dateIndexCalculator = new DateIndexCalculator(2008, 2011);
-        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createTemporalFeatureNames(config, dateIndexCalculator);
+        final String[] featureNames = AggregatorBiasCorrect.createTemporalFeatureNames(config, dateIndexCalculator);
         assertNotNull(featureNames);
         assertEquals(0, featureNames.length);
     }
@@ -85,7 +85,7 @@ public class AggregatorBiasCorrectTest {
         config.varNames = new String[]{"rrs_0"};
         final DateIndexCalculator dateIndexCalculator = new DateIndexCalculator(2008, 2008);
 
-        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createTemporalFeatureNames(config, dateIndexCalculator);
+        final String[] featureNames = AggregatorBiasCorrect.createTemporalFeatureNames(config, dateIndexCalculator);
         assertNotNull(featureNames);
         assertEquals(24, featureNames.length);
 
@@ -101,21 +101,23 @@ public class AggregatorBiasCorrectTest {
 
     @Test
     public void testCreateOutputFeatureNames_empty() {
-        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createOutputFeatureNames(config);
+        final String[] featureNames = AggregatorBiasCorrect.createOutputFeatureNames(config);
         assertNotNull(featureNames);
-        assertEquals(0, featureNames.length);
+        assertEquals(1, featureNames.length);
+        assertEquals("sensor", featureNames[0]);
     }
 
     @Test
     public void testCreateOutputFeatureNames() {
         config.varNames = new String[]{"rrs_0", "rrs_1", "rrs_2"};
 
-        final String[] featureNames = AggregatorBiasCorrect.Descriptor.createOutputFeatureNames(config);
+        final String[] featureNames = AggregatorBiasCorrect.createOutputFeatureNames(config);
         assertNotNull(featureNames);
-        assertEquals(3, featureNames.length);
+        assertEquals(4, featureNames.length);
         assertEquals("rrs_0", featureNames[0]);
         assertEquals("rrs_1", featureNames[1]);
         assertEquals("rrs_2", featureNames[2]);
+        assertEquals("sensor", featureNames[3]);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -467,17 +469,20 @@ public class AggregatorBiasCorrectTest {
         config.varNames = new String[]{"rrs_1"};
         config.startYear = 2003;
         config.endYear = 2004;
-        final TestVector outputVector = new TestVector(1);
+        config.sensor = 101;
+        final TestVector outputVector = new TestVector(2);
         final TestVector temporalVector = new TestVector(48);   // one variable, two years
 
         temporalVector.set(24, 12); // three times 4 in Jan 2004
         temporalVector.set(25, 3);
 
 
-        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect.Descriptor().createAggregator(ctx, config);
+        Aggregator aggregatorBiasCorrect = new AggregatorBiasCorrect(ctx, config);
 
         aggregatorBiasCorrect.computeOutput(temporalVector, outputVector);
+        assertEquals(2, outputVector.size());
         assertEquals(4.f, outputVector.get(0), 1e-6);
+        assertEquals(101f, outputVector.get(1), 1e-6);
     }
 
     private class TestVector implements WritableVector {

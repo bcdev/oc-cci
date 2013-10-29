@@ -43,7 +43,7 @@ public class MarkSensorProcessor extends CellProcessor {
     }
 
     public static class Config extends CellProcessorConfig {
-        @Parameter(description = "Adds an indication indication for the used sensor", notNull = true)
+        @Parameter(description = "Adds an indication for the used sensor", notNull = true)
         private int sensor;
 
         public Config() {

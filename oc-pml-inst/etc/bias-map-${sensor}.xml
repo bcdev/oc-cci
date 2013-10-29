@@ -67,12 +67,9 @@
                                 <varNames>Rrs_412,Rrs_443,Rrs_490,Rrs_510,Rrs_555,Rrs_670</varNames>
                                 <startYear>2003</startYear>
                                 <endYear>2007</endYear>
+                                <sensor>${sensorMarker}</sensor>
                             </aggregator>
                         </aggregators>
-                        <postProcessor>
-                            <type>MarkSensor</type>
-                            <sensor>${sensorMarker}</sensor>
-                        </postProcessor>
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>
