@@ -1,8 +1,9 @@
 package org.esa.beam.occci.qaa.binning;
 
-import org.esa.beam.binning.support.VariableContextImpl;
+import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.support.VectorImpl;
 import org.esa.beam.occci.qaa.QaaConstants;
+import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -17,7 +18,8 @@ public class QaaPostProcessorTest {
         final QaaConfig config = new QaaConfig();
         config.setSensorName(QaaConstants.SEAWIFS);
 
-        final QaaPostProcessor qaaPostProcessor = new QaaPostProcessor(new VariableContextImpl(), config, outputFeatureNames);
+        VariableContext variableContext = BinningUtils.createVariableContext();
+        final QaaPostProcessor qaaPostProcessor = new QaaPostProcessor(variableContext, config, outputFeatureNames);
         assertArrayEquals(outputFeatureNames, qaaPostProcessor.getOutputFeatureNames());
     }
 
@@ -30,7 +32,7 @@ public class QaaPostProcessorTest {
         config.setAPigOutIndices(new int[]{0, 1, 2});
         config.setATotalOutIndices(new int[]{2, 3, 4});
 
-        final VariableContextImpl varCtx = createVariableContext();
+        final VariableContext varCtx = createVariableContext();
 
         final String[] outputFeatureNames = QaaDescriptor.createOutputFeatureNames(config);
         final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
@@ -60,7 +62,7 @@ public class QaaPostProcessorTest {
         config.setAYsOutIndices(new int[]{0, 2});
         config.setBbSpmOutIndices(new int[]{0, 2, 3, 4});
 
-        final VariableContextImpl varCtx = createVariableContext();
+        final VariableContext varCtx = createVariableContext();
 
         final String[] outputFeatureNames = QaaDescriptor.createOutputFeatureNames(config);
         final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
@@ -80,15 +82,13 @@ public class QaaPostProcessorTest {
         assertEquals(0.00775269977748394, postVector.get(5), 1e-8);
     }
 
-    private VariableContextImpl createVariableContext() {
-        final VariableContextImpl context = new VariableContextImpl();
-        context.defineVariable("ref_1");
-        context.defineVariable("ref_2");
-        context.defineVariable("ref_3");
-        context.defineVariable("ref_4");
-        context.defineVariable("ref_5");
-        context.defineVariable("ref_6");
-        return context;
+    private VariableContext createVariableContext() {
+        return BinningUtils.createVariableContext("ref_1",
+                                                  "ref_2",
+                                                  "ref_3",
+                                                  "ref_4",
+                                                  "ref_5",
+                                                  "ref_6");
     }
 
     private QaaConfig createConfig() {

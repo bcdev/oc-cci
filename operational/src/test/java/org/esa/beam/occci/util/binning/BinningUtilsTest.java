@@ -1,13 +1,11 @@
 package org.esa.beam.occci.util.binning;
 
-import org.esa.beam.binning.support.VariableContextImpl;
+import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.support.VectorImpl;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class BinningUtilsTest {
 
@@ -15,10 +13,7 @@ public class BinningUtilsTest {
     public void testGetBandIndices_directMapping()  {
         final String[] bandNames = {"band_1", "band_2", "band_3"};
 
-        final VariableContextImpl context = new VariableContextImpl();
-        context.defineVariable("band_1");
-        context.defineVariable("band_2");
-        context.defineVariable("band_3");
+        final VariableContext context = BinningUtils.createVariableContext("band_1", "band_2", "band_3");
 
         int[] indices = BinningUtils.getBandIndices(context, bandNames);
         assertEquals(3, indices.length);
@@ -31,11 +26,7 @@ public class BinningUtilsTest {
     public void testGetBandIndices_mixedMapping()  {
         final String[] bandNames = {"band_4", "band_1", "band_3", "band_2"};
 
-        final VariableContextImpl context = new VariableContextImpl();
-        context.defineVariable("band_2");
-        context.defineVariable("band_3");
-        context.defineVariable("band_1");
-        context.defineVariable("band_4");
+        final VariableContext context = BinningUtils.createVariableContext("band_2", "band_3", "band_1", "band_4");
 
         int[] indices = BinningUtils.getBandIndices(context, bandNames);
         assertEquals(4, indices.length);
@@ -49,9 +40,7 @@ public class BinningUtilsTest {
     public void testGetBandIndices_bandNotPresent()  {
         final String[] bandNames = {"band_1", "band_2", "band_3"};
 
-        final VariableContextImpl context = new VariableContextImpl();
-        context.defineVariable("band_1");
-        context.defineVariable("band_3");
+        final VariableContext context = BinningUtils.createVariableContext("band_1", "band_3");
 
         try {
             BinningUtils.getBandIndices(context, bandNames);

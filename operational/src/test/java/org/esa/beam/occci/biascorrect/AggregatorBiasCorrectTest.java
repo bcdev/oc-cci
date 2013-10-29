@@ -2,9 +2,10 @@ package org.esa.beam.occci.biascorrect;
 
 import org.esa.beam.binning.Aggregator;
 import org.esa.beam.binning.BinContext;
+import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.binning.support.ObservationImpl;
-import org.esa.beam.binning.support.VariableContextImpl;
+import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,16 +17,16 @@ public class AggregatorBiasCorrectTest {
 
     private AggregatorBiasCorrect.Config config;
     private BinContext binContext;
-    private VariableContextImpl ctx = new VariableContextImpl();
+    private VariableContext ctx;// = new VariableContextImpl();
 
     @Before
     public void setUp() {
         config = new AggregatorBiasCorrect.Config();
         binContext = createBinContext();
-        ctx.defineVariable("rrs_0");
-        ctx.defineVariable("rrs_1");
-        ctx.defineVariable("rrs_2");
-        ctx.defineVariable("rrs_3");
+        ctx = BinningUtils.createVariableContext("rrs_0",
+                                                 "rrs_1",
+                                                 "rrs_2",
+                                                 "rrs_3");
     }
 
     @Test

@@ -1,8 +1,8 @@
 package org.esa.beam.occci.bandshift.binning;
 
 import org.esa.beam.binning.VariableContext;
-import org.esa.beam.binning.support.VariableContextImpl;
 import org.esa.beam.binning.support.VectorImpl;
+import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class BandShiftPostProcessorTest {
     public void testThrowsExceptionOnMissingBands() throws IOException {
         final String[] outputFeatureNames = {"out", "feature", "names"};
         final BandShiftConfig config = createConfig("MERIS", new int[0]);
-        final VariableContextImpl variableContext = createVariableContext();
+        final VariableContext variableContext = createVariableContext();
 
         // add band to config that is not in the context
         final String[] bandNames = config.getBandNames();
@@ -73,17 +73,16 @@ public class BandShiftPostProcessorTest {
         assertFalse(BandShiftPostProcessor.isCorrected(new double[0]));
     }
 
-    private VariableContextImpl createVariableContext() {
-        final VariableContextImpl variableContext = new VariableContextImpl();
-        variableContext.defineVariable("band_1");
-        variableContext.defineVariable("band_2");
-        variableContext.defineVariable("band_3");
-        variableContext.defineVariable("band_4");
-        variableContext.defineVariable("band_5");
-        variableContext.defineVariable("band_6");
-        variableContext.defineVariable("band_7");
-        variableContext.defineVariable("band_8");
-        variableContext.defineVariable("band_9");
+    private VariableContext createVariableContext() {
+        final VariableContext variableContext = BinningUtils.createVariableContext("band_1",
+                                                                                   "band_2",
+                                                                                   "band_3",
+                                                                                   "band_4",
+                                                                                   "band_5",
+                                                                                   "band_6",
+                                                                                   "band_7",
+                                                                                   "band_8",
+                                                                                   "band_9");
         return variableContext;
     }
 

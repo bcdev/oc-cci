@@ -3,7 +3,8 @@ package org.esa.beam.occci.bandshift.binning;
 import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.binning.CellProcessorDescriptor;
-import org.esa.beam.binning.support.VariableContextImpl;
+import org.esa.beam.binning.VariableContext;
+import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +43,8 @@ public class BandShiftDescriptorTest {
         final BandShiftConfig config = new BandShiftConfig("BandShifting");
         config.setSensorName("MODISA");
 
-        final CellProcessor postProcessor = descriptor.createCellProcessor(new VariableContextImpl(), config);
+        VariableContext variableContext = BinningUtils.createVariableContext();
+        final CellProcessor postProcessor = descriptor.createCellProcessor(variableContext, config);
         assertNotNull(postProcessor);
         assertTrue(postProcessor instanceof BandShiftPostProcessor);
     }

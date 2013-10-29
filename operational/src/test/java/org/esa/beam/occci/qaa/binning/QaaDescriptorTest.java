@@ -5,8 +5,8 @@ import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
-import org.esa.beam.binning.support.VariableContextImpl;
 import org.esa.beam.occci.qaa.QaaConstants;
+import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -101,22 +101,22 @@ public class QaaDescriptorTest {
     }
 
     @Test
-        public void testCreateOutputFeatureNames_SEAWIFS_no_a_total_plus_rrs() {
-            final QaaConfig config = new QaaConfig();
-            config.setSensorName(QaaConstants.SEAWIFS);
-            config.setAPigOutIndices(new int[]{0, 1, 5});
-            config.setATotalOutIndices(new int[0]);
-            config.setAYsOutIndices(new int[]{4});
-            config.setBbSpmOutIndices(new int[]{3, 4, 5});
-            config.setBandNames(new String[]{"rrs_1", "rrs_2"});
-            config.setRrsOut(true);
+    public void testCreateOutputFeatureNames_SEAWIFS_no_a_total_plus_rrs() {
+        final QaaConfig config = new QaaConfig();
+        config.setSensorName(QaaConstants.SEAWIFS);
+        config.setAPigOutIndices(new int[]{0, 1, 5});
+        config.setATotalOutIndices(new int[0]);
+        config.setAYsOutIndices(new int[]{4});
+        config.setBbSpmOutIndices(new int[]{3, 4, 5});
+        config.setBandNames(new String[]{"rrs_1", "rrs_2"});
+        config.setRrsOut(true);
 
-            final String[] featureNames = QaaDescriptor.createOutputFeatureNames(config);
-            assertNotNull(featureNames);
+        final String[] featureNames = QaaDescriptor.createOutputFeatureNames(config);
+        assertNotNull(featureNames);
 
-            final String[] expected = {"a_pig_412", "a_pig_443", "a_pig_667", "a_ys_555", "bb_spm_510", "bb_spm_555", "bb_spm_667", "rrs_1", "rrs_2"};
-            assertArrayEquals(expected, featureNames);
-        }
+        final String[] expected = {"a_pig_412", "a_pig_443", "a_pig_667", "a_ys_555", "bb_spm_510", "bb_spm_555", "bb_spm_667", "rrs_1", "rrs_2"};
+        assertArrayEquals(expected, featureNames);
+    }
 
     @Test
     public void testGetWavelengthInt() {
@@ -167,7 +167,7 @@ public class QaaDescriptorTest {
     @Test
     public void testValidateConfig_invalidNumberOfInputBands() {
         final QaaConfig config = createValidConfig();
-        config.setBandNames(new String[] {"one", "two", "three", "four", "five"});
+        config.setBandNames(new String[]{"one", "two", "three", "four", "five"});
 
         try {
             QaaDescriptor.validate(config);
@@ -176,7 +176,7 @@ public class QaaDescriptorTest {
             assertEquals("Illegal number of input bands: must provide six reflectance band names", expected.getMessage());
         }
 
-        config.setBandNames(new String[] {"one", "two", "three", "four", "five", "six", "seven"});
+        config.setBandNames(new String[]{"one", "two", "three", "four", "five", "six", "seven"});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
@@ -304,7 +304,7 @@ public class QaaDescriptorTest {
     private QaaConfig createValidConfig() {
         final QaaConfig config = new QaaConfig();
         config.setSensorName(QaaConstants.MODIS);
-        config.setBandNames(new String[] {"one", "two", "three", "four", "five", "six"});
+        config.setBandNames(new String[]{"one", "two", "three", "four", "five", "six"});
         config.setAPigOutIndices(new int[]{0, 1, 2});
         config.setATotalOutIndices(new int[]{0, 1, 2, 3, 4});
         config.setAYsOutIndices(new int[]{0, 1, 2});
@@ -313,14 +313,12 @@ public class QaaDescriptorTest {
     }
 
     private VariableContext createValidContext() {
-        final VariableContextImpl variableContext = new VariableContextImpl();
-        variableContext.defineVariable("one");
-        variableContext.defineVariable("two");
-        variableContext.defineVariable("three");
-        variableContext.defineVariable("four");
-        variableContext.defineVariable("five");
-        variableContext.defineVariable("six");
-        return variableContext;
+        return BinningUtils.createVariableContext("one",
+                                                  "two",
+                                                  "three",
+                                                  "four",
+                                                  "five",
+                                                  "six");
     }
 
 }

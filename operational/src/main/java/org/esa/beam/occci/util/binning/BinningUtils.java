@@ -2,6 +2,7 @@ package org.esa.beam.occci.util.binning;
 
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.WritableVector;
+import org.esa.beam.binning.support.VariableContextImpl;
 
 public class BinningUtils {
 
@@ -21,5 +22,13 @@ public class BinningUtils {
         for (int i = 0; i < postVector.size(); i++) {
             postVector.set(i, Float.NaN);
         }
+    }
+
+    public static VariableContext createVariableContext(String... outputFeatureNames) {
+        VariableContextImpl variableContext = new VariableContextImpl();
+        for (String outputFeatureName : outputFeatureNames) {
+            variableContext.defineVariable(outputFeatureName);
+        }
+        return variableContext;
     }
 }

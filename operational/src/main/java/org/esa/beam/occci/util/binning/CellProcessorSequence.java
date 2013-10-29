@@ -6,14 +6,14 @@ import org.esa.beam.binning.WritableVector;
 import org.esa.beam.binning.support.VectorImpl;
 
 /**
- * computes all steps in a chain. Feeding the output as input into the next one.
+ * Computes all steps in a sequence. Feeding the output as input into the next one.
  */
-public class ChainProcessor extends CellProcessor {
+public class CellProcessorSequence extends CellProcessor {
 
     private final CellProcessor[] cellProcessors;
     private final WritableVector[] outputVectors;
 
-    public ChainProcessor(CellProcessor...cellProcessors) {
+    public CellProcessorSequence(CellProcessor... cellProcessors) {
         super(cellProcessors[cellProcessors.length - 1].getOutputFeatureNames());
         this.cellProcessors = cellProcessors;
         outputVectors = new WritableVector[cellProcessors.length - 1];
