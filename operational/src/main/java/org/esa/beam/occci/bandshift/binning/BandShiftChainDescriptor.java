@@ -49,14 +49,13 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
 
         if (QaaConstants.MERIS.equals(config.sensorName)) {
 
-            String[] bsInputFeatures = {"Rrs412_mean", "Rrs443_mean", "Rrs490_mean", "Rrs510_mean", "Rrs560_mean", "Rrs665_mean", "a_pig_443_mean", "a_ys_443_mean", "bb_spm_443_mean"};
-
-            BandShiftDescriptor bandShiftDescriptor = new BandShiftDescriptor();
-            BandShiftConfig bandShiftConfig = (BandShiftConfig) bandShiftDescriptor.createConfig();
-            bandShiftConfig.setSensorName(Sensor.MERIS_NAME);
-            bandShiftConfig.setBandNames(bsInputFeatures);
-            bandShiftConfig.setOutputCenterWavelengths(BS_OUTPUT_CENTER_WAVELENGTHS);
-            CellProcessor bandshiftProcessor = bandShiftDescriptor.createCellProcessor(varCtx, bandShiftConfig);
+            String[] bsInputFeatures = {
+                    "Rrs412_mean", "Rrs443_mean", "Rrs490_mean", "Rrs510_mean", "Rrs560_mean", "Rrs665_mean",
+                    "a_pig_443_mean", "a_ys_443_mean", "bb_spm_443_mean"};
+            CellProcessor bandshiftProcessor =new BandShiftCellProcessor(varCtx,
+                                                                         Sensor.MERIS_NAME,
+                                                                         bsInputFeatures,
+                                                                         BS_OUTPUT_CENTER_WAVELENGTHS);
 
             VariableContext variableContext = BinningUtils.createVariableContext(bandshiftProcessor.getOutputFeatureNames());
             CellProcessor markProcessor = new MarkSensorProcessor(variableContext, 0);
@@ -82,14 +81,13 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
             CellProcessor qaaProcessor = qaaDescriptor.createCellProcessor(qaaVarCtx, qaaConfig);
 
             VariableContext bandShiftVarCtx = BinningUtils.createVariableContext(qaaProcessor.getOutputFeatureNames());
-            String[] bsInputFeatures = {"Rrs_412", "Rrs_443", "Rrs_488", "Rrs_531", "Rrs_547", "Rrs_667", "a_pig_443", "a_ys_443", "bb_spm_443"};
-
-            BandShiftDescriptor bandShiftDescriptor = new BandShiftDescriptor();
-            BandShiftConfig bandShiftConfig = (BandShiftConfig) bandShiftDescriptor.createConfig();
-            bandShiftConfig.setSensorName(Sensor.MODISA_NAME);
-            bandShiftConfig.setBandNames(bsInputFeatures);
-            bandShiftConfig.setOutputCenterWavelengths(BS_OUTPUT_CENTER_WAVELENGTHS);
-            CellProcessor bandshiftProcessor = bandShiftDescriptor.createCellProcessor(bandShiftVarCtx, bandShiftConfig);
+            String[] bsInputFeatures = {
+                    "Rrs_412", "Rrs_443", "Rrs_488", "Rrs_531", "Rrs_547", "Rrs_667",
+                    "a_pig_443", "a_ys_443", "bb_spm_443"};
+            CellProcessor bandshiftProcessor = new BandShiftCellProcessor(bandShiftVarCtx,
+                                                                          Sensor.MODISA_NAME,
+                                                                          bsInputFeatures,
+                                                                          BS_OUTPUT_CENTER_WAVELENGTHS);
 
             VariableContext markVarCtx = BinningUtils.createVariableContext(bandshiftProcessor.getOutputFeatureNames());
             CellProcessor markProcessor = new MarkSensorProcessor(markVarCtx, 1);

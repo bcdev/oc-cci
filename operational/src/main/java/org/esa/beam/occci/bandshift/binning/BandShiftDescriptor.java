@@ -5,7 +5,6 @@ import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 
-import java.io.IOException;
 
 public class BandShiftDescriptor implements CellProcessorDescriptor {
 
@@ -27,10 +26,6 @@ public class BandShiftDescriptor implements CellProcessorDescriptor {
         String sensorName = bandShiftConfig.getSensorName();
         String[] bandNames = bandShiftConfig.getBandNames();
         int[] outputCenterWavelengths = bandShiftConfig.getOutputCenterWavelengths();
-        try {
-            return new BandShiftCellProcessor(varCtx, sensorName, bandNames, outputCenterWavelengths);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to init BandShiftCellProcessor", e);
-        }
+        return new BandShiftCellProcessor(varCtx, sensorName, bandNames, outputCenterWavelengths);
     }
 }

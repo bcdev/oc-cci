@@ -24,11 +24,16 @@ public class BandShiftCellProcessor extends CellProcessor {
     private final double[] qaa;
     private final ResultMapper resultMapper;
 
-    public BandShiftCellProcessor(VariableContext varCtx, String sensorName, String[] bandNames, int[] outputCenterWavelengths) throws IOException {
+    public BandShiftCellProcessor(VariableContext varCtx, String sensorName, String[] bandNames, int[] outputCenterWavelengths) {
         super(createOutputFeatureNames(outputCenterWavelengths));
 
         sensor = Sensor.byName(sensorName);
-         final CorrectionContext correctionContext = new CorrectionContext(sensor);
+        final CorrectionContext correctionContext;
+        try {
+            correctionContext = new CorrectionContext(sensor);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to init BandShiftCellProcessor.", e);
+        }
         bandShiftCorrection = new BandShiftCorrection(correctionContext);
         rrs = new double[NUM_RRS];
         qaa = new double[NUM_QAA];
