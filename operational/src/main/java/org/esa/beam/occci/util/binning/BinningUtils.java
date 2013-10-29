@@ -6,7 +6,7 @@ import org.esa.beam.binning.support.VariableContextImpl;
 
 public class BinningUtils {
 
-    public static int[] getBandIndices(VariableContext context, String[] bandNames) {
+    public static int[] getBandIndices(VariableContext context, String...bandNames) {
         final int[] bandIndices = new int[bandNames.length];
         for (int i = 0; i < bandNames.length; i++) {
             bandIndices[i] = context.getVariableIndex(bandNames[i]);
