@@ -23,6 +23,8 @@ class BandShifter {
             rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
         } else if (spectrum.isCompleteModis()) {
             rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
+        }else if (spectrum.isCompleteSeaWiFS()) {
+            rrs_corrected = correctFromSeaWifs(spectrum, qaaAt443, bandShiftCorrection);
         }
         return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
     }
@@ -41,6 +43,8 @@ class BandShifter {
             rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
         } else if (spectrum.isCompleteModis()) {
             rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
+        } else if (spectrum.isCompleteSeaWiFS()) {
+            rrs_corrected = correctFromSeaWifs(spectrum, qaaAt443, bandShiftCorrection);
         }
         return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
     }
@@ -70,5 +74,9 @@ class BandShifter {
 
     private static double[] correctFromMeris(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
         return bandShiftCorrection.correctBandshift(spectrum.getMerisMeasurements(), spectrum.getMerisWavelengths(), qaaAt443);
+    }
+
+    private static double[] correctFromSeaWifs(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
+        return bandShiftCorrection.correctBandshift(spectrum.getSeaWifsMeasurements(), spectrum.getSeaWifsWavelengths(), qaaAt443);
     }
 }

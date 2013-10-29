@@ -316,6 +316,30 @@ public class InSituSpectrumTest {
     }
 
     @Test
+    public void testGetSeaWifsWavelengths() {
+        for (int i = 0; i < 6; i++) {
+            addSeawifsMeasurement(13.0 + i, 0, i);
+        }
+
+        final double[] wavelengths = inSituSpectrum.getSeaWifsWavelengths();
+        assertNotNull(wavelengths);
+        assertEquals(6, wavelengths.length);
+
+        for (int i = 0; i < 6; i++) {
+            assertEquals(13.0 + i, wavelengths[i], 1e-8);
+        }
+    }
+
+    @Test
+    public void testGetSeaWifsWavelengths_incompleteSpectrum() {
+        try {
+            inSituSpectrum.getSeaWifsWavelengths();
+            fail("IllegalStateException expected");
+        } catch (IllegalStateException expected) {
+        }
+    }
+
+    @Test
     public void testGetMeasurementsFloat() {
         for (int i = 0; i < 6; i++) {
             addSpectralMeasurement(10.0, 4 + i, i);
@@ -408,6 +432,21 @@ public class InSituSpectrumTest {
             inSituSpectrum.getModisMeasurements();
             fail("IllegalStateException expected");
         } catch (IllegalStateException expected) {
+        }
+    }
+
+    @Test
+    public void testGetSeaWifsMeasurements() {
+        for (int i = 0; i < 6; i++) {
+            addSeawifsMeasurement(13.0, 9 + i, i);
+        }
+
+        final double[] measurements = inSituSpectrum.getSeaWifsMeasurements();
+        assertNotNull(measurements);
+        assertEquals(6, measurements.length);
+
+        for (int i = 0; i < 6; i++) {
+            assertEquals(9 + i, measurements[i], 1e-8);
         }
     }
 

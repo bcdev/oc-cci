@@ -124,4 +124,42 @@ public class SensorFactoryTest {
         assertEquals(5, averageIndices[0]);
         assertEquals(6, averageIndices[1]);
     }
+
+    @Test
+    public void testCreateSeaWifsLikeToMeris() {
+        final double[] wavelengths = {412.0, 443.0, 490.0, 510.0, 555.0, 670.0};
+        final double[] rrs_in = {0.01318, 0.0094184, 0.0065419, 0.0032623, 0.0013976, 1.1169E-4};
+        final InSituSpectrum seaWifsSpectrum= TestHelper.createSeaWifsSpectrum(wavelengths, rrs_in);
+
+        final Sensor toMeris = SensorFactory.createToMeris(seaWifsSpectrum);
+        assertNotNull(toMeris);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 555.0, 670.0, 670.0}, toMeris.getLambdaI(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 560.0, 620.0, 620.0, 665.0}, toMeris.getLambdaO(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 620.0, 665.0}, toMeris.getLambdaInterface(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 620.0, 665.0}, toMeris.getLambdaOAvg(), 1e-8);
+        assertEquals(443.0, toMeris.getGreenWavelength(), 1e-8);
+        final int[] averageIndices = toMeris.getAverageIndices();
+        assertEquals(2, averageIndices.length);
+        assertEquals(5, averageIndices[0]);
+        assertEquals(6, averageIndices[1]);
+    }
+
+    @Test
+    public void testCreateSeaWifsLikeToModis() {
+        final double[] wavelengths = {412.0, 443.0, 490.0, 510.0, 555.0, 670.0};
+        final double[] rrs_in = {0.0086553, 0.0063214, 0.0047236, 0.0028191, 0.0013089, 1.0021E-4};
+        final InSituSpectrum seaWifsSpectrum= TestHelper.createSeaWifsSpectrum(wavelengths, rrs_in);
+
+        final Sensor toModis = SensorFactory.createToModis(seaWifsSpectrum);
+        assertNotNull(toModis);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 555.0, 670.0, 670.0}, toModis.getLambdaI(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 488.0, 531.0, 531.0, 547.0, 667.0, 678.0}, toModis.getLambdaO(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0}, toModis.getLambdaInterface(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0}, toModis.getLambdaOAvg(), 1e-8);
+        assertEquals(443.0, toModis.getGreenWavelength(), 1e-8);
+        final int[] averageIndices = toModis.getAverageIndices();
+        assertEquals(2, averageIndices.length);
+        assertEquals(4, averageIndices[0]);
+        assertEquals(5, averageIndices[1]);
+    }
 }

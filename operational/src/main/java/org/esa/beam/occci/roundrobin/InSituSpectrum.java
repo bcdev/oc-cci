@@ -102,6 +102,14 @@ class InSituSpectrum {
         return getWavelengthsArray(modisMeasurements);
     }
 
+    double[] getSeaWifsWavelengths() {
+        if (!isCompleteSeaWiFS()) {
+            throw new IllegalStateException("Incomplete spectrum");
+        }
+
+        return getWavelengthsArray(seaWiFSMeasurements);
+    }
+
     public double[] getQaaMeasurements() {
         if (!isCompleteQaa()) {
             throw new IllegalStateException("Incomplete spectrum");
@@ -122,6 +130,13 @@ class InSituSpectrum {
             throw new IllegalStateException("Incomplete spectrum");
         }
         return getMeasurementsArray(modisMeasurements);
+    }
+
+    double[] getSeaWifsMeasurements() {
+        if (!isCompleteSeaWiFS()) {
+            throw new IllegalStateException("Incomplete spectrum");
+        }
+        return getMeasurementsArray(seaWiFSMeasurements);
     }
 
     float[] getMeasurementsFloat() {

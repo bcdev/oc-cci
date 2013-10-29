@@ -51,14 +51,14 @@ public class BandShiftMain {
     }
 
     private static void shiftFromModisLike(InSituSpectrum spectrum, double[] qaaAt443) {
-        ++count;
-        if (count == 529) {
-            System.out.println("shiftFromModisLike() - TO BE IMPLEMENTED");
-        }
+        System.out.println("shiftFromModisLike() - TO BE IMPLEMENTED");
     }
 
     private static void shiftFromSeawifsLike(InSituSpectrum spectrum, double[] qaaAt443) {
-        System.out.println("shiftFromSeawifsLike() - TO BE IMPLEMENTED");
+        ++count;
+        if (count == 449) {
+            System.out.println("shiftFromSeawifsLike() - TO BE IMPLEMENTED");
+        }
     }
 
     private static void shiftFromQaa(InSituSpectrum spectrum, double[] qaaAt443) {
