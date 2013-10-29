@@ -51,12 +51,12 @@ public class BandShifterTest {
     public void testShiftModisLikeToMeris() throws IOException {
         final double[] wavelengths = {412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
         final double[] rrs_in = {0.012084, 0.0089211, 0.0062153, 0.0021173, 0.0014871, 9.943E-5, 1.0206E-4};
-        final InSituSpectrum merisLike = TestHelper.createMerisSpectrum(wavelengths, rrs_in);
+        final InSituSpectrum modisLike = TestHelper.createModisSpectrum(wavelengths, rrs_in);
 
         final double[] qaaAt443 = new double[]{0.009201783686876297, 0.007969709113240242, 0.004412563983350992};
-        final double[] rrs_expected = {0.012088970090059437, 0.0089211, 0.006138016198978773, 0.0028114008634353926, 0.0012443304160077934, 1.4731044498197948E-4, 1.1313891087980301E-4};
+        final double[] rrs_expected = {0.012088970090059437, 0.0089211, 0.006138016198978773, 0.0032432243095825396, 0.0012443304160077934, 1.7500117089236389E-4, 1.0127766945234463E-4};
 
-        final double[] rrs_out = BandShifter.toMeris(merisLike, qaaAt443);
+        final double[] rrs_out = BandShifter.toMeris(modisLike, qaaAt443);
         assertArrayEquals(rrs_expected, rrs_out, 1e-8);
     }
 
@@ -64,12 +64,25 @@ public class BandShifterTest {
     public void testShiftModisLikeToModis() throws IOException {
         final double[] wavelengths = {412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
         final double[] rrs_in = {0.0086757, 0.0064082, 0.0042756, 0.0013042, 9.1488E-4, 7.18E-5, 8.693E-5};
-        final InSituSpectrum merisLike = TestHelper.createModisSpectrum(wavelengths, rrs_in);
+        final InSituSpectrum modisLike = TestHelper.createModisSpectrum(wavelengths, rrs_in);
 
         final double[] qaaAt443 = new double[]{0.007476214785128832, 0.009706169366836548, 0.003199426457285881};
         final double[] rrs_expected = {0.0086757, 0.0064082, 0.0042756, 0.0013042, 9.1488E-4, 7.18E-5, 8.693E-5};
 
-        final double[] rrs_out = BandShifter.toModis(merisLike, qaaAt443);
+        final double[] rrs_out = BandShifter.toModis(modisLike, qaaAt443);
+        assertArrayEquals(rrs_expected, rrs_out, 1e-8);
+    }
+
+    @Test
+    public void testShiftModisLikeToSeaWifs() throws IOException {
+        final double[] wavelengths = {412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
+        final double[] rrs_in = {0.014407, 0.010421, 0.007321, 0.0025148, 0.001784, 1.0777E-4, 1.1223E-4};
+        final InSituSpectrum modisLike = TestHelper.createModisSpectrum(wavelengths, rrs_in);
+
+        final double[] qaaAt443 = new double[]{0.009684919379651546, 0.00665450980886817, 0.0049596792086958885};
+        final double[] rrs_expected = {0.014407, 0.010421, 0.007228377483014507, 0.0033374722164972843, 0.0015677037176513903, 1.0986529321888687E-4};
+
+        final double[] rrs_out = BandShifter.toSeaWifs(modisLike, qaaAt443);
         assertArrayEquals(rrs_expected, rrs_out, 1e-8);
     }
 }
