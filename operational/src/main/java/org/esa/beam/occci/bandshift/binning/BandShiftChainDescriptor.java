@@ -10,6 +10,7 @@ import org.esa.beam.occci.qaa.QaaConstants;
 import org.esa.beam.occci.qaa.binning.QaaCellProcessor;
 import org.esa.beam.occci.qaa.binning.QaaConfig;
 import org.esa.beam.occci.util.binning.BinningUtils;
+import org.esa.beam.occci.util.binning.CellProcessorParallel;
 import org.esa.beam.occci.util.binning.CellProcessorSequence;
 import org.esa.beam.occci.util.binning.MarkSensorProcessor;
 import org.esa.beam.occci.util.binning.SumToMeanCellProcessor;
@@ -65,10 +66,8 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
                                                                          bsInputFeatures,
                                                                          BS_OUTPUT_CENTER_WAVELENGTHS);
 
-            VariableContext variableContext = BinningUtils.createVariableContext(bandshiftProcessor.getOutputFeatureNames());
-            CellProcessor markProcessor = new MarkSensorProcessor(variableContext, 0);
-
-            return new CellProcessorSequence(bandshiftProcessor, markProcessor);
+            CellProcessor markProcessor = new MarkSensorProcessor(0);
+            return new CellProcessorParallel(bandshiftProcessor, markProcessor);
         } else if (QaaConstants.MODIS.equals(config.sensorName)) {
 
             String[] sumFeatureNames = {"Rrs_412_sum", "Rrs_443_sum", "Rrs_488_sum", "Rrs_531_sum", "Rrs_547_sum", "Rrs_667_sum"};
@@ -96,20 +95,17 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
                                                                           bsInputFeatures,
                                                                           BS_OUTPUT_CENTER_WAVELENGTHS);
 
-            VariableContext markVarCtx = BinningUtils.createVariableContext(bandshiftProcessor.getOutputFeatureNames());
-            CellProcessor markProcessor = new MarkSensorProcessor(markVarCtx, 1);
-
-            return new CellProcessorSequence(sumToMeanProcessor, qaaProcessor, bandshiftProcessor, markProcessor);
+            CellProcessor markProcessor = new MarkSensorProcessor(1);
+            CellProcessor sequence = new CellProcessorSequence(sumToMeanProcessor, qaaProcessor, bandshiftProcessor);
+            return new CellProcessorParallel(sequence, markProcessor);
         } else if (QaaConstants.SEAWIFS.equals(config.sensorName)) {
 
             String[] sumFeatureNames = {"Rrs_412_sum", "Rrs_443_sum", "Rrs_490_sum", "Rrs_510_sum", "Rrs_555_sum", "Rrs_670_sum"};
             String weightFeatureName = "weights";
             CellProcessor sumToMeanProcessor = new SumToMeanCellProcessor(varCtx, weightFeatureName, sumFeatureNames);
 
-            VariableContext variableContext = BinningUtils.createVariableContext(sumToMeanProcessor.getOutputFeatureNames());
-            CellProcessor markProcessor = new MarkSensorProcessor(variableContext, 2);
-
-            return new CellProcessorSequence(sumToMeanProcessor, markProcessor);
+            CellProcessor markProcessor = new MarkSensorProcessor(2);
+            return new CellProcessorParallel(sumToMeanProcessor, markProcessor);
         } else {
             throw new IllegalArgumentException("Unsupported sensor: " + config.sensorName);
         }

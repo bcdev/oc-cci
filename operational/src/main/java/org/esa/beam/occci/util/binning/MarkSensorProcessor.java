@@ -27,19 +27,18 @@ import org.esa.beam.framework.gpf.annotations.Parameter;
 
 public class MarkSensorProcessor extends CellProcessor {
 
+    private static final String[] OUTPUT_FEATURES = {"sensor"};
+
     private final int sensor;
 
-    public MarkSensorProcessor(VariableContext varCtx, int sensor) {
-        super(createOutputFeatureNames(varCtx));
+    public MarkSensorProcessor(int sensor) {
+        super(OUTPUT_FEATURES);
         this.sensor = sensor;
     }
 
     @Override
-    public void compute(Vector outputVector, WritableVector postVector) {
-        for (int i = 0; i < outputVector.size(); i++) {
-            postVector.set(i, outputVector.get(i));
-        }
-        postVector.set(outputVector.size(), sensor);
+    public void compute(Vector inputVector, WritableVector outputVector) {
+        outputVector.set(0, sensor);
     }
 
     public static class Config extends CellProcessorConfig {
@@ -67,23 +66,12 @@ public class MarkSensorProcessor extends CellProcessor {
         @Override
         public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
             Config config = (Config) cellProcessorConfig;
-            return new MarkSensorProcessor(varCtx, config.sensor);
+            return new MarkSensorProcessor(config.sensor);
         }
 
         @Override
         public CellProcessorConfig createConfig() {
             return new Config();
         }
-    }
-
-    private static String[] createOutputFeatureNames(VariableContext varCtx) {
-        int variableCount = varCtx.getVariableCount();
-
-        String[] features = new String[variableCount + 1];
-        for (int i = 0; i < variableCount; i++) {
-            features[i] = varCtx.getVariableName(i);
-        }
-        features[variableCount] = "sensor";
-        return features;
     }
 }
