@@ -116,15 +116,7 @@ public class PostMergingProcessor extends CellProcessor {
             copySensorContribution(sensor, outputVector);
             return;
         }
-        if (containsInvalid(qaaResult.getA_PIG()) ||
-                containsInvalid(qaaResult.getA_Total()) ||
-                containsInvalid(qaaResult.getA_YS()) ||
-                containsInvalid(qaaResult.getBB_SPM())) {
-            BinningUtils.setToInvalid(outputVector);
-            copyRRS(rrs, outputVector);
-            copySensorContribution(sensor, outputVector);
-            return;
-        }
+
         resultMapper.assign(qaaResult, rrs, outputVector);
         copyRRS(rrs, outputVector);
         copySensorContribution(sensor, outputVector);
@@ -201,15 +193,6 @@ public class PostMergingProcessor extends CellProcessor {
         for (int i = 0; i < sensors.length; i++) {
             outputVector.set(sensorOffset + i, sensors[i]);
         }
-    }
-
-    private static boolean containsInvalid(float[] values) {
-        for (float value : values) {
-            if (Float.isNaN(value) || Float.isInfinite(value)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static class Config extends CellProcessorConfig {

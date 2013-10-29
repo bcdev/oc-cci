@@ -42,7 +42,24 @@ public class QaaPostProcessor extends CellProcessor {
             BinningUtils.setToInvalid(outputVector);
             return;
         }
+        if (containsInfinite(qaaResult.getA_PIG()) ||
+                containsInfinite(qaaResult.getA_Total()) ||
+                containsInfinite(qaaResult.getA_YS()) ||
+                containsInfinite(qaaResult.getBB_SPM())) {
+            BinningUtils.setToInvalid(outputVector);
+            return;
+        }
+
 
         resultMapper.assign(qaaResult, rrs, outputVector);
+    }
+
+    private static boolean containsInfinite(float[] values) {
+        for (float value : values) {
+            if (Float.isInfinite(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
