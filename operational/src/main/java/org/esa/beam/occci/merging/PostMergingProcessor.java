@@ -31,8 +31,8 @@ import org.esa.beam.occci.qaa.QaaConstants;
 import org.esa.beam.occci.qaa.QaaResult;
 import org.esa.beam.occci.qaa.SensorConfig;
 import org.esa.beam.occci.qaa.SensorConfigFactory;
+import org.esa.beam.occci.qaa.binning.QaaCellProcessor;
 import org.esa.beam.occci.qaa.binning.QaaConfig;
-import org.esa.beam.occci.qaa.binning.QaaDescriptor;
 import org.esa.beam.occci.qaa.binning.ResultMapper;
 import org.esa.beam.occci.util.binning.BinningUtils;
 
@@ -234,7 +234,7 @@ public class PostMergingProcessor extends CellProcessor {
     }
 
     private static String[] createOutputFeatureNames(VariableContext varCtx, QaaConfig qaaConfig) {
-        String[] IOPfeatureNames = QaaDescriptor.createOutputFeatureNames(qaaConfig);
+        String[] IOPfeatureNames = QaaCellProcessor.createOutputFeatureNames(qaaConfig);
         final ArrayList<String> featureNameList = new ArrayList<String>();
         Collections.addAll(featureNameList, IOPfeatureNames);
         featureNameList.add("chlor_a");
