@@ -11,11 +11,8 @@ public class ResultMapperTest {
 
     @Test
     public void testAssignInvalidSensorName() {
-        final BandShiftConfig config= new BandShiftConfig("macht_bäng");
-        config.setSensorName("Nikon");
-
         try {
-            new ResultMapper(config);
+            new ResultMapper("Nikon", null);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
@@ -23,12 +20,8 @@ public class ResultMapperTest {
 
     @Test
     public void testAssignInvalidWavelength() {
-        final BandShiftConfig config= new BandShiftConfig("macht_bäng");
-        config.setSensorName("SEAWIFS");
-        config.setOutputCenterWavelengths(new int[] {876});
-
         try {
-            new ResultMapper(config);
+            new ResultMapper("SEAWIFS", new int[] {876});
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
@@ -36,11 +29,7 @@ public class ResultMapperTest {
 
     @Test
     public void testAssign_MODIS_noBands() {
-        final BandShiftConfig config = new BandShiftConfig("who");
-        config.setSensorName("MODISA");
-        config.setOutputCenterWavelengths(new int[]{});
-
-        final ResultMapper mapper = new ResultMapper(config);
+        final ResultMapper mapper = new ResultMapper("MODISA", new int[0]);
 
         final VectorImpl postVector = createVector(2);
         final double[] rrs_shifted = new double[] {-1.0, -1.0};
@@ -55,11 +44,7 @@ public class ResultMapperTest {
 
     @Test
     public void testAssign_MERIS_twoBands_justInput() {
-        final BandShiftConfig config = new BandShiftConfig("the");
-        config.setSensorName("MERIS");
-        config.setOutputCenterWavelengths(new int[]{413, 443});
-
-        final ResultMapper mapper = new ResultMapper(config);
+        final ResultMapper mapper = new ResultMapper("MERIS", new int[]{413, 443});
 
         final VectorImpl postVector = createVector(2);
         final double[] rrs_shifted = new double[] {-1.0, -1.0};
@@ -73,11 +58,7 @@ public class ResultMapperTest {
 
     @Test
     public void testAssign_SeaWifs_threeBands_justShifted() {
-        final BandShiftConfig config = new BandShiftConfig("f**k");
-        config.setSensorName("SEAWIFS");
-        config.setOutputCenterWavelengths(new int[]{413, 547, 560});
-
-        final ResultMapper mapper = new ResultMapper(config);
+        final ResultMapper mapper = new ResultMapper("SEAWIFS", new int[]{413, 547, 560});
 
         final VectorImpl postVector = createVector(3);
         final double[] rrs_shifted = new double[] {0.6, 0.7, 0.8, 0.9, 1.0, 1.1};
@@ -92,11 +73,7 @@ public class ResultMapperTest {
 
     @Test
     public void testAssign_MODIS_fourBands_mixedInAndOut() {
-        final BandShiftConfig config = new BandShiftConfig("is");
-        config.setSensorName("MODISA");
-        config.setOutputCenterWavelengths(new int[]{412, 413, 547, 555});
-
-        final ResultMapper mapper = new ResultMapper(config);
+        final ResultMapper mapper = new ResultMapper("MODISA", new int[]{412, 413, 547, 555});
 
         final VectorImpl postVector = createVector(4);
         final double[] rrs_shifted = new double[] {0.6, 0.7, 0.8, 0.9, 1.0, 1.1};

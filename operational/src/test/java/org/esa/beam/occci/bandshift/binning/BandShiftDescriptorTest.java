@@ -48,39 +48,4 @@ public class BandShiftDescriptorTest {
         assertNotNull(postProcessor);
         assertTrue(postProcessor instanceof BandShiftPostProcessor);
     }
-
-    @Test
-    public void testCreateOutputFeaturesNames() {
-        final BandShiftConfig config = new BandShiftConfig("bla");
-        config.setOutputCenterWavelengths(new int[]{412, 488, 531, 547, 555, 667, 670});
-        final String[] merisFeatures = BandShiftDescriptor.createOutputFeatureNames(config);
-        assertEquals(7, merisFeatures.length);
-
-        assertEquals("Rrs_412", merisFeatures[0]);
-        assertEquals("Rrs_488", merisFeatures[1]);
-        assertEquals("Rrs_531", merisFeatures[2]);
-        assertEquals("Rrs_547", merisFeatures[3]);
-        assertEquals("Rrs_555", merisFeatures[4]);
-        assertEquals("Rrs_667", merisFeatures[5]);
-        assertEquals("Rrs_670", merisFeatures[6]);
-    }
-
-    @Test
-    public void testCreateOutputFeaturesNames_justTwo() {
-        final BandShiftConfig config = new BandShiftConfig("schwafel");
-        config.setOutputCenterWavelengths(new int[]{667, 670});
-        final String[] merisFeatures = BandShiftDescriptor.createOutputFeatureNames(config);
-        assertEquals(2, merisFeatures.length);
-
-        assertEquals("Rrs_667", merisFeatures[0]);
-        assertEquals("Rrs_670", merisFeatures[1]);
-    }
-
-    @Test
-    public void testCreateOutputFeaturesNames_noBands() {
-        final BandShiftConfig config = new BandShiftConfig("schwafel");
-        config.setOutputCenterWavelengths(new int[0]);
-        final String[] merisFeatures = BandShiftDescriptor.createOutputFeatureNames(config);
-        assertEquals(0, merisFeatures.length);
-    }
 }

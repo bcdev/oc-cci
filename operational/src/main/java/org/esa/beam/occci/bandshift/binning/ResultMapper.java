@@ -13,15 +13,14 @@ class ResultMapper {
     private final int[] lambdaShifteSrc;
     private final int[] lambdaShiftedDest;
 
-    public ResultMapper(BandShiftConfig config) {
-        final Sensor sensor = Sensor.byName(config.getSensorName());
+    public ResultMapper(String sensorName, int[] outputCenterWavelengths) {
+        final Sensor sensor = Sensor.byName(sensorName);
 
         final ArrayList<Integer> lambdaInSrcList = new ArrayList<Integer>();
         final ArrayList<Integer> lambdaInDestList = new ArrayList<Integer>();
         final ArrayList<Integer> lambdaShiftedSrcList = new ArrayList<Integer>();
         final ArrayList<Integer> lambdaShiftedDestList = new ArrayList<Integer>();
 
-        final int[] outputCenterWavelengths = config.getOutputCenterWavelengths();
         for (int i = 0; i < outputCenterWavelengths.length; i++) {
             boolean mapped = false;
             int outputCenterWavelength = outputCenterWavelengths[i];

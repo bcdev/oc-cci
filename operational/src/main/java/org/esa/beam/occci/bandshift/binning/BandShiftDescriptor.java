@@ -23,25 +23,14 @@ public class BandShiftDescriptor implements CellProcessorDescriptor {
     @Override
     public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig config) {
         final BandShiftConfig bandShiftConfig = (BandShiftConfig) config;
-        final String[] outputFeatureNames = createOutputFeatureNames(bandShiftConfig);
-        final BandShiftPostProcessor bandShiftPostProcessor;
+
+        String sensorName = bandShiftConfig.getSensorName();
+        String[] bandNames = bandShiftConfig.getBandNames();
+        int[] outputCenterWavelengths = bandShiftConfig.getOutputCenterWavelengths();
         try {
-            bandShiftPostProcessor = new BandShiftPostProcessor(outputFeatureNames, bandShiftConfig, varCtx);
+            return new BandShiftPostProcessor(varCtx, sensorName, bandNames, outputCenterWavelengths);
         } catch (IOException e) {
-            throw new IllegalStateException(e.getMessage());
+            throw new IllegalArgumentException("Failed to init BandShiftPostProcessor", e);
         }
-        return bandShiftPostProcessor;
-    }
-
-    // package access for testing only tb 2013-04-19
-    static String[] createOutputFeatureNames(BandShiftConfig config) {
-        final int[] outputCenterWavelengths = config.getOutputCenterWavelengths();
-        final String[] outputFeatureNames = new String[outputCenterWavelengths.length];
-
-        for (int i = 0; i < outputCenterWavelengths.length; i++) {
-            outputFeatureNames[i] = "Rrs_" + outputCenterWavelengths[i];
-        }
-
-        return outputFeatureNames;
     }
 }

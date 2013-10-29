@@ -13,7 +13,8 @@ import java.io.IOException;
 
 public class BandShiftPostProcessor extends CellProcessor {
 
-    private static final int QAA_OFFSET = 6;
+    private static final int NUM_RRS = 6;
+    private static final int NUM_QAA = 3;
 
     private final BandShiftCorrection bandShiftCorrection;
     private final Sensor sensor;
@@ -23,37 +24,45 @@ public class BandShiftPostProcessor extends CellProcessor {
     private final double[] qaa;
     private final ResultMapper resultMapper;
 
-    protected BandShiftPostProcessor(String[] outputFeatureNames, BandShiftConfig config, VariableContext varCtx) throws IOException {
-        super(outputFeatureNames);
+    public BandShiftPostProcessor(VariableContext varCtx, String sensorName, String[] bandNames, int[] outputCenterWavelengths) throws IOException {
+        super(createOutputFeatureNames(outputCenterWavelengths));
 
-        sensor = Sensor.byName(config.getSensorName());
-        final CorrectionContext correctionContext = new CorrectionContext(sensor);
+        sensor = Sensor.byName(sensorName);
+         final CorrectionContext correctionContext = new CorrectionContext(sensor);
         bandShiftCorrection = new BandShiftCorrection(correctionContext);
-        rrs = new double[6];
-        qaa = new double[3];
+        rrs = new double[NUM_RRS];
+        qaa = new double[NUM_QAA];
 
-        final String[] bandNames = config.getBandNames();
         bandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
-        resultMapper = new ResultMapper(config);
+        resultMapper = new ResultMapper(sensorName, outputCenterWavelengths);
+    }
+
+    // package access for testing only tb 2013-04-19
+    static String[] createOutputFeatureNames(int[] outputCenterWavelengths) {
+        final String[] outputFeatureNames = new String[outputCenterWavelengths.length];
+        for (int i = 0; i < outputCenterWavelengths.length; i++) {
+            outputFeatureNames[i] = "Rrs_" + outputCenterWavelengths[i];
+        }
+        return outputFeatureNames;
     }
 
     @Override
-    public void compute(Vector outputVector, WritableVector postVector) {
+    public void compute(Vector input, WritableVector output) {
         for (int i = 0; i < rrs.length; i++) {
-            rrs[i] = outputVector.get(bandIndices[i]);
+            rrs[i] = input.get(bandIndices[i]);
         }
 
         for (int i = 0; i < qaa.length; i++) {
-            qaa[i] = outputVector.get(bandIndices[i + QAA_OFFSET]);
+            qaa[i] = input.get(bandIndices[i + NUM_RRS]);
         }
 
         final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambdaInterface(), qaa);
         if (isCorrected(rrs_corrected)) {
             final double[] rrs_shifted = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
 
-            resultMapper.assign(rrs, rrs_shifted, postVector);
+            resultMapper.assign(rrs, rrs_shifted, output);
         } else {
-            BinningUtils.setToInvalid(postVector);
+            BinningUtils.setToInvalid(output);
         }
     }
 

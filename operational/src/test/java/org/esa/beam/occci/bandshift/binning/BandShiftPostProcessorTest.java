@@ -6,38 +6,29 @@ import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
 public class BandShiftPostProcessorTest {
 
-    @Test
-    public void testGetOutputFeatureNames() throws IOException {
-        final String[] outputFeatureNames = {"out", "feature", "names"};
-        final BandShiftConfig config = createConfig("MERIS", new int[0]);
-        final VariableContext variableContext = createVariableContext();
-
-        final BandShiftPostProcessor postProcessor = new BandShiftPostProcessor(outputFeatureNames, config, variableContext);
-
-        final String[] featureNamesFromProcessor = postProcessor.getOutputFeatureNames();
-        assertArrayEquals(outputFeatureNames, featureNamesFromProcessor);
-    }
+    private static final String[] BAND_NAMES = new String[]{"band_1",
+            "band_2",
+            "band_3",
+            "band_4",
+            "band_5",
+            "band_6",
+            "band_7",
+            "band_8",
+            "band_9"};
 
     @Test
     public void testThrowsExceptionOnMissingBands() throws IOException {
-        final String[] outputFeatureNames = {"out", "feature", "names"};
-        final BandShiftConfig config = createConfig("MERIS", new int[0]);
-        final VariableContext variableContext = createVariableContext();
-
-        // add band to config that is not in the context
-        final String[] bandNames = config.getBandNames();
-        final String[] additionalBandNames = new String[bandNames.length + 1];
-        System.arraycopy(bandNames, 0, additionalBandNames, 0, bandNames.length);
-        additionalBandNames[bandNames.length] = "does_not_exist";
-        config.setBandNames(additionalBandNames);
-
-        try {
-            new BandShiftPostProcessor(outputFeatureNames, config, variableContext);
+        final String[] bandNames = Arrays.copyOf(BAND_NAMES, BAND_NAMES.length + 1);
+        bandNames[BAND_NAMES.length] = "does_not_exist";
+        final VariableContext ctx = BinningUtils.createVariableContext(BAND_NAMES);
+     try {
+            new BandShiftPostProcessor(ctx, "MERIS", bandNames, new int[0]);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
@@ -50,9 +41,8 @@ public class BandShiftPostProcessorTest {
         final String[] outputFeatureNames = {"Rrs_413", "Rrs_510", "Rrs_490", "Rrs_560", "Rrs_555", "Rrs_665", "Rrs_670"};
         final int[] outCenterWaveLengths = new int[]{413, 510, 490, 560, 555, 665, 670};
 
-        final VariableContext variableContext = createVariableContext();
-        final BandShiftConfig config = createConfig("MODISA", outCenterWaveLengths);
-        final BandShiftPostProcessor postProcessor = new BandShiftPostProcessor(outputFeatureNames, config, variableContext);
+        final VariableContext ctx = BinningUtils.createVariableContext(BAND_NAMES);
+        final BandShiftPostProcessor postProcessor = new BandShiftPostProcessor(ctx, "MODISA", BAND_NAMES, outCenterWaveLengths);
 
         final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
         final VectorImpl outVector = new VectorImpl(inputData);
@@ -73,24 +63,35 @@ public class BandShiftPostProcessorTest {
         assertFalse(BandShiftPostProcessor.isCorrected(new double[0]));
     }
 
-    private VariableContext createVariableContext() {
-        return BinningUtils.createVariableContext("band_1",
-                                                  "band_2",
-                                                  "band_3",
-                                                  "band_4",
-                                                  "band_5",
-                                                  "band_6",
-                                                  "band_7",
-                                                  "band_8",
-                                                  "band_9");
+    @Test
+    public void testCreateOutputFeaturesNames() {
+        int[] outputCenterWavelengths = {412, 488, 531, 547, 555, 667, 670};
+        final String[] merisFeatures = BandShiftPostProcessor.createOutputFeatureNames(outputCenterWavelengths);
+        assertEquals(7, merisFeatures.length);
+
+        assertEquals("Rrs_412", merisFeatures[0]);
+        assertEquals("Rrs_488", merisFeatures[1]);
+        assertEquals("Rrs_531", merisFeatures[2]);
+        assertEquals("Rrs_547", merisFeatures[3]);
+        assertEquals("Rrs_555", merisFeatures[4]);
+        assertEquals("Rrs_667", merisFeatures[5]);
+        assertEquals("Rrs_670", merisFeatures[6]);
     }
 
-    private BandShiftConfig createConfig(String meris, int[] outCenterWaveLengths) {
-        final BandShiftConfig config = new BandShiftConfig("bla");
-        config.setSensorName(meris);
-        final String[] bandNames = {"band_1", "band_2", "band_3", "band_4", "band_5", "band_6", "band_7", "band_8", "band_9"};
-        config.setBandNames(bandNames);
-        config.setOutputCenterWavelengths(outCenterWaveLengths);
-        return config;
+    @Test
+    public void testCreateOutputFeaturesNames_justTwo() {
+        int[] outputCenterWavelengths = {667, 670};
+        final String[] merisFeatures = BandShiftPostProcessor.createOutputFeatureNames(outputCenterWavelengths);
+        assertEquals(2, merisFeatures.length);
+
+        assertEquals("Rrs_667", merisFeatures[0]);
+        assertEquals("Rrs_670", merisFeatures[1]);
+    }
+
+    @Test
+    public void testCreateOutputFeaturesNames_noBands() {
+        int[] outputCenterWavelengths = new int[0];
+        final String[] merisFeatures = BandShiftPostProcessor.createOutputFeatureNames(outputCenterWavelengths);
+        assertEquals(0, merisFeatures.length);
     }
 }
