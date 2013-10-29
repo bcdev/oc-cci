@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<wps:Execute service="WPS"
+version="1.0.0"
+xmlns:wps="http://www.opengis.net/wps/1.0.0"
+xmlns:ows="http://www.opengis.net/ows/1.1"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+  >
+
+    <ows:Identifier>L3</ows:Identifier>
+
+    <wps:DataInputs>
+      <wps:Input>
+        <ows:Identifier>calvalus.output.dir</ows:Identifier>
+        <wps:Data>
+          <wps:Reference xlink:href="hdfs://master00:9000/calvalus/projects/oc/pm10/cloud-stats/monthly_2008" />
+        </wps:Data>
+      </wps:Input>
+
+      <wps:Input>
+        <ows:Identifier>inputPath</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>/calvalus/projects/oc/Idepix4v1/${yyyy}/${MM}/L2_of_MER_..._1.*${yyyy}${MM}${dd}_.*seq$</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+
+      <wps:Input>
+        <ows:Identifier>minDate</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>2008-01-01</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+      <wps:Input>
+        <ows:Identifier>maxDate</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>2008-12-31</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+      <wps:Input>
+        <ows:Identifier>periodLength</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>30</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+
+      <wps:Input>
+        <ows:Identifier>calvalus.l3.parameters</ows:Identifier>
+        <wps:Data>
+          <wps:ComplexData>
+            <parameters>
+              <numRows>2160</numRows>
+              <maskExpr>not l1_flags.INVALID</maskExpr>
+              <variables>
+                <variable>
+                   <name>cloud_free</name>
+                   <expr>not cloud_classif_flags.F_CLOUD</expr>
+                </variable>
+                <variable>
+                   <name>cloudy</name>
+                   <expr>cloud_classif_flags.F_CLOUD</expr>
+                </variable>
+                <variable>
+                   <name>land</name>
+                   <expr>cloud_classif_flags.F_LAND</expr>
+                </variable>
+
+              </variables>
+              <aggregators>
+                <aggregator>
+                  <type>AVG</type>
+                  <varName>cloud_free</varName>
+                </aggregator>
+                <aggregator>
+                  <type>AVG</type>
+                  <varName>cloudy</varName>
+                </aggregator>
+                <aggregator>
+                  <type>AVG</type>
+                  <varName>land</varName>
+                </aggregator>
+              </aggregators>
+              <postProcessor>
+                <type>Selection</type>
+                <varNames>cloud_free_mean,cloudy_mean,land_mean</varNames>
+              </postProcessor>
+            </parameters>
+          </wps:ComplexData>
+        </wps:Data>
+      </wps:Input>
+
+      <wps:Input>
+        <ows:Identifier>calvalus.output.prefix</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>monthly-cloud</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+
+      <wps:Input>
+        <ows:Identifier>outputFormat</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>BEAM-DIMAP</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+
+      <wps:Input>
+        <ows:Identifier>calvalus.hadoop.mapred.job.queue.name</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>cc</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+    </wps:DataInputs>
+</wps:Execute>
