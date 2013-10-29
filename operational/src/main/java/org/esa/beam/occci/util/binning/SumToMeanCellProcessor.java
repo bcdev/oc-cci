@@ -41,12 +41,12 @@ public class SumToMeanCellProcessor extends CellProcessor {
     }
 
     @Override
-    public void compute(Vector outputVector, WritableVector postVector) {
-        float weight = outputVector.get(weightIndex);
-        for (int i = 0; i < postVector.size(); i++) {
-            float sum = outputVector.get(sumIndices[i]);
-            float mean = sum / weight;
-            postVector.set(i, mean);
+    public void compute(Vector input, WritableVector output) {
+        float weight = input.get(weightIndex);
+        for (int i = 0; i < sumIndices.length; i++) {
+            final float sum = input.get(sumIndices[i]);
+            final float mean = sum / weight;
+            output.set(i, mean);
         }
     }
 
