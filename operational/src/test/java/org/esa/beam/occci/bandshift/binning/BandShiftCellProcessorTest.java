@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class BandShiftPostProcessorTest {
+public class BandShiftCellProcessorTest {
 
     private static final String[] BAND_NAMES = new String[]{"band_1",
             "band_2",
@@ -28,7 +28,7 @@ public class BandShiftPostProcessorTest {
         bandNames[BAND_NAMES.length] = "does_not_exist";
         final VariableContext ctx = BinningUtils.createVariableContext(BAND_NAMES);
      try {
-            new BandShiftPostProcessor(ctx, "MERIS", bandNames, new int[0]);
+            new BandShiftCellProcessor(ctx, "MERIS", bandNames, new int[0]);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
@@ -42,7 +42,7 @@ public class BandShiftPostProcessorTest {
         final int[] outCenterWaveLengths = new int[]{413, 510, 490, 560, 555, 665, 670};
 
         final VariableContext ctx = BinningUtils.createVariableContext(BAND_NAMES);
-        final BandShiftPostProcessor postProcessor = new BandShiftPostProcessor(ctx, "MODISA", BAND_NAMES, outCenterWaveLengths);
+        final BandShiftCellProcessor postProcessor = new BandShiftCellProcessor(ctx, "MODISA", BAND_NAMES, outCenterWaveLengths);
 
         final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
         final VectorImpl outVector = new VectorImpl(inputData);
@@ -59,14 +59,14 @@ public class BandShiftPostProcessorTest {
 
     @Test
     public void testIsCorrected() {
-        assertTrue(BandShiftPostProcessor.isCorrected(new double[2]));
-        assertFalse(BandShiftPostProcessor.isCorrected(new double[0]));
+        assertTrue(BandShiftCellProcessor.isCorrected(new double[2]));
+        assertFalse(BandShiftCellProcessor.isCorrected(new double[0]));
     }
 
     @Test
     public void testCreateOutputFeaturesNames() {
         int[] outputCenterWavelengths = {412, 488, 531, 547, 555, 667, 670};
-        final String[] merisFeatures = BandShiftPostProcessor.createOutputFeatureNames(outputCenterWavelengths);
+        final String[] merisFeatures = BandShiftCellProcessor.createOutputFeatureNames(outputCenterWavelengths);
         assertEquals(7, merisFeatures.length);
 
         assertEquals("Rrs_412", merisFeatures[0]);
@@ -81,7 +81,7 @@ public class BandShiftPostProcessorTest {
     @Test
     public void testCreateOutputFeaturesNames_justTwo() {
         int[] outputCenterWavelengths = {667, 670};
-        final String[] merisFeatures = BandShiftPostProcessor.createOutputFeatureNames(outputCenterWavelengths);
+        final String[] merisFeatures = BandShiftCellProcessor.createOutputFeatureNames(outputCenterWavelengths);
         assertEquals(2, merisFeatures.length);
 
         assertEquals("Rrs_667", merisFeatures[0]);
@@ -91,7 +91,7 @@ public class BandShiftPostProcessorTest {
     @Test
     public void testCreateOutputFeaturesNames_noBands() {
         int[] outputCenterWavelengths = new int[0];
-        final String[] merisFeatures = BandShiftPostProcessor.createOutputFeatureNames(outputCenterWavelengths);
+        final String[] merisFeatures = BandShiftCellProcessor.createOutputFeatureNames(outputCenterWavelengths);
         assertEquals(0, merisFeatures.length);
     }
 }

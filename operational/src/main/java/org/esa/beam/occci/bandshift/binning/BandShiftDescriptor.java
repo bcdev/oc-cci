@@ -28,9 +28,9 @@ public class BandShiftDescriptor implements CellProcessorDescriptor {
         String[] bandNames = bandShiftConfig.getBandNames();
         int[] outputCenterWavelengths = bandShiftConfig.getOutputCenterWavelengths();
         try {
-            return new BandShiftPostProcessor(varCtx, sensorName, bandNames, outputCenterWavelengths);
+            return new BandShiftCellProcessor(varCtx, sensorName, bandNames, outputCenterWavelengths);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to init BandShiftPostProcessor", e);
+            throw new IllegalArgumentException("Failed to init BandShiftCellProcessor", e);
         }
     }
 }

@@ -11,7 +11,7 @@ import org.esa.beam.occci.util.binning.BinningUtils;
 
 import java.io.IOException;
 
-public class BandShiftPostProcessor extends CellProcessor {
+public class BandShiftCellProcessor extends CellProcessor {
 
     private static final int NUM_RRS = 6;
     private static final int NUM_QAA = 3;
@@ -24,7 +24,7 @@ public class BandShiftPostProcessor extends CellProcessor {
     private final double[] qaa;
     private final ResultMapper resultMapper;
 
-    public BandShiftPostProcessor(VariableContext varCtx, String sensorName, String[] bandNames, int[] outputCenterWavelengths) throws IOException {
+    public BandShiftCellProcessor(VariableContext varCtx, String sensorName, String[] bandNames, int[] outputCenterWavelengths) throws IOException {
         super(createOutputFeatureNames(outputCenterWavelengths));
 
         sensor = Sensor.byName(sensorName);

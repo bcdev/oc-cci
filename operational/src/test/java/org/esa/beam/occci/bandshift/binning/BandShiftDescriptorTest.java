@@ -46,6 +46,6 @@ public class BandShiftDescriptorTest {
         VariableContext variableContext = BinningUtils.createVariableContext();
         final CellProcessor postProcessor = descriptor.createCellProcessor(variableContext, config);
         assertNotNull(postProcessor);
-        assertTrue(postProcessor instanceof BandShiftPostProcessor);
+        assertTrue(postProcessor instanceof BandShiftCellProcessor);
     }
 }
