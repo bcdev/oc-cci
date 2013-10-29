@@ -4,7 +4,6 @@ import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.binning.cellprocessor.FeatureSelection;
-import org.esa.beam.binning.support.VariableContextImpl;
 import static org.junit.Assert.*;
 
 import org.esa.beam.binning.support.VectorImpl;

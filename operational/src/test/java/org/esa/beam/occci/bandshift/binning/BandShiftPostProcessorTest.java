@@ -74,16 +74,15 @@ public class BandShiftPostProcessorTest {
     }
 
     private VariableContext createVariableContext() {
-        final VariableContext variableContext = BinningUtils.createVariableContext("band_1",
-                                                                                   "band_2",
-                                                                                   "band_3",
-                                                                                   "band_4",
-                                                                                   "band_5",
-                                                                                   "band_6",
-                                                                                   "band_7",
-                                                                                   "band_8",
-                                                                                   "band_9");
-        return variableContext;
+        return BinningUtils.createVariableContext("band_1",
+                                                  "band_2",
+                                                  "band_3",
+                                                  "band_4",
+                                                  "band_5",
+                                                  "band_6",
+                                                  "band_7",
+                                                  "band_8",
+                                                  "band_9");
     }
 
     private BandShiftConfig createConfig(String meris, int[] outCenterWaveLengths) {
