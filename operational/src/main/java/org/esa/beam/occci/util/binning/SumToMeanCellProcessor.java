@@ -33,11 +33,8 @@ public class SumToMeanCellProcessor extends CellProcessor {
     public SumToMeanCellProcessor(VariableContext varCtx, String weightFeatureName, String...sumFeatureNames) {
         super(createOutputFeatureNames(sumFeatureNames));
 
-        weightIndex = varCtx.getVariableIndex(weightFeatureName);
-        sumIndices = new int[sumFeatureNames.length];
-        for (int i = 0; i < sumIndices.length; i++) {
-            sumIndices[i] = varCtx.getVariableIndex(sumFeatureNames[i]);
-        }
+        weightIndex = BinningUtils.getBandIndices(varCtx, weightFeatureName)[0];
+        sumIndices = BinningUtils.getBandIndices(varCtx, sumFeatureNames);
     }
 
     @Override

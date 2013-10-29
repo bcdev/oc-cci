@@ -24,26 +24,25 @@ public class CellProcessorSequence extends CellProcessor {
     }
 
     @Override
-    public void compute(Vector input, WritableVector output) {
+    public void compute(Vector inputVector, WritableVector outputVector) {
         for (int i = 0; i < cellProcessors.length; i++) {
 
-            final WritableVector out;
+            final WritableVector output;
             if (i == cellProcessors.length - 1) {
-                // last processor write to portVector
-                out = output;
+                // last processor write to outputVector
+                output = outputVector;
             } else {
-                out = outputVectors[i];
+                output = outputVectors[i];
             }
 
-            final Vector in;
+            final Vector input;
             if (i == 0) {
-                // first processor read from input
-                in = input;
+                // first processor read from inputVector
+                input = inputVector;
             } else {
-                in = outputVectors[i - 1];
+                input = outputVectors[i - 1];
             }
-
-            cellProcessors[i].compute(in, out);
+            cellProcessors[i].compute(input, output);
         }
     }
 }

@@ -10,6 +10,7 @@ import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.framework.gpf.annotations.Parameter;
+import org.esa.beam.occci.util.binning.BinningUtils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -37,15 +38,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
         sensor = config.getSensor();
         String[] varNames = config.getVarNames();
 
-        varIndexes = new int[varNames.length];
-        for (int i = 0; i < varNames.length; i++) {
-            int varIndex = varCtx.getVariableIndex(varNames[i]);
-            if (varIndex < 0) {
-                throw new IllegalArgumentException("Input Variable does not exist: " + varNames[i]);
-            }
-            varIndexes[i] = varIndex;
-        }
-
+        varIndexes = BinningUtils.getBandIndices(varCtx, varNames);
         this.dateIndexCalculator = createDateIndexCalculator(config);
         this.numFeatures = varIndexes.length;
 
