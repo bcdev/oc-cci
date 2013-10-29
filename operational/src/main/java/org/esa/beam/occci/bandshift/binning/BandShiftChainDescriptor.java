@@ -31,6 +31,14 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
         public Config() {
             super(NAME);
         }
+
+        public String getSensorName() {
+            return sensorName;
+        }
+
+        public void setSensorName(String sensorName) {
+            this.sensorName = sensorName;
+        }
     }
 
     @Override
