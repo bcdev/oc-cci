@@ -6,22 +6,9 @@ import org.esa.beam.occci.qaa.QaaConstants;
 import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class QaaCellProcessorTest {
-
-    @Test
-    public void testGetOutputFeatureNames() {
-        final String[] outputFeatureNames = {"out", "feature", "names"};
-
-        final QaaConfig config = new QaaConfig();
-        config.setSensorName(QaaConstants.SEAWIFS);
-
-        VariableContext variableContext = BinningUtils.createVariableContext();
-        final QaaCellProcessor qaaCellProcessor = new QaaCellProcessor(variableContext, config, outputFeatureNames);
-        assertArrayEquals(outputFeatureNames, qaaCellProcessor.getOutputFeatureNames());
-    }
 
     @Test
     public void testProcess_MODIS_a_pig_a_total() {
@@ -34,11 +21,9 @@ public class QaaCellProcessorTest {
 
         final VariableContext varCtx = createVariableContext();
 
-        final String[] outputFeatureNames = QaaDescriptor.createOutputFeatureNames(config);
-        final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
-
-        final QaaCellProcessor postProcessor = new QaaCellProcessor(varCtx, config, outputFeatureNames);
-        postProcessor.compute(outVector, postVector);
+        final QaaCellProcessor processor = new QaaCellProcessor(varCtx, config);
+        final VectorImpl postVector = new VectorImpl(new float[processor.getOutputFeatureNames().length]);
+        processor.compute(outVector, postVector);
 
         // out:     [a_pig_412, a_pig_443, a_pig_488, a_total_488, a_total_531, a_total_547]
 
@@ -64,11 +49,9 @@ public class QaaCellProcessorTest {
 
         final VariableContext varCtx = createVariableContext();
 
-        final String[] outputFeatureNames = QaaDescriptor.createOutputFeatureNames(config);
-        final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
-
-        final QaaCellProcessor postProcessor = new QaaCellProcessor(varCtx, config, outputFeatureNames);
-        postProcessor.compute(outVector, postVector);
+        final QaaCellProcessor processor = new QaaCellProcessor(varCtx, config);
+        final VectorImpl postVector = new VectorImpl(new float[processor.getOutputFeatureNames().length]);
+        processor.compute(outVector, postVector);
 
         // out:     [[a_ys_412, a_ys_488, bb_spm_412 ,bb_spm_488 ,bb_spm_531 ,bb_spm_547]]
         // a_ys:    [0.35672852396965027, 0.21561411023139954, 0.10381654649972916]
@@ -81,6 +64,73 @@ public class QaaCellProcessorTest {
         assertEquals(0.008171066641807556, postVector.get(4), 1e-8);
         assertEquals(0.00775269977748394, postVector.get(5), 1e-8);
     }
+
+    @Test
+    public void testCreateOutputFeatureNames_MERIS_no_bb_spm() {
+        final QaaConfig config = new QaaConfig();
+        config.setSensorName(QaaConstants.MERIS);
+        config.setAPigOutIndices(new int[]{0, 1});
+        config.setATotalOutIndices(new int[]{2, 3});
+        config.setAYsOutIndices(new int[]{4, 5});
+        config.setBbSpmOutIndices(new int[0]);
+
+        final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
+        assertNotNull(featureNames);
+
+        final String[] expected = {"a_pig_413", "a_pig_443", "a_total_490", "a_total_510", "a_ys_560", "a_ys_665"};
+        assertArrayEquals(expected, featureNames);
+    }
+
+    @Test
+    public void testCreateOutputFeatureNames_MODIS_no_a_pig() {
+        final QaaConfig config = new QaaConfig();
+        config.setSensorName(QaaConstants.MODIS);
+        config.setAPigOutIndices(new int[0]);
+        config.setATotalOutIndices(new int[]{2, 3});
+        config.setAYsOutIndices(new int[]{4});
+        config.setBbSpmOutIndices(new int[]{3, 4, 5});
+
+        final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
+        assertNotNull(featureNames);
+
+        final String[] expected = {"a_total_488", "a_total_531", "a_ys_547", "bb_spm_531", "bb_spm_547", "bb_spm_667"};
+        assertArrayEquals(expected, featureNames);
+    }
+
+    @Test
+    public void testCreateOutputFeatureNames_SEAWIFS_no_a_total() {
+        final QaaConfig config = new QaaConfig();
+        config.setSensorName(QaaConstants.SEAWIFS);
+        config.setAPigOutIndices(new int[]{0, 1, 5});
+        config.setATotalOutIndices(new int[0]);
+        config.setAYsOutIndices(new int[]{4});
+        config.setBbSpmOutIndices(new int[]{3, 4, 5});
+
+        final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
+        assertNotNull(featureNames);
+
+        final String[] expected = {"a_pig_412", "a_pig_443", "a_pig_667", "a_ys_555", "bb_spm_510", "bb_spm_555", "bb_spm_667"};
+        assertArrayEquals(expected, featureNames);
+    }
+
+    @Test
+    public void testCreateOutputFeatureNames_SEAWIFS_no_a_total_plus_rrs() {
+        final QaaConfig config = new QaaConfig();
+        config.setSensorName(QaaConstants.SEAWIFS);
+        config.setAPigOutIndices(new int[]{0, 1, 5});
+        config.setATotalOutIndices(new int[0]);
+        config.setAYsOutIndices(new int[]{4});
+        config.setBbSpmOutIndices(new int[]{3, 4, 5});
+        config.setBandNames(new String[]{"rrs_1", "rrs_2"});
+        config.setRrsOut(true);
+
+        final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
+        assertNotNull(featureNames);
+
+        final String[] expected = {"a_pig_412", "a_pig_443", "a_pig_667", "a_ys_555", "bb_spm_510", "bb_spm_555", "bb_spm_667", "rrs_1", "rrs_2"};
+        assertArrayEquals(expected, featureNames);
+    }
+
 
     private VariableContext createVariableContext() {
         return BinningUtils.createVariableContext("ref_1",

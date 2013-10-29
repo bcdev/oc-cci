@@ -29,41 +29,7 @@ public class QaaDescriptor implements CellProcessorDescriptor {
         final QaaConfig config = (QaaConfig) postProcessorConfig;
         validate(config);
 
-        final String[] outputFeatureNames = createOutputFeatureNames(config);
-        return new QaaCellProcessor(varCtx, config, outputFeatureNames);
-    }
-
-    // package access for testing only tb 2013-04-23
-    public static String[] createOutputFeatureNames(QaaConfig config) {
-        final SensorConfig sensorConfig = SensorConfigFactory.get(config.getSensorName());
-        final ArrayList<String> featureNameList = new ArrayList<String>();
-
-        final double[] wavelengths = sensorConfig.getWavelengths();
-        final int[] a_pig_out_indices = config.getAPigOutIndices();
-        for (int a_pig_out_index : a_pig_out_indices) {
-            featureNameList.add("a_pig_" + getWavelengthInt(wavelengths, a_pig_out_index));
-        }
-
-        final int[] a_total_out_indices = config.getATotalOutIndices();
-        for (int a_total_out_index : a_total_out_indices) {
-            featureNameList.add("a_total_" + getWavelengthInt(wavelengths, a_total_out_index));
-        }
-
-        final int[] a_ys_out_indices = config.getAYsOutIndices();
-        for (int a_ys_out_index : a_ys_out_indices) {
-            featureNameList.add("a_ys_" + getWavelengthInt(wavelengths, a_ys_out_index));
-        }
-
-        final int[] bb_spm_out_indices = config.getBbSpmOutIndices();
-        for (int bb_spm_out_index : bb_spm_out_indices) {
-            featureNameList.add("bb_spm_" + getWavelengthInt(wavelengths, bb_spm_out_index));
-        }
-
-        if (config.isRrsOut()) {
-            Collections.addAll(featureNameList, config.getBandNames());
-        }
-
-        return featureNameList.toArray(new String[featureNameList.size()]);
+        return new QaaCellProcessor(varCtx, config);
     }
 
     // package access for testing only tb 2013-04-24

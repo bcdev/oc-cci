@@ -7,8 +7,8 @@ import org.esa.beam.binning.VariableContext;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.occci.bandshift.Sensor;
 import org.esa.beam.occci.qaa.QaaConstants;
+import org.esa.beam.occci.qaa.binning.QaaCellProcessor;
 import org.esa.beam.occci.qaa.binning.QaaConfig;
-import org.esa.beam.occci.qaa.binning.QaaDescriptor;
 import org.esa.beam.occci.util.binning.BinningUtils;
 import org.esa.beam.occci.util.binning.CellProcessorSequence;
 import org.esa.beam.occci.util.binning.MarkSensorProcessor;
@@ -69,8 +69,7 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
 
             VariableContext qaaVarCtx = BinningUtils.createVariableContext(sumToMeanProcessor.getOutputFeatureNames());
             String[] qaaInputFeatures = {"Rrs_412", "Rrs_443", "Rrs_488", "Rrs_531", "Rrs_547", "Rrs_667"};
-            QaaDescriptor qaaDescriptor = new QaaDescriptor();
-            QaaConfig qaaConfig = (QaaConfig) qaaDescriptor.createConfig();
+            QaaConfig qaaConfig = new QaaConfig();
             qaaConfig.setSensorName(QaaConstants.MODIS);
             qaaConfig.setBandNames(qaaInputFeatures);
             qaaConfig.setATotalOutIndices(new int[0]);
@@ -78,7 +77,7 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
             qaaConfig.setAPigOutIndices(new int[]{1});
             qaaConfig.setAYsOutIndices(new int[]{1});
             qaaConfig.setRrsOut(true);
-            CellProcessor qaaProcessor = qaaDescriptor.createCellProcessor(qaaVarCtx, qaaConfig);
+            CellProcessor qaaProcessor = new QaaCellProcessor(qaaVarCtx, qaaConfig);
 
             VariableContext bandShiftVarCtx = BinningUtils.createVariableContext(qaaProcessor.getOutputFeatureNames());
             String[] bsInputFeatures = {
