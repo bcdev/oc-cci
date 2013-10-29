@@ -30,7 +30,7 @@ public class QaaDescriptor implements CellProcessorDescriptor {
         validate(config);
 
         final String[] outputFeatureNames = createOutputFeatureNames(config);
-        return new QaaPostProcessor(varCtx, config, outputFeatureNames);
+        return new QaaCellProcessor(varCtx, config, outputFeatureNames);
     }
 
     // package access for testing only tb 2013-04-23

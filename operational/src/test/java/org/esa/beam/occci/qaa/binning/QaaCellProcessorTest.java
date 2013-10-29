@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public class QaaPostProcessorTest {
+public class QaaCellProcessorTest {
 
     @Test
     public void testGetOutputFeatureNames() {
@@ -19,8 +19,8 @@ public class QaaPostProcessorTest {
         config.setSensorName(QaaConstants.SEAWIFS);
 
         VariableContext variableContext = BinningUtils.createVariableContext();
-        final QaaPostProcessor qaaPostProcessor = new QaaPostProcessor(variableContext, config, outputFeatureNames);
-        assertArrayEquals(outputFeatureNames, qaaPostProcessor.getOutputFeatureNames());
+        final QaaCellProcessor qaaCellProcessor = new QaaCellProcessor(variableContext, config, outputFeatureNames);
+        assertArrayEquals(outputFeatureNames, qaaCellProcessor.getOutputFeatureNames());
     }
 
     @Test
@@ -37,7 +37,7 @@ public class QaaPostProcessorTest {
         final String[] outputFeatureNames = QaaDescriptor.createOutputFeatureNames(config);
         final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
 
-        final QaaPostProcessor postProcessor = new QaaPostProcessor(varCtx, config, outputFeatureNames);
+        final QaaCellProcessor postProcessor = new QaaCellProcessor(varCtx, config, outputFeatureNames);
         postProcessor.compute(outVector, postVector);
 
         // out:     [a_pig_412, a_pig_443, a_pig_488, a_total_488, a_total_531, a_total_547]
@@ -67,7 +67,7 @@ public class QaaPostProcessorTest {
         final String[] outputFeatureNames = QaaDescriptor.createOutputFeatureNames(config);
         final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
 
-        final QaaPostProcessor postProcessor = new QaaPostProcessor(varCtx, config, outputFeatureNames);
+        final QaaCellProcessor postProcessor = new QaaCellProcessor(varCtx, config, outputFeatureNames);
         postProcessor.compute(outVector, postVector);
 
         // out:     [[a_ys_412, a_ys_488, bb_spm_412 ,bb_spm_488 ,bb_spm_531 ,bb_spm_547]]

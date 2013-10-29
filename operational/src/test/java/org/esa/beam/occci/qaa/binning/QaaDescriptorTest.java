@@ -48,7 +48,7 @@ public class QaaDescriptorTest {
 
         final CellProcessor postProcessor = descriptor.createCellProcessor(varCtx, config);
         assertNotNull(postProcessor);
-        assertTrue(postProcessor instanceof QaaPostProcessor);
+        assertTrue(postProcessor instanceof QaaCellProcessor);
     }
 
 

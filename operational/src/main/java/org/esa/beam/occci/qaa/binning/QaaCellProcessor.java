@@ -8,7 +8,7 @@ import org.esa.beam.binning.WritableVector;
 import org.esa.beam.occci.qaa.*;
 import org.esa.beam.occci.util.binning.BinningUtils;
 
-public class QaaPostProcessor extends CellProcessor {
+public class QaaCellProcessor extends CellProcessor {
 
     private final QaaAlgorithm qaaAlgorithm;
     private final int[] bandIndices;
@@ -16,7 +16,7 @@ public class QaaPostProcessor extends CellProcessor {
     QaaResult qaaResult;
     private final ResultMapper resultMapper;
 
-    public QaaPostProcessor(VariableContext varCtx, QaaConfig config, String[] outputFeatureNames) {
+    public QaaCellProcessor(VariableContext varCtx, QaaConfig config, String[] outputFeatureNames) {
         super(outputFeatureNames);
 
         final SensorConfig sensorConfig = SensorConfigFactory.get(config.getSensorName());
