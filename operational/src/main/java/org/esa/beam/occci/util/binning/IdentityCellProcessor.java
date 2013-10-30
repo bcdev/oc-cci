@@ -23,23 +23,38 @@ import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
+import org.esa.beam.framework.gpf.annotations.Parameter;
 
 public class IdentityCellProcessor extends CellProcessor {
 
     public static final String NAME = "Identity";
 
-    public IdentityCellProcessor(VariableContext varCtx) {
-        super(createOutputFeatureNames(varCtx));
+    private final int[] bandIndices;
+
+    public IdentityCellProcessor(VariableContext varCtx, String... bandNames) {
+        super(createOutputFeatureNames(varCtx, bandNames));
+        if (bandNames == null || bandNames.length == 0) {
+            bandIndices = new int[varCtx.getVariableCount()];
+            for (int i = 0; i < bandIndices.length; i++) {
+                bandIndices[i] = varCtx.getVariableIndex(varCtx.getVariableName(i));
+            }
+        } else {
+            bandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
+        }
     }
 
     @Override
     public void compute(Vector outputVector, WritableVector postVector) {
-        for (int i = 0; i < outputVector.size(); i++) {
-            postVector.set(i, outputVector.get(i));
+        for (int i = 0; i < bandIndices.length; i++) {
+            postVector.set(i, outputVector.get(bandIndices[i]));
         }
     }
 
     public static class Config extends CellProcessorConfig {
+
+        @Parameter()
+        private String[] bandNames;
+
         public Config() {
             super(NAME);
         }
@@ -54,7 +69,8 @@ public class IdentityCellProcessor extends CellProcessor {
 
         @Override
         public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
-            return new IdentityCellProcessor(varCtx);
+            IdentityCellProcessor.Config config = (Config) cellProcessorConfig;
+            return new IdentityCellProcessor(varCtx, config.bandNames);
         }
 
         @Override
@@ -63,11 +79,15 @@ public class IdentityCellProcessor extends CellProcessor {
         }
     }
 
-    private static String[] createOutputFeatureNames(VariableContext varCtx) {
-        String[] features = new String[varCtx.getVariableCount()];
-        for (int i = 0; i < features.length; i++) {
-            features[i] = varCtx.getVariableName(i);
+    private static String[] createOutputFeatureNames(VariableContext varCtx, String[] bandNames) {
+        if (bandNames == null || bandNames.length == 0) {
+            String[] features = new String[varCtx.getVariableCount()];
+            for (int i = 0; i < features.length; i++) {
+                features[i] = varCtx.getVariableName(i);
+            }
+            return features;
+        } else {
+            return bandNames;
         }
-        return features;
     }
 }

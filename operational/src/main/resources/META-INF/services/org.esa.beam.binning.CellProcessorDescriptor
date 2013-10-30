@@ -4,4 +4,4 @@ org.esa.beam.occci.util.binning.IdentityCellProcessor$Descriptor
 org.esa.beam.occci.util.binning.SumToMeanCellProcessor$Descriptor
 org.esa.beam.occci.util.binning.MarkSensorProcessor$Descriptor
 org.esa.beam.occci.bandshift.binning.BandShiftChainDescriptor
-org.esa.beam.occci.merging.PostMergingProcessor$Descriptor
+org.esa.beam.occci.merging.PostMergingDescriptor

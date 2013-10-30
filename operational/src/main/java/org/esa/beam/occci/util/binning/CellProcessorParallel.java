@@ -30,7 +30,7 @@ public class CellProcessorParallel extends CellProcessor {
             if (i == 0) {
                 offsets[i] = 0;
             } else {
-                offsets[i] = sizes[i - 1];
+                offsets[i] = offsets[i - 1] + sizes[i - 1];
             }
         }
         outputFeatureCount = getOutputFeatureNames().length;

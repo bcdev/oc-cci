@@ -1,35 +1,25 @@
 package org.esa.beam.occci.merging;
 
+import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.support.VectorImpl;
-import org.esa.beam.occci.qaa.QaaConstants;
-import org.esa.beam.occci.qaa.binning.QaaConfig;
 import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Test;
 
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 
 
-public class PostMergingProcessorTest {
+public class PostMergingDescriptorTest {
 
     private static final String[] BAND_NAMES = new String[]{"Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670"};
-    private static final int[] ALL_IOPS = new int[]{0, 1, 2, 3, 4, 5};
 
     @Test
     public void testCompute() throws Exception {
         String[] bands = BinningUtils.combine(BAND_NAMES, "sensor_0", "sensor_1", "sensor_2");
         VariableContext varCtx = BinningUtils.createVariableContext(bands);
 
-        QaaConfig qaaConfig = new QaaConfig();
-        qaaConfig.setSensorName(QaaConstants.SEAWIFS);
-        qaaConfig.setBandNames(BAND_NAMES);
-        qaaConfig.setATotalOutIndices(ALL_IOPS);
-        qaaConfig.setBbSpmOutIndices(ALL_IOPS);
-        qaaConfig.setAPigOutIndices(ALL_IOPS);
-        qaaConfig.setAYsOutIndices(ALL_IOPS);
-        PostMergingProcessor processor = new PostMergingProcessor(varCtx, qaaConfig);
+        CellProcessor processor = PostMergingDescriptor.create(varCtx);
+
         String[] outputFeatureNames = processor.getOutputFeatureNames();
         String[] expectOutputFeatures = {
                 "a_pig_412", "a_pig_443", "a_pig_490", "a_pig_510", "a_pig_555", "a_pig_667",
