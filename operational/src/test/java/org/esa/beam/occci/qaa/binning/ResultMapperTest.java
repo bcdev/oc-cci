@@ -18,7 +18,7 @@ public class ResultMapperTest {
         final VectorImpl vector = new VectorImpl(new float[2]);
 
         final QaaResult qaaResult = createQaaResult();
-        mapper.assign(qaaResult, new float[]{}, vector);
+        mapper.assign(qaaResult, vector);
 
         assertEquals(2.f, vector.get(0), 1e-8);
         assertEquals(3.f, vector.get(1), 1e-8);
@@ -33,7 +33,7 @@ public class ResultMapperTest {
         final VectorImpl vector = new VectorImpl(new float[3]);
 
         final QaaResult qaaResult = createQaaResult();
-        mapper.assign(qaaResult, new float[]{}, vector);
+        mapper.assign(qaaResult, vector);
 
         assertEquals(5.f, vector.get(0), 1e-8);
         assertEquals(7.f, vector.get(1), 1e-8);
@@ -49,7 +49,7 @@ public class ResultMapperTest {
         final VectorImpl vector = new VectorImpl(new float[2]);
 
         final QaaResult qaaResult = createQaaResult();
-        mapper.assign(qaaResult, new float[]{}, vector);
+        mapper.assign(qaaResult, vector);
 
         assertEquals(9.f, vector.get(0), 1e-8);
         assertEquals(11.f, vector.get(1), 1e-8);
@@ -64,31 +64,11 @@ public class ResultMapperTest {
         final VectorImpl vector = new VectorImpl(new float[3]);
 
         final QaaResult qaaResult = createQaaResult();
-        mapper.assign(qaaResult, new float[]{}, vector);
+        mapper.assign(qaaResult, vector);
 
         assertEquals(12.f, vector.get(0), 1e-8);
         assertEquals(14.f, vector.get(1), 1e-8);
         assertEquals(16.f, vector.get(2), 1e-8);
-    }
-
-    @Test
-    public void testAssign_bb_spm_and_pass_through_input() {
-        final QaaConfig config = new QaaConfig();
-        config.setBbSpmOutIndices(new int[]{0, 2, 4});
-        config.setRrsOut(true);
-
-        final ResultMapper mapper = new ResultMapper(config);
-        final VectorImpl outVector = new VectorImpl(new float[5]);
-
-        final QaaResult qaaResult = createQaaResult();
-        mapper.assign(qaaResult, new float[]{42f, 84f}, outVector);
-
-        assertEquals(12.f, outVector.get(0), 1e-8);
-        assertEquals(14.f, outVector.get(1), 1e-8);
-        assertEquals(16.f, outVector.get(2), 1e-8);
-
-        assertEquals(42.f, outVector.get(3), 1e-8);
-        assertEquals(84.f, outVector.get(4), 1e-8);
     }
 
     @Test
@@ -99,7 +79,7 @@ public class ResultMapperTest {
         final VectorImpl vector = new VectorImpl(new float[0]);
 
         final QaaResult qaaResult = createQaaResult();
-        mapper.assign(qaaResult, new float[]{}, vector);
+        mapper.assign(qaaResult, vector);
     }
 
     @Test
@@ -114,7 +94,7 @@ public class ResultMapperTest {
         final VectorImpl vector = new VectorImpl(new float[4]);
 
         final QaaResult qaaResult = createQaaResult();
-        mapper.assign(qaaResult, new float[]{}, vector);
+        mapper.assign(qaaResult, vector);
 
         assertEquals(1.f, vector.get(0), 1e-8);
         assertEquals(5.f, vector.get(1), 1e-8);

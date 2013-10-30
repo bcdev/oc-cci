@@ -4,6 +4,9 @@ import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
+import org.esa.beam.binning.Vector;
+import org.esa.beam.binning.WritableVector;
+import org.esa.beam.binning.support.VectorImpl;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.occci.bandshift.Sensor;
 import org.esa.beam.occci.qaa.QaaConstants;
@@ -11,7 +14,6 @@ import org.esa.beam.occci.qaa.binning.QaaCellProcessor;
 import org.esa.beam.occci.qaa.binning.QaaConfig;
 import org.esa.beam.occci.util.binning.BinningUtils;
 import org.esa.beam.occci.util.binning.CellProcessorParallel;
-import org.esa.beam.occci.util.binning.CellProcessorSequence;
 import org.esa.beam.occci.util.binning.MarkSensorProcessor;
 import org.esa.beam.occci.util.binning.SumToMeanCellProcessor;
 
@@ -71,34 +73,35 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
             return new CellProcessorParallel(bandshiftProcessor, markProcessor);
         } else if (QaaConstants.MODIS.equals(config.sensorName)) {
 
-            String[] sumFeatureNames = {"Rrs_412_sum", "Rrs_443_sum", "Rrs_488_sum", "Rrs_531_sum", "Rrs_547_sum", "Rrs_667_sum"};
+            String[] modisSumFeatures = {"Rrs_412_sum", "Rrs_443_sum", "Rrs_488_sum", "Rrs_531_sum", "Rrs_547_sum", "Rrs_667_sum"};
             String weightFeatureName = "weights";
-            CellProcessor sumToMeanProcessor = new SumToMeanCellProcessor(varCtx, weightFeatureName, sumFeatureNames);
+            String[] modisRrsFeatures = {"Rrs_412", "Rrs_443", "Rrs_488", "Rrs_531", "Rrs_547", "Rrs_667"};
 
-            VariableContext qaaVarCtx = BinningUtils.createVariableContext(sumToMeanProcessor.getOutputFeatureNames());
-            String[] qaaInputFeatures = {"Rrs_412", "Rrs_443", "Rrs_488", "Rrs_531", "Rrs_547", "Rrs_667"};
+            CellProcessor sumToMeanProcessor = new SumToMeanCellProcessor(varCtx, weightFeatureName, modisSumFeatures);
+
+            String[] meanOutFeatures = sumToMeanProcessor.getOutputFeatureNames();
+            VariableContext qaaVarCtx = BinningUtils.createVariableContext(meanOutFeatures);
             QaaConfig qaaConfig = new QaaConfig();
             qaaConfig.setSensorName(QaaConstants.MODIS);
-            qaaConfig.setBandNames(qaaInputFeatures);
+            qaaConfig.setBandNames(modisRrsFeatures);
             qaaConfig.setATotalOutIndices(new int[0]);
             qaaConfig.setBbSpmOutIndices(new int[]{1});
             qaaConfig.setAPigOutIndices(new int[]{1});
             qaaConfig.setAYsOutIndices(new int[]{1});
-            qaaConfig.setRrsOut(true);
             CellProcessor qaaProcessor = new QaaCellProcessor(qaaVarCtx, qaaConfig);
 
-            VariableContext bandShiftVarCtx = BinningUtils.createVariableContext(qaaProcessor.getOutputFeatureNames());
-            String[] rrsInputFeatures = {"Rrs_412", "Rrs_443", "Rrs_488", "Rrs_531", "Rrs_547", "Rrs_667"};
-            String[] iopInputFeatures = {"a_pig_443", "a_ys_443", "bb_spm_443"};
+            String[] qaaOutFeatures = qaaProcessor.getOutputFeatureNames();
+            String[] meanPlusQaaFeatures = BinningUtils.combine(meanOutFeatures, qaaOutFeatures);
+            VariableContext bandShiftVarCtx = BinningUtils.createVariableContext(meanPlusQaaFeatures);
             CellProcessor bandshiftProcessor = new BandShiftCellProcessor(bandShiftVarCtx,
                                                                           Sensor.MODISA_NAME,
-                                                                          rrsInputFeatures,
-                                                                          iopInputFeatures,
+                                                                          modisRrsFeatures,
+                                                                          qaaOutFeatures,
                                                                           BS_OUTPUT_CENTER_WAVELENGTHS);
 
             CellProcessor markProcessor = new MarkSensorProcessor(1);
-            CellProcessor sequence = new CellProcessorSequence(sumToMeanProcessor, qaaProcessor, bandshiftProcessor);
-            return new CellProcessorParallel(sequence, markProcessor);
+            CellProcessor modisBandShiftProcessor = new ModisBandShiftProcessor(sumToMeanProcessor, qaaProcessor, bandshiftProcessor);
+            return new CellProcessorParallel(modisBandShiftProcessor, markProcessor);
         } else if (QaaConstants.SEAWIFS.equals(config.sensorName)) {
 
             String[] sumFeatureNames = {"Rrs_412_sum", "Rrs_443_sum", "Rrs_490_sum", "Rrs_510_sum", "Rrs_555_sum", "Rrs_670_sum"};
@@ -110,6 +113,44 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
         } else {
             throw new IllegalArgumentException("Unsupported sensor: " + config.sensorName);
         }
+    }
+
+    private static class ModisBandShiftProcessor extends CellProcessor {
+
+        private final CellProcessor sumToMeanProcessor;
+        private final CellProcessor qaaProcessor;
+        private final CellProcessor bandshiftProcessor;
+        private final float[] meanElems;
+        private final float[] qaaElems;
+        private final float[] meanPlusQaaElems;
+        private WritableVector meanVector;
+        private WritableVector qaaVector;
+        private WritableVector meanPlusQaaVector;
+
+        protected ModisBandShiftProcessor(CellProcessor sumToMeanProcessor, CellProcessor qaaProcessor, CellProcessor bandshiftProcessor) {
+            super(bandshiftProcessor.getOutputFeatureNames());
+            this.sumToMeanProcessor = sumToMeanProcessor;
+            this.qaaProcessor = qaaProcessor;
+            this.bandshiftProcessor = bandshiftProcessor;
+            int numMeanRrs = sumToMeanProcessor.getOutputFeatureNames().length;
+            int numQaa = qaaProcessor.getOutputFeatureNames().length;
+            meanElems = new float[numMeanRrs];
+            meanVector = new VectorImpl(meanElems);
+            qaaElems = new float[numQaa];
+            qaaVector = new VectorImpl(qaaElems);
+            meanPlusQaaElems = new float[numMeanRrs + numQaa];
+            meanPlusQaaVector = new VectorImpl(meanPlusQaaElems);
+        }
+
+        @Override
+        public void compute(Vector inputVector, WritableVector outputVector) {
+            sumToMeanProcessor.compute(inputVector, meanVector);
+            qaaProcessor.compute(meanVector, qaaVector);
+            System.arraycopy(meanElems, 0, meanPlusQaaElems, 0, meanElems.length);
+            System.arraycopy(qaaElems, 0, meanPlusQaaElems, meanElems.length, qaaElems.length);
+            bandshiftProcessor.compute(meanPlusQaaVector, outputVector);
+        }
+
     }
 
 }

@@ -18,9 +18,6 @@ public class ResultMapper {
     private final int[] bb_spm_src;
     private final int[] bb_spm_dest;
 
-    private final int numIOPs;
-    private final boolean copyRrsToOutput;
-
     public ResultMapper(QaaConfig config) {
         int outIndex = 0;
 
@@ -51,11 +48,9 @@ public class ResultMapper {
             bb_spm_dest[i] = outIndex;
             ++outIndex;
         }
-        numIOPs = outIndex;
-        copyRrsToOutput = config.isRrsOut();
     }
 
-    public void assign(QaaResult result, float[] rrs, WritableVector outVector) {
+    public void assign(QaaResult result, WritableVector outVector) {
         final float[] a_pig = result.getA_PIG();
         for (int i = 0; i < a_pig_src.length; i++) {
             final float value = a_pig[a_pig_src[i]];
@@ -78,12 +73,6 @@ public class ResultMapper {
         for (int i = 0; i < bb_spm_src.length; i++) {
             final float value = bb_spm[bb_spm_src[i]];
             outVector.set(bb_spm_dest[i], value);
-        }
-
-        if (copyRrsToOutput) {
-            for (int i = 0; i < rrs.length; i++) {
-                outVector.set(numIOPs + i, rrs[i]);
-            }
         }
     }
 }

@@ -77,7 +77,7 @@ public class PostMergingProcessor extends CellProcessor {
 
         final String[] bandNames = qaaConfig.getBandNames();
         rrsBandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
-        sensorBandIndices = BinningUtils.getBandIndices(varCtx, new String[]{"sensor_0", "sensor_1", "sensor_2"});
+        sensorBandIndices = BinningUtils.getBandIndices(varCtx, "sensor_0", "sensor_1", "sensor_2");
 
         rrs = new float[rrsBandIndices.length];
         sensor = new float[sensorBandIndices.length];
@@ -117,7 +117,7 @@ public class PostMergingProcessor extends CellProcessor {
             return;
         }
 
-        resultMapper.assign(qaaResult, rrs, outputVector);
+        resultMapper.assign(qaaResult, outputVector);
         copyRRS(rrs, outputVector);
         copySensorContribution(sensor, outputVector);
 
@@ -223,7 +223,6 @@ public class PostMergingProcessor extends CellProcessor {
             qaaConfig.setBbSpmOutIndices(ALL_IOPS);
             qaaConfig.setAPigOutIndices(ALL_IOPS);
             qaaConfig.setAYsOutIndices(ALL_IOPS);
-            qaaConfig.setRrsOut(false);
             return new PostMergingProcessor(varCtx, qaaConfig);
         }
 

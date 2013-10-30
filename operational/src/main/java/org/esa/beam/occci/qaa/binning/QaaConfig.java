@@ -42,10 +42,6 @@ public class QaaConfig extends CellProcessorConfig {
             defaultValue = "0,1,2")
     private int[] aYsOutIndices;
 
-    @Parameter(description = "If 'true' the input rrs are included in the output",
-               defaultValue = "false")
-    private boolean rrsOut;
-
     public QaaConfig() {
         super("QAA");
 
@@ -102,13 +98,5 @@ public class QaaConfig extends CellProcessorConfig {
 
     public void setSensorName(String sensorName) {
         this.sensorName = sensorName;
-    }
-
-    public boolean isRrsOut() {
-        return rrsOut;
-    }
-
-    public void setRrsOut(boolean rrsOut) {
-        this.rrsOut = rrsOut;
     }
 }

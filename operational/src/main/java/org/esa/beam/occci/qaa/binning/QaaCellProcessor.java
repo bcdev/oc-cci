@@ -9,7 +9,6 @@ import org.esa.beam.occci.qaa.*;
 import org.esa.beam.occci.util.binning.BinningUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class QaaCellProcessor extends CellProcessor {
 
@@ -58,11 +57,6 @@ public class QaaCellProcessor extends CellProcessor {
         for (int bb_spm_out_index : bb_spm_out_indices) {
             featureNameList.add("bb_spm_" + QaaDescriptor.getWavelengthInt(wavelengths, bb_spm_out_index));
         }
-
-        if (config.isRrsOut()) {
-            Collections.addAll(featureNameList, config.getBandNames());
-        }
-
         return featureNameList.toArray(new String[featureNameList.size()]);
     }
 
@@ -84,7 +78,7 @@ public class QaaCellProcessor extends CellProcessor {
                 containsInfinite(qaaResult.getBB_SPM())) {
             BinningUtils.setToInvalid(outputVector);
         } else {
-            resultMapper.assign(qaaResult, rrs, outputVector);
+            resultMapper.assign(qaaResult, outputVector);
         }
     }
 
