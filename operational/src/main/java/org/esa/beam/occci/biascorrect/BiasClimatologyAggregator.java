@@ -15,7 +15,7 @@ import org.esa.beam.occci.util.binning.BinningUtils;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-public class AggregatorBiasCorrect extends AbstractAggregator {
+public class BiasClimatologyAggregator extends AbstractAggregator {
 
     public static final String NAME = "OC-CCI-BIAS";
 
@@ -27,7 +27,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
 
     private int spatialDateIdx;
 
-    public AggregatorBiasCorrect(VariableContext varCtx, Config config) {
+    public BiasClimatologyAggregator(VariableContext varCtx, Config config) {
         super(NAME,
               createSpatialFeatureNames(config),
               createTemporalFeatureNames(config, createDateIndexCalculator(config)),
@@ -169,7 +169,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
             if (aggregatorConfig instanceof Config) {
                 Config config = (Config) aggregatorConfig;
 
-                return new AggregatorBiasCorrect(varCtx, config);
+                return new BiasClimatologyAggregator(varCtx, config);
             }
             throw new IllegalArgumentException("Invalid type of configuration: " + aggregatorConfig.getClass());
         }

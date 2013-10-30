@@ -17,7 +17,7 @@ public class DescriptorTest {
 
     @Before
     public void setUp() {
-        descriptor = new AggregatorBiasCorrect.Descriptor();
+        descriptor = new BiasClimatologyAggregator.Descriptor();
     }
 
     @Test

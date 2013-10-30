@@ -8,11 +8,11 @@ import static org.junit.Assert.assertNotNull;
 
 public class ConfigTest {
 
-    private AggregatorBiasCorrect.Config config;
+    private BiasClimatologyAggregator.Config config;
 
     @Before
     public void setUp() {
-        config = new AggregatorBiasCorrect.Config();
+        config = new BiasClimatologyAggregator.Config();
     }
 
     @Test

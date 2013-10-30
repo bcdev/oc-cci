@@ -43,7 +43,7 @@ public class AcceptanceTestMain {
 
         final BinningConfig binningConfig = new BinningConfig();
         binningConfig.setNumRows(100);
-        final AggregatorBiasCorrect.Config aggregatorConfig = new AggregatorBiasCorrect.Config();
+        final BiasClimatologyAggregator.Config aggregatorConfig = new BiasClimatologyAggregator.Config();
         aggregatorConfig.varNames = new String[]{"radiance_1"};
         aggregatorConfig.startYear = 2006;
         aggregatorConfig.endYear = 2009;
