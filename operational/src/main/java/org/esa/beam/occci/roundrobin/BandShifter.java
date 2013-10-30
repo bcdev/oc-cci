@@ -63,6 +63,8 @@ class BandShifter {
             rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
         } else if (spectrum.isCompleteModis()) {
             rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
+        } else if (spectrum.isCompleteSeaWiFS()) {
+            rrs_corrected = correctFromSeaWifs(spectrum, qaaAt443, bandShiftCorrection);
         }
         final double[] correcteAveraged = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
         return Arrays.copyOf(correcteAveraged, correcteAveraged.length - 1);

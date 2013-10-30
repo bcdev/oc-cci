@@ -34,6 +34,8 @@ class SensorFactory {
             return createMerisToSeaWifsConfig(inSituSpectrum);
         } if (inSituSpectrum.isCompleteModis()){
             return createModisToSeaWifsConfig(inSituSpectrum);
+        } if (inSituSpectrum.isCompleteSeaWiFS()) {
+            return createSeaWifsToSeaWifsConfig(inSituSpectrum);
         }
         return null;
     }
@@ -182,6 +184,21 @@ class SensorFactory {
         final double[] lambdaO = new double[]{412.0, 443.0, 488.0, 531.0, 531.0, 547.0, 667.0, 678.0};
         final double[] lambdaInterface = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
         final double[] lambdaOAvg = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
+
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{4, 5});
+    }
+
+    private static Sensor createSeaWifsToSeaWifsConfig(InSituSpectrum inSituSpectrum) {
+        final double[] inSituWavelengths = inSituSpectrum.getSeaWifsWavelengths();
+        final double[] lambdaI = new double[8];
+
+        System.arraycopy(inSituWavelengths, 0, lambdaI, 0, inSituWavelengths.length);
+        lambdaI[6] = inSituWavelengths[5];
+        lambdaI[7] = inSituWavelengths[5];
+
+        final double[] lambdaO = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0, 670.0};
+        final double[] lambdaInterface = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
+        final double[] lambdaOAvg = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
 
         return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{4, 5});
     }

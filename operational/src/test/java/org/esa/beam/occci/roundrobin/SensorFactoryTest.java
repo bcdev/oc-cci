@@ -162,4 +162,23 @@ public class SensorFactoryTest {
         assertEquals(4, averageIndices[0]);
         assertEquals(5, averageIndices[1]);
     }
+
+    @Test
+    public void testCreateSeaWifsLikeToSeaWifs() {
+        final double[] wavelengths = {412.0, 443.0, 490.0, 510.0, 555.0, 670.0};
+        final double[] rrs_in = {0.0093957, 0.0073781, 0.0058887, 0.0032078, 0.0014114, 7.811E-5};
+        final InSituSpectrum seaWifsSpectrum= TestHelper.createSeaWifsSpectrum(wavelengths, rrs_in);
+
+        final Sensor toSeaWifs = SensorFactory.createToSeaWifs(seaWifsSpectrum);
+        assertNotNull(toSeaWifs);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0, 670.0}, toSeaWifs.getLambdaI(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0, 670.0}, toSeaWifs.getLambdaO(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0}, toSeaWifs.getLambdaInterface(), 1e-8);
+        assertArrayEquals(new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0}, toSeaWifs.getLambdaOAvg(), 1e-8);
+        assertEquals(443.0, toSeaWifs.getGreenWavelength(), 1e-8);
+        final int[] averageIndices = toSeaWifs.getAverageIndices();
+        assertEquals(2, averageIndices.length);
+        assertEquals(4, averageIndices[0]);
+        assertEquals(5, averageIndices[1]);
+    }
 }

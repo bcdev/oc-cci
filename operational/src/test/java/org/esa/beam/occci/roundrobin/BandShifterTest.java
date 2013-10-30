@@ -111,4 +111,17 @@ public class BandShifterTest {
         final double[] rrs_out = BandShifter.toModis(seaWifsLike, qaaAt443);
         assertArrayEquals(rrs_expected, rrs_out, 1e-8);
     }
+
+    @Test
+    public void testShiftSeaWifsLikeToSeaWifs() throws IOException {
+        final double[] wavelengths = {412.0, 443.0, 490.0, 510.0, 555.0, 670.0};
+        final double[] rrs_in = {0.0046052, 0.00438, 0.0040955, 0.0028885, 0.0016933, 1.9945E-4};
+        final InSituSpectrum seaWifsLike = TestHelper.createSeaWifsSpectrum(wavelengths, rrs_in);
+
+        final double[] qaaAt443 = new double[]{0.01727110706269741,0.033406905829906464,0.005261986516416073};
+        final double[] rrs_expected = {0.0046052, 0.00438, 0.0040955, 0.0028885, 0.0016933, 1.9945E-4};
+
+        final double[] rrs_out = BandShifter.toSeaWifs(seaWifsLike, qaaAt443);
+        assertArrayEquals(rrs_expected, rrs_out, 1e-8);
+    }
 }

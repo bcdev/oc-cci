@@ -56,7 +56,7 @@ public class BandShiftMain {
 
     private static void shiftFromSeawifsLike(InSituSpectrum spectrum, double[] qaaAt443) {
         ++count;
-        if (count == 449) {
+        if (count == 409) {
             System.out.println("shiftFromSeawifsLike() - TO BE IMPLEMENTED");
         }
     }
