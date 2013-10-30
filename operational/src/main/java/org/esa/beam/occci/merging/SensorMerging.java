@@ -28,8 +28,6 @@ import org.esa.beam.binning.WritableVector;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.occci.util.binning.BinningUtils;
 
-import java.util.Arrays;
-
 /**
  * Implements BIAS correction using the BIAS maps and sensor merging (in one step).
  */
@@ -176,9 +174,7 @@ public class SensorMerging extends AbstractAggregator {
 
         @Override
         public String[] getVarNames() {
-            String[] varNames = Arrays.copyOf(rrsFeatureNames, rrsFeatureNames.length + 1);
-            varNames[rrsFeatureNames.length] = "sensor";
-            return varNames;
+            return BinningUtils.combine(rrsFeatureNames, "sensor");
         }
     }
 
@@ -202,9 +198,7 @@ public class SensorMerging extends AbstractAggregator {
     }
 
     private static String[] createSpatialFeatureNames(String[] rrsFeatureNames) {
-        String[] features = Arrays.copyOf(rrsFeatureNames, rrsFeatureNames.length + 1);
-        features[rrsFeatureNames.length] = "sensor";
-        return features;
+        return BinningUtils.combine(rrsFeatureNames, "sensor");
     }
 
     private static String[] createTemporalFeatureNames(String[] rrsFeatureNames) {
@@ -236,11 +230,7 @@ public class SensorMerging extends AbstractAggregator {
                 return features;
             }
             case MERGING: {
-                String[] features = Arrays.copyOf(rrsFeatureNames, rrsFeatureNames.length + 3);
-                features[rrsFeatureNames.length] = "sensor_0";
-                features[rrsFeatureNames.length + 1] = "sensor_1";
-                features[rrsFeatureNames.length + 2] = "sensor_2";
-                return features;
+                return BinningUtils.combine(rrsFeatureNames, "sensor_0", "sensor_1", "sensor_2");
             }
         }
         throw new IllegalArgumentException("Unsupported mode:" + mode);

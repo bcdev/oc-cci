@@ -14,7 +14,6 @@ import org.esa.beam.occci.util.binning.BinningUtils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
 
 public class AggregatorBiasCorrect extends AbstractAggregator {
 
@@ -266,10 +265,7 @@ public class AggregatorBiasCorrect extends AbstractAggregator {
     }
 
     static String[] createOutputFeatureNames(Config config) {
-        String[] varnames = config.getVarNames();
-        String[] outputFeatureNames = Arrays.copyOf(varnames, varnames.length + 1);
-        outputFeatureNames[varnames.length] = "sensor";
-        return outputFeatureNames;
+        return BinningUtils.combine(config.getVarNames(), "sensor");
     }
 
     static DateIndexCalculator createDateIndexCalculator(Config config) {

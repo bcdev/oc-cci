@@ -59,4 +59,12 @@ public class BinningUtilsTest {
             assertThat(vector.get(i), is(Float.NaN));
         }
     }
+
+    @Test
+    public void testCombine() throws Exception {
+        String[] a = {"1", "2"};
+        String[] b = {"3", "4", "5"};
+        String[] combine = BinningUtils.combine(a, b);
+        assertArrayEquals(new String[]{"1", "2", "3", "4", "5"}, combine);
+    }
 }
