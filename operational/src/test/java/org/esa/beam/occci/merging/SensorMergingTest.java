@@ -17,8 +17,10 @@
 package org.esa.beam.occci.merging;
 
 
+import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.binning.support.VectorImpl;
+import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Test;
 
 import static java.lang.Float.NaN;
@@ -47,17 +49,18 @@ public class SensorMergingTest {
                 "rrs_4_seawifs"
         };
 
-        SensorMerging sensorMerging = new SensorMerging(null, SensorMerging.Mode.MERGING, "rrs_2", "rrs_4");
+        VariableContext varCtx = BinningUtils.createVariableContext("rrs_2", "rrs_4");
+        SensorMerging sensorMerging = new SensorMerging(varCtx, SensorMerging.Mode.MERGING, "rrs_2", "rrs_4");
         assertArrayEquals(spatial, sensorMerging.getSpatialFeatureNames());
         assertArrayEquals(temporal, sensorMerging.getTemporalFeatureNames());
         assertArrayEquals(outputMerging, sensorMerging.getOutputFeatureNames());
 
-        sensorMerging = new SensorMerging(null, SensorMerging.Mode.AGGREGATION, "rrs_2", "rrs_4");
+        sensorMerging = new SensorMerging(varCtx, SensorMerging.Mode.AGGREGATION, "rrs_2", "rrs_4");
         assertArrayEquals(spatial, sensorMerging.getSpatialFeatureNames());
         assertArrayEquals(temporal, sensorMerging.getTemporalFeatureNames());
         assertArrayEquals(temporal, sensorMerging.getOutputFeatureNames());
 
-        sensorMerging = new SensorMerging(null, SensorMerging.Mode.BIAS_CORRECTION, "rrs_2", "rrs_4");
+        sensorMerging = new SensorMerging(varCtx, SensorMerging.Mode.BIAS_CORRECTION, "rrs_2", "rrs_4");
         assertArrayEquals(spatial, sensorMerging.getSpatialFeatureNames());
         assertArrayEquals(temporal, sensorMerging.getTemporalFeatureNames());
         assertArrayEquals(outputBiasCorr, sensorMerging.getOutputFeatureNames());
@@ -65,7 +68,8 @@ public class SensorMergingTest {
 
     @Test
     public void testTemporalAggregation() throws Exception {
-        SensorMerging sensorMerging = new SensorMerging(null, SensorMerging.Mode.AGGREGATION, "rrs_2", "rrs_4");
+        VariableContext varCtx = BinningUtils.createVariableContext("rrs_2", "rrs_4");
+        SensorMerging sensorMerging = new SensorMerging(varCtx, SensorMerging.Mode.AGGREGATION, "rrs_2", "rrs_4");
         float[] temporalElems = new float[sensorMerging.getTemporalFeatureNames().length];
         final WritableVector temporalVector = new VectorImpl(temporalElems);
         sensorMerging.initTemporal(null, temporalVector);

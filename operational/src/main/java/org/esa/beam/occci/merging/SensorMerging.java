@@ -26,6 +26,7 @@ import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.framework.gpf.annotations.Parameter;
+import org.esa.beam.occci.util.binning.BinningUtils;
 
 import java.util.Arrays;
 
@@ -41,6 +42,8 @@ public class SensorMerging extends AbstractAggregator {
 
     private final Mode mode;
     private final int numRrs;
+    private final int[] rssBandIndices;
+
 
     public SensorMerging(VariableContext varCtx, Mode mode, String... rrsFeatureNames) {
         super(NAME,
@@ -50,6 +53,7 @@ public class SensorMerging extends AbstractAggregator {
         );
         this.mode = mode;
         this.numRrs = rrsFeatureNames.length;
+        this.rssBandIndices = BinningUtils.getBandIndices(varCtx, rrsFeatureNames);
     }
 
     @Override
@@ -59,8 +63,8 @@ public class SensorMerging extends AbstractAggregator {
 
     @Override
     public void aggregateSpatial(BinContext ctx, Observation observationVector, WritableVector spatialVector) {
-        for (int i = 0; i < observationVector.size(); i++) {
-            spatialVector.set(i, observationVector.get(i));
+        for (int i = 0; i < rssBandIndices.length; i++) {
+            spatialVector.set(i, observationVector.get(rssBandIndices[i]));
         }
     }
 
