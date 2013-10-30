@@ -12,23 +12,21 @@ import static org.junit.Assert.*;
 
 public class BandShiftCellProcessorTest {
 
-    private static final String[] BAND_NAMES = new String[]{"band_1",
+    private static final String[] RRS_BAND_NAMES = new String[]{"band_1",
             "band_2",
             "band_3",
             "band_4",
             "band_5",
-            "band_6",
-            "band_7",
-            "band_8",
-            "band_9"};
+            "band_6"};
+    private static final String[] IOP_BAND_NAMES = new String[]{"iop_1", "iop_2", "iop_3"};
 
     @Test
     public void testThrowsExceptionOnMissingBands() throws IOException {
-        final String[] bandNames = Arrays.copyOf(BAND_NAMES, BAND_NAMES.length + 1);
-        bandNames[BAND_NAMES.length] = "does_not_exist";
-        final VariableContext ctx = BinningUtils.createVariableContext(BAND_NAMES);
+        final String[] bandNames = Arrays.copyOf(RRS_BAND_NAMES, RRS_BAND_NAMES.length + 1);
+        bandNames[RRS_BAND_NAMES.length] = "does_not_exist";
+        final VariableContext ctx = BinningUtils.createVariableContext(RRS_BAND_NAMES);
      try {
-            new BandShiftCellProcessor(ctx, "MERIS", bandNames, new int[0]);
+            new BandShiftCellProcessor(ctx, "MERIS", bandNames, bandNames, new int[0]);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
@@ -41,8 +39,10 @@ public class BandShiftCellProcessorTest {
         final String[] outputFeatureNames = {"Rrs_413", "Rrs_510", "Rrs_490", "Rrs_560", "Rrs_555", "Rrs_665", "Rrs_670"};
         final int[] outCenterWaveLengths = new int[]{413, 510, 490, 560, 555, 665, 670};
 
-        final VariableContext ctx = BinningUtils.createVariableContext(BAND_NAMES);
-        final BandShiftCellProcessor postProcessor = new BandShiftCellProcessor(ctx, "MODISA", BAND_NAMES, outCenterWaveLengths);
+        String[] allBands = Arrays.copyOf(RRS_BAND_NAMES, RRS_BAND_NAMES.length + IOP_BAND_NAMES.length);
+        System.arraycopy(IOP_BAND_NAMES, 0, allBands, RRS_BAND_NAMES.length, IOP_BAND_NAMES.length);
+        final VariableContext ctx = BinningUtils.createVariableContext(allBands);
+        final BandShiftCellProcessor postProcessor = new BandShiftCellProcessor(ctx, "MODISA", RRS_BAND_NAMES, IOP_BAND_NAMES, outCenterWaveLengths);
 
         final VectorImpl postVector = new VectorImpl(new float[outputFeatureNames.length]);
         final VectorImpl outVector = new VectorImpl(inputData);

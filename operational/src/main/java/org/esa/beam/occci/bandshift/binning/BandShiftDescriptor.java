@@ -24,8 +24,9 @@ public class BandShiftDescriptor implements CellProcessorDescriptor {
         final BandShiftConfig bandShiftConfig = (BandShiftConfig) config;
 
         String sensorName = bandShiftConfig.getSensorName();
-        String[] bandNames = bandShiftConfig.getBandNames();
+        String[] rssBandNames = bandShiftConfig.getRrsBandNames();
+        String[] iopBandNames = bandShiftConfig.getIopBandNames();
         int[] outputCenterWavelengths = bandShiftConfig.getOutputCenterWavelengths();
-        return new BandShiftCellProcessor(varCtx, sensorName, bandNames, outputCenterWavelengths);
+        return new BandShiftCellProcessor(varCtx, sensorName, rssBandNames, iopBandNames, outputCenterWavelengths);
     }
 }

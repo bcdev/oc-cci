@@ -58,12 +58,13 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
 
         if (QaaConstants.MERIS.equals(config.sensorName)) {
 
-            String[] bsInputFeatures = {
-                    "Rrs412_mean", "Rrs443_mean", "Rrs490_mean", "Rrs510_mean", "Rrs560_mean", "Rrs665_mean",
-                    "a_pig_443_mean", "a_ys_443_mean", "bb_spm_443_mean"};
+            String[] rrsInputFeatures = {"Rrs412_mean", "Rrs443_mean", "Rrs490_mean", "Rrs510_mean", "Rrs560_mean", "Rrs665_mean"};
+            String[] iopInputFeatures = {"a_pig_443_mean", "a_ys_443_mean", "bb_spm_443_mean"};
+
             CellProcessor bandshiftProcessor =new BandShiftCellProcessor(varCtx,
                                                                          Sensor.MERIS_NAME,
-                                                                         bsInputFeatures,
+                                                                         rrsInputFeatures,
+                                                                         iopInputFeatures,
                                                                          BS_OUTPUT_CENTER_WAVELENGTHS);
 
             CellProcessor markProcessor = new MarkSensorProcessor(0);
@@ -87,12 +88,12 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
             CellProcessor qaaProcessor = new QaaCellProcessor(qaaVarCtx, qaaConfig);
 
             VariableContext bandShiftVarCtx = BinningUtils.createVariableContext(qaaProcessor.getOutputFeatureNames());
-            String[] bsInputFeatures = {
-                    "Rrs_412", "Rrs_443", "Rrs_488", "Rrs_531", "Rrs_547", "Rrs_667",
-                    "a_pig_443", "a_ys_443", "bb_spm_443"};
+            String[] rrsInputFeatures = {"Rrs_412", "Rrs_443", "Rrs_488", "Rrs_531", "Rrs_547", "Rrs_667"};
+            String[] iopInputFeatures = {"a_pig_443", "a_ys_443", "bb_spm_443"};
             CellProcessor bandshiftProcessor = new BandShiftCellProcessor(bandShiftVarCtx,
                                                                           Sensor.MODISA_NAME,
-                                                                          bsInputFeatures,
+                                                                          rrsInputFeatures,
+                                                                          iopInputFeatures,
                                                                           BS_OUTPUT_CENTER_WAVELENGTHS);
 
             CellProcessor markProcessor = new MarkSensorProcessor(1);

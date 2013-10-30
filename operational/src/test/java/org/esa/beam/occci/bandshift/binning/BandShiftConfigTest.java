@@ -11,7 +11,10 @@ public class BandShiftConfigTest {
     public void testConstruction() {
         final BandShiftConfig bandShiftConfig = new BandShiftConfig("whatever");
 
-        final String[] bandNames = bandShiftConfig.getBandNames();
+        String[] bandNames = bandShiftConfig.getRrsBandNames();
+        assertNotNull(bandNames);
+        assertEquals(0, bandNames.length);
+        bandNames = bandShiftConfig.getIopBandNames();
         assertNotNull(bandNames);
         assertEquals(0, bandNames.length);
 

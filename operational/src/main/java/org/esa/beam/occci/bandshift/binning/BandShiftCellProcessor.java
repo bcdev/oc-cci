@@ -14,17 +14,18 @@ import java.io.IOException;
 public class BandShiftCellProcessor extends CellProcessor {
 
     private static final int NUM_RRS = 6;
-    private static final int NUM_QAA = 3;
+    private static final int NUM_IOP = 3;
 
     private final BandShiftCorrection bandShiftCorrection;
     private final Sensor sensor;
 
-    private final int[] bandIndices;
+    private final int[] rrsBandIndices;
+    private final int[] iopBandIndices;
     private final double[] rrs;
-    private final double[] qaa;
+    private final double[] iop;
     private final ResultMapper resultMapper;
 
-    public BandShiftCellProcessor(VariableContext varCtx, String sensorName, String[] bandNames, int[] outputCenterWavelengths) {
+    public BandShiftCellProcessor(VariableContext varCtx, String sensorName, String[] rrsBandNames, String[] iopBandNames, int[] outputCenterWavelengths) {
         super(createOutputFeatureNames(outputCenterWavelengths));
 
         sensor = Sensor.byName(sensorName);
@@ -35,10 +36,17 @@ public class BandShiftCellProcessor extends CellProcessor {
             throw new IllegalArgumentException("Failed to init BandShiftCellProcessor.", e);
         }
         bandShiftCorrection = new BandShiftCorrection(correctionContext);
-        rrs = new double[NUM_RRS];
-        qaa = new double[NUM_QAA];
 
-        bandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
+        if (rrsBandNames.length != NUM_RRS) {
+            throw new IllegalArgumentException("Expecting " + NUM_RRS + " rrs band names got " + rrsBandNames.length);
+        }
+        rrsBandIndices = BinningUtils.getBandIndices(varCtx, rrsBandNames);
+        rrs = new double[NUM_RRS];
+        if (iopBandNames.length != NUM_IOP) {
+            throw new IllegalArgumentException("Expecting " + NUM_IOP + " iop band names got " + iopBandNames.length);
+        }
+        iopBandIndices = BinningUtils.getBandIndices(varCtx, iopBandNames);
+        iop = new double[NUM_IOP];
         resultMapper = new ResultMapper(sensorName, outputCenterWavelengths);
     }
 
@@ -54,14 +62,14 @@ public class BandShiftCellProcessor extends CellProcessor {
     @Override
     public void compute(Vector input, WritableVector output) {
         for (int i = 0; i < rrs.length; i++) {
-            rrs[i] = input.get(bandIndices[i]);
+            rrs[i] = input.get(rrsBandIndices[i]);
         }
 
-        for (int i = 0; i < qaa.length; i++) {
-            qaa[i] = input.get(bandIndices[i + NUM_RRS]);
+        for (int i = 0; i < iop.length; i++) {
+            iop[i] = input.get(iopBandIndices[i]);
         }
 
-        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambdaInterface(), qaa);
+        final double[] rrs_corrected = bandShiftCorrection.correctBandshift(rrs, sensor.getLambdaInterface(), iop);
         if (isCorrected(rrs_corrected)) {
             final double[] rrs_shifted = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
 

@@ -42,8 +42,10 @@ public class BandShiftDescriptorTest {
     public void testCreateCellProcessor() {
         final BandShiftConfig config = new BandShiftConfig("BandShifting");
         config.setSensorName("MODISA");
+        config.setRrsBandNames("r1","r2","r3","r4","r5","r6");
+        config.setIopBandNames("i1","i2","i3");
 
-        VariableContext variableContext = BinningUtils.createVariableContext();
+        VariableContext variableContext = BinningUtils.createVariableContext("r1","r2","r3","r4","r5","r6","i1","i2","i3");
         final CellProcessor postProcessor = descriptor.createCellProcessor(variableContext, config);
         assertNotNull(postProcessor);
         assertTrue(postProcessor instanceof BandShiftCellProcessor);
