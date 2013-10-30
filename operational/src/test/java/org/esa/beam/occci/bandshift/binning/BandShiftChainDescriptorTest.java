@@ -53,7 +53,7 @@ public class BandShiftChainDescriptorTest {
         CellProcessor processor = descriptor.createCellProcessor(varCtx, config);
 
         assertArrayEquals(BANDSHIFTED_FEATURES, processor.getOutputFeatureNames());
-        final float[] rrs_sum = {0.012084f, 0.0089211f, 0.0062153f, 0.0021173f, 0.0014871f, 9.943E-5f, 1.f};
+        final float[] rrs_sum = {0.012084f*5, 0.0089211f*5, 0.0062153f*5, 0.0021173f*5, 0.0014871f*5, 9.943E-5f*5, 5.f};
         Vector input = new VectorImpl(rrs_sum);
         WritableVector output = new VectorImpl(new float[BANDSHIFTED_FEATURES.length]);
         processor.compute(input, output);
@@ -78,7 +78,7 @@ public class BandShiftChainDescriptorTest {
         CellProcessor processor = descriptor.createCellProcessor(varCtx, config);
 
         assertArrayEquals(BANDSHIFTED_FEATURES, processor.getOutputFeatureNames());
-        final float[] rrs_sum = {0.012084f, 0.0089211f, 0.0062153f, 0.0021173f, 0.0014871f, 9.943E-5f, 1.f};
+        final float[] rrs_sum = {0.012084f*4f, 0.0089211f*4f, 0.0062153f*4f, 0.0021173f*4f, 0.0014871f*4f, 9.943E-5f*4f, 4.f};
         Vector input = new VectorImpl(rrs_sum);
         WritableVector output = new VectorImpl(new float[BANDSHIFTED_FEATURES.length]);
         processor.compute(input, output);
