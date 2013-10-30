@@ -120,12 +120,9 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
         private final CellProcessor sumToMeanProcessor;
         private final CellProcessor qaaProcessor;
         private final CellProcessor bandshiftProcessor;
-        private final float[] meanElems;
-        private final float[] qaaElems;
-        private final float[] meanPlusQaaElems;
-        private WritableVector meanVector;
-        private WritableVector qaaVector;
-        private WritableVector meanPlusQaaVector;
+        private final WritableVector meanVector;
+        private final WritableVector qaaVector;
+        private final Vector meanPlusQaaVector;
 
         protected ModisBandShiftProcessor(CellProcessor sumToMeanProcessor, CellProcessor qaaProcessor, CellProcessor bandshiftProcessor) {
             super(bandshiftProcessor.getOutputFeatureNames());
@@ -134,11 +131,14 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
             this.bandshiftProcessor = bandshiftProcessor;
             int numMeanRrs = sumToMeanProcessor.getOutputFeatureNames().length;
             int numQaa = qaaProcessor.getOutputFeatureNames().length;
-            meanElems = new float[numMeanRrs];
-            meanVector = new VectorImpl(meanElems);
-            qaaElems = new float[numQaa];
-            qaaVector = new VectorImpl(qaaElems);
-            meanPlusQaaElems = new float[numMeanRrs + numQaa];
+            float[] meanPlusQaaElems = new float[numMeanRrs + numQaa];
+
+            meanVector = new VectorImpl(meanPlusQaaElems);
+            ((VectorImpl)meanVector).setOffsetAndSize(0, numMeanRrs);
+
+            qaaVector = new VectorImpl(meanPlusQaaElems);
+            ((VectorImpl)qaaVector).setOffsetAndSize(numMeanRrs, numQaa);
+
             meanPlusQaaVector = new VectorImpl(meanPlusQaaElems);
         }
 
@@ -146,8 +146,6 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
         public void compute(Vector inputVector, WritableVector outputVector) {
             sumToMeanProcessor.compute(inputVector, meanVector);
             qaaProcessor.compute(meanVector, qaaVector);
-            System.arraycopy(meanElems, 0, meanPlusQaaElems, 0, meanElems.length);
-            System.arraycopy(qaaElems, 0, meanPlusQaaElems, meanElems.length, qaaElems.length);
             bandshiftProcessor.compute(meanPlusQaaVector, outputVector);
         }
 
