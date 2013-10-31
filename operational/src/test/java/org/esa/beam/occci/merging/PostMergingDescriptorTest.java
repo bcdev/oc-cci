@@ -11,7 +11,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 public class PostMergingDescriptorTest {
 
-    private static final String[] BAND_NAMES = new String[]{"Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670"};
+    private static final String[] BAND_NAMES = {"Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670"};
 
     @Test
     public void testCompute() throws Exception {
