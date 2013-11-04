@@ -55,13 +55,13 @@ public class BandShiftMain {
     }
 
     private static void shiftFromSeawifsLike(InSituSpectrum spectrum, double[] qaaAt443) {
-        ++count;
-        if (count == 409) {
-            System.out.println("shiftFromSeawifsLike() - TO BE IMPLEMENTED");
-        }
+        System.out.println("shiftFromSeawifsLike() - TO BE IMPLEMENTED");
     }
 
     private static void shiftFromQaa(InSituSpectrum spectrum, double[] qaaAt443) {
-        System.out.println("shiftFromQaa() - TO BE IMPLEMENTED");
+        ++count;
+        if (count == 269) {
+            System.out.println("shiftFromQaa() - TO BE IMPLEMENTED");
+        }
     }
 }

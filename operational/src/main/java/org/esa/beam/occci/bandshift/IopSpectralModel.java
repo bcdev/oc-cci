@@ -38,9 +38,11 @@ public class IopSpectralModel {
         BRICAUD_A = new HashMap<String, Double>();
         BRICAUD_A.put("412", 0.0323);
         BRICAUD_A.put("413", 0.032775);
+        BRICAUD_A.put("442", 0.0398);
         BRICAUD_A.put("443", 0.0394);
         BRICAUD_A.put("488", 0.0279);
         BRICAUD_A.put("510", 0.0180);
+        BRICAUD_A.put("530", 0.0117);
         BRICAUD_A.put("531", 0.0115);
         BRICAUD_A.put("547", 0.00845);
         BRICAUD_A.put("620", 0.0065);
@@ -48,6 +50,7 @@ public class IopSpectralModel {
         BRICAUD_A.put("665", 0.0152);
         BRICAUD_A.put("490", 0.0274);
         BRICAUD_A.put("560", 0.0062);
+        BRICAUD_A.put("551", 0.0078);
         BRICAUD_A.put("555", 0.007);
         BRICAUD_A.put("670", 0.0189);
         BRICAUD_A.put("678", 0.0193);
@@ -55,9 +58,11 @@ public class IopSpectralModel {
         BRICAUD_B = new HashMap<String, Double>();
         BRICAUD_B.put("412", 0.286);
         BRICAUD_B.put("413", 0.28775);
+        BRICAUD_B.put("442", 0.339);
         BRICAUD_B.put("443", 0.3435);
         BRICAUD_B.put("488", 0.369);
         BRICAUD_B.put("510", 0.260);
+        BRICAUD_B.put("530", 0.139);
         BRICAUD_B.put("531", 0.134);
         BRICAUD_B.put("547", 0.0625);
         BRICAUD_B.put("620", 0.064);
@@ -65,6 +70,7 @@ public class IopSpectralModel {
         BRICAUD_B.put("665", 0.134);
         BRICAUD_B.put("490", 0.361);
         BRICAUD_B.put("560", 0.016);
+        BRICAUD_B.put("551", 0.048);
         BRICAUD_B.put("555", 0.0315);
         BRICAUD_B.put("670", 0.149);
         BRICAUD_B.put("678", 0.158);

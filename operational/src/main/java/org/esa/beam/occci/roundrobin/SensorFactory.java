@@ -14,6 +14,8 @@ class SensorFactory {
             return createModisToMerisConfig(inSituSpectrum);
         } else if (inSituSpectrum.isCompleteSeaWiFS()) {
             return createSeaWifsToMerisConfig(inSituSpectrum);
+        } else if (inSituSpectrum.isCompleteQaa()) {
+            return createQaaToMerisConfig(inSituSpectrum);
         }
         return null;
     }
@@ -25,6 +27,8 @@ class SensorFactory {
             return createModisToModisConfig(inSituSpectrum);
         } else if (inSituSpectrum.isCompleteSeaWiFS()) {
             return createSeaWifsToModisConfig(inSituSpectrum);
+        }  else if (inSituSpectrum.isCompleteQaa()) {
+            return createQaaToModisConfig(inSituSpectrum);
         }
         return null;
     }
@@ -36,6 +40,8 @@ class SensorFactory {
             return createModisToSeaWifsConfig(inSituSpectrum);
         } if (inSituSpectrum.isCompleteSeaWiFS()) {
             return createSeaWifsToSeaWifsConfig(inSituSpectrum);
+        } if (inSituSpectrum.isCompleteQaa()) {
+            return createQaaToSeaWifsConfig(inSituSpectrum);
         }
         return null;
     }
@@ -51,7 +57,7 @@ class SensorFactory {
         final double[] lambdaInterface = MERIS_WAVELENGTHS;
         final double[] lambdaOAvg = MERIS_WAVELENGTHS;
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{5, 6});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4], new int[]{5, 6});
     }
 
     private static Sensor createMerisToModisConfig(InSituSpectrum inSituSpectrum) {
@@ -71,7 +77,7 @@ class SensorFactory {
         final double[] lambdaInterface = MODIS_WAVELENGTHS;
         final double[] lambdaOAvg = MODIS_WAVELENGTHS;
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{3, 4});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4], new int[]{3, 4});
     }
 
     private static Sensor createMerisToSeaWifsConfig(InSituSpectrum inSituSpectrum) {
@@ -91,7 +97,7 @@ class SensorFactory {
         final double[] lambdaInterface = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
         final double[] lambdaOAvg = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{5, 6});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{5, 6});
     }
 
     private static Sensor createModisToMerisConfig(InSituSpectrum inSituSpectrum) {
@@ -111,7 +117,7 @@ class SensorFactory {
         final double[] lambdaInterface = MERIS_WAVELENGTHS;
         final double[] lambdaOAvg = MERIS_WAVELENGTHS;
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{3, 4});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{3, 4});
     }
 
     private static Sensor createModisToModisConfig(InSituSpectrum inSituSpectrum) {
@@ -125,7 +131,7 @@ class SensorFactory {
         final double[] lambdaInterface = MODIS_WAVELENGTHS;
         final double[] lambdaOAvg = MODIS_WAVELENGTHS;
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{5, 6});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{5, 6});
     }
 
     private static Sensor createModisToSeaWifsConfig(InSituSpectrum inSituSpectrum) {
@@ -145,7 +151,7 @@ class SensorFactory {
         final double[] lambdaInterface = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
         final double[] lambdaOAvg = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{5, 6});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{5, 6});
     }
 
     private static Sensor createSeaWifsToMerisConfig(InSituSpectrum inSituSpectrum) {
@@ -165,7 +171,7 @@ class SensorFactory {
         final double[] lambdaInterface = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 620.0, 665.0};
         final double[] lambdaOAvg = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 620.0, 665.0};
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{5, 6});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{5, 6});
     }
 
     private static Sensor createSeaWifsToModisConfig(InSituSpectrum inSituSpectrum) {
@@ -185,7 +191,7 @@ class SensorFactory {
         final double[] lambdaInterface = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
         final double[] lambdaOAvg = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{4, 5});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{4, 5});
     }
 
     private static Sensor createSeaWifsToSeaWifsConfig(InSituSpectrum inSituSpectrum) {
@@ -200,6 +206,66 @@ class SensorFactory {
         final double[] lambdaInterface = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
         final double[] lambdaOAvg = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
 
-        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], new int[]{4, 5});
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{4, 5});
+    }
+
+    private static Sensor createQaaToMerisConfig(InSituSpectrum inSituSpectrum) {
+        final double[] inSituWavelengths = inSituSpectrum.getQaaWavelengths();
+        final double[] lambdaI = new double[8];
+
+        lambdaI[0] = inSituWavelengths[0];
+        lambdaI[1] = inSituWavelengths[1];
+        lambdaI[2] = inSituWavelengths[2];
+        lambdaI[3] = inSituWavelengths[3];
+        lambdaI[4] = inSituWavelengths[4];
+        lambdaI[5] = inSituWavelengths[4];
+        lambdaI[6] = inSituWavelengths[5];
+        lambdaI[7] = inSituWavelengths[5];
+
+        final double[] lambdaO = new double[]{413.0, 443.0, 490.0, 510.0, 560.0, 620.0, 620.0, 665.0};
+        final double[] lambdaInterface = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
+        final double[] lambdaOAvg = new double[]{413.0, 443.0, 490.0, 510.0, 560.0, 620.0, 665.0};
+
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{4, 5});
+    }
+
+    private static Sensor createQaaToModisConfig(InSituSpectrum inSituSpectrum) {
+        final double[] inSituWavelengths = inSituSpectrum.getQaaWavelengths();
+        final double[] lambdaI = new double[8];
+
+        lambdaI[0] = inSituWavelengths[0];
+        lambdaI[1] = inSituWavelengths[1];
+        lambdaI[2] = inSituWavelengths[2];
+        lambdaI[3] = inSituWavelengths[3];
+        lambdaI[4] = inSituWavelengths[4];
+        lambdaI[5] = inSituWavelengths[5];
+        lambdaI[6] = inSituWavelengths[5];
+        lambdaI[7] = inSituWavelengths[5];
+
+        final double[] lambdaO = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 667.0, 678.0};
+        final double[] lambdaInterface = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
+        final double[] lambdaOAvg = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
+
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[4],new int[]{5, 6});
+    }
+
+    private static Sensor createQaaToSeaWifsConfig(InSituSpectrum inSituSpectrum) {
+        final double[] inSituWavelengths = inSituSpectrum.getQaaWavelengths();
+        final double[] lambdaI = new double[8];
+
+        lambdaI[0] = inSituWavelengths[0];
+        lambdaI[1] = inSituWavelengths[1];
+        lambdaI[2] = inSituWavelengths[2];
+        lambdaI[3] = inSituWavelengths[2];
+        lambdaI[4] = inSituWavelengths[3];
+        lambdaI[5] = inSituWavelengths[4];
+        lambdaI[6] = inSituWavelengths[5];
+        lambdaI[7] = inSituWavelengths[5];
+
+        final double[] lambdaO = new double[]{412.0, 443.0, 490.0, 510.0, 510.0, 555.0, 670.0, 670.0};
+        final double[] lambdaInterface = new double[]{412.0, 443.0, 488.0, 531.0, 547.0, 667.0, 678.0};
+        final double[] lambdaOAvg = new double[]{412.0, 443.0, 490.0, 510.0, 555.0, 670.0, 670.0};
+
+        return new Sensor(lambdaI, lambdaO, lambdaInterface, lambdaOAvg, inSituWavelengths[1], inSituWavelengths[3],new int[]{3, 4});
     }
 }

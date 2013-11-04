@@ -23,8 +23,10 @@ class BandShifter {
             rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
         } else if (spectrum.isCompleteModis()) {
             rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
-        }else if (spectrum.isCompleteSeaWiFS()) {
+        } else if (spectrum.isCompleteSeaWiFS()) {
             rrs_corrected = correctFromSeaWifs(spectrum, qaaAt443, bandShiftCorrection);
+        } else if (spectrum.isCompleteQaa()) {
+            rrs_corrected = correctFromQaa(spectrum, qaaAt443, bandShiftCorrection);
         }
         return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
     }
@@ -45,6 +47,8 @@ class BandShifter {
             rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
         } else if (spectrum.isCompleteSeaWiFS()) {
             rrs_corrected = correctFromSeaWifs(spectrum, qaaAt443, bandShiftCorrection);
+        } else if (spectrum.isCompleteQaa()) {
+            rrs_corrected = correctFromQaa(spectrum, qaaAt443, bandShiftCorrection);
         }
         return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
     }
@@ -55,8 +59,8 @@ class BandShifter {
      * @return rrs at {412, 443, 490, 510, 555, 670}
      */
     static double[] toSeaWifs(InSituSpectrum spectrum, double[] qaaAt443) throws IOException {
-        final Sensor toMeris = SensorFactory.createToSeaWifs(spectrum);
-        final CorrectionContext context = new CorrectionContext(toMeris);
+        final Sensor toSeaWifs = SensorFactory.createToSeaWifs(spectrum);
+        final CorrectionContext context = new CorrectionContext(toSeaWifs);
         final BandShiftCorrection bandShiftCorrection = new BandShiftCorrection(context);
         double[] rrs_corrected = null;
         if (spectrum.isCompleteMeris()) {
@@ -65,6 +69,8 @@ class BandShifter {
             rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
         } else if (spectrum.isCompleteSeaWiFS()) {
             rrs_corrected = correctFromSeaWifs(spectrum, qaaAt443, bandShiftCorrection);
+        } else if (spectrum.isCompleteQaa()) {
+            rrs_corrected = correctFromQaa(spectrum, qaaAt443, bandShiftCorrection);
         }
         final double[] correcteAveraged = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
         return Arrays.copyOf(correcteAveraged, correcteAveraged.length - 1);
@@ -80,5 +86,9 @@ class BandShifter {
 
     private static double[] correctFromSeaWifs(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
         return bandShiftCorrection.correctBandshift(spectrum.getSeaWifsMeasurements(), spectrum.getSeaWifsWavelengths(), qaaAt443);
+    }
+
+    private static double[] correctFromQaa(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
+        return bandShiftCorrection.correctBandshift(spectrum.getQaaMeasurements(), spectrum.getQaaWavelengths(), qaaAt443);
     }
 }

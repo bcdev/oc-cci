@@ -30,7 +30,6 @@ public class CorrectionContext {
     private final double smsB;
     private final double[] lambdaI;
     private final double[] lambdaO;
-    private final double[] lambdaOSorted;
     private final double[] aw_i;
     private final double[] aw_o;
     private final double[] bbw_i;
@@ -45,7 +44,7 @@ public class CorrectionContext {
         this.sensor = sensor;
         lambdaI = sensor.getLambdaI();
         lambdaO = sensor.getLambdaO();
-        lambdaOSorted = Arrays.copyOf(lambdaO, lambdaO.length);
+        final double[] lambdaOSorted = Arrays.copyOf(lambdaO, lambdaO.length);
         Arrays.sort(lambdaOSorted);
 
         PureWater pureWater = PureWater.read();
@@ -89,7 +88,7 @@ public class CorrectionContext {
         }
 
         //spectral model is applied from blue wavelength onwards, for each of the corrections.
-        spec_model_start = 443.0;
+        spec_model_start = sensor.getBlueWavelength();
         double[] sms = IopSpectralModel.getABBricaud(spec_model_start);
         smsA =sms[0];
         smsB =sms[1];
@@ -113,10 +112,6 @@ public class CorrectionContext {
 
     public double[] getLambdaO() {
         return lambdaO;
-    }
-
-    public double[] getLambdaOSorted() {
-        return lambdaOSorted;
     }
 
     public double[] getAw_i() {

@@ -35,6 +35,7 @@ public class Sensor {
     private final double[] lambdaInterface;
     private final double[] lambdaOAvg;
     private final double greenWavelength;
+    private final double blueWavelength;
     private final int[] averageIndices;
 
     public static Sensor byName(String name) {
@@ -48,11 +49,12 @@ public class Sensor {
         throw new IllegalArgumentException("Unsupported sensor: " + name);
     }
 
-    public Sensor(double[] lambdaI, double[] lambdaO, double[] lambdaInterface, double[] lamdaOAvg, double greenWavelength, int[] averageIndices) {
+    public Sensor(double[] lambdaI, double[] lambdaO, double[] lambdaInterface, double[] lamdaOAvg, double blueWavelength, double greenWavelength, int[] averageIndices) {
         this.lambdaI = lambdaI;
         this.lambdaO = lambdaO;
         this.lambdaInterface = lambdaInterface;
         this.lambdaOAvg = lamdaOAvg;
+        this.blueWavelength = blueWavelength;
         this.greenWavelength = greenWavelength;
         this.averageIndices = averageIndices;
     }
@@ -67,6 +69,10 @@ public class Sensor {
 
     public double[] getLambdaO() {
         return lambdaO;
+    }
+
+    public double getBlueWavelength() {
+        return blueWavelength;
     }
 
     public double getGreenWavelength() {
@@ -86,6 +92,7 @@ public class Sensor {
                 new double[]{413., 488., 531., 531., 547., 560., 665., 670.},
                 new double[]{412., 443., 490., 510., 555., 667.},
                 new double[]{413., 488., 531., 547., 560., 665., 670.},
+                443.0,
                 555.0,
                 new int[]{2, 3});
     }
@@ -95,6 +102,7 @@ public class Sensor {
                 new double[]{412., 488., 531., 531., 547., 555., 667., 670.},
                 new double[]{413., 443., 490., 510., 560., 665.},
                 new double[]{412., 488., 531., 547., 555., 667., 670.},
+                443.0,
                 560.0,
                 new int[]{2, 3});
     }
@@ -104,6 +112,7 @@ public class Sensor {
                 new double[]{413., 510., 490., 510., 560., 555., 665., 670.},
                 new double[]{412., 443., 488., 531., 547., 667.},
                 new double[]{413., 510., 490., 560., 555., 665., 670.},
+                443.0,
                 547.0,
                 new int[]{1, 3});
     }
