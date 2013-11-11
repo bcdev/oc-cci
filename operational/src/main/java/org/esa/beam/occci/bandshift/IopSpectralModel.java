@@ -36,19 +36,24 @@ public class IopSpectralModel {
 
     static {
         BRICAUD_A = new HashMap<String, Double>();
+        BRICAUD_A.put("411", 0.0318);
         BRICAUD_A.put("412", 0.0323);
         BRICAUD_A.put("413", 0.032775);
+        BRICAUD_A.put("441", 0.04005);
         BRICAUD_A.put("442", 0.0398);
         BRICAUD_A.put("443", 0.0394);
         BRICAUD_A.put("488", 0.0279);
+        BRICAUD_A.put("489", 0.02765);
+        BRICAUD_A.put("490", 0.0274);
+        BRICAUD_A.put("491", 0.02705);
         BRICAUD_A.put("510", 0.0180);
         BRICAUD_A.put("530", 0.0117);
         BRICAUD_A.put("531", 0.0115);
         BRICAUD_A.put("547", 0.00845);
         BRICAUD_A.put("620", 0.0065);
-        BRICAUD_A.put("667", 0.01685);
         BRICAUD_A.put("665", 0.0152);
-        BRICAUD_A.put("490", 0.0274);
+        BRICAUD_A.put("667", 0.01685);
+        BRICAUD_A.put("668", 0.0176);
         BRICAUD_A.put("560", 0.0062);
         BRICAUD_A.put("551", 0.0078);
         BRICAUD_A.put("555", 0.007);
@@ -56,19 +61,24 @@ public class IopSpectralModel {
         BRICAUD_A.put("678", 0.0193);
 
         BRICAUD_B = new HashMap<String, Double>();
+        BRICAUD_B.put("411", 0.2845);
         BRICAUD_B.put("412", 0.286);
         BRICAUD_B.put("413", 0.28775);
+        BRICAUD_B.put("441", 0.3355);
         BRICAUD_B.put("442", 0.339);
         BRICAUD_B.put("443", 0.3435);
         BRICAUD_B.put("488", 0.369);
+        BRICAUD_B.put("489", 0.365);
+        BRICAUD_B.put("490", 0.361);
+        BRICAUD_B.put("491", 0.3585);
         BRICAUD_B.put("510", 0.260);
         BRICAUD_B.put("530", 0.139);
         BRICAUD_B.put("531", 0.134);
         BRICAUD_B.put("547", 0.0625);
         BRICAUD_B.put("620", 0.064);
-        BRICAUD_B.put("667", 0.140);
         BRICAUD_B.put("665", 0.134);
-        BRICAUD_B.put("490", 0.361);
+        BRICAUD_B.put("667", 0.140);
+        BRICAUD_B.put("668", 0.143);
         BRICAUD_B.put("560", 0.016);
         BRICAUD_B.put("551", 0.048);
         BRICAUD_B.put("555", 0.0315);
@@ -82,10 +92,10 @@ public class IopSpectralModel {
     public static double[] getABBricaud(double wl) {
         // a and b at 443 derived from values previously in a_bb_prediction
         // a_443 = 0.0394 and k (= 1/(1-b))= 1.52323
-        String wavelengthAsString = Integer.toString((int)wl);
+        final String wavelengthAsString = Integer.toString((int) wl);
 //        System.out.println("wavelengthAsString = " + wavelengthAsString);
-        double aBricaud = BRICAUD_A.get(wavelengthAsString);
-        double bBricaud = BRICAUD_B.get(wavelengthAsString);
+        final double aBricaud = BRICAUD_A.get(wavelengthAsString);
+        final double bBricaud = BRICAUD_B.get(wavelengthAsString);
         return new double[]{aBricaud, bBricaud};
     }
 
@@ -99,51 +109,50 @@ public class IopSpectralModel {
      * (QAA_v5): International Ocean Color Group software report). To calculate these slopes, the below water remote sensing reflectances in the blue and green band
      * need to be given as input.
      * <p/>
-     * @param
-     *    lambda_in: in, required, type="float/fltarr(m)"
-     *      start wavelength(s) of the spectral model, in general the start wavelength used is the same for each of the individual conversions
      *
-     *    a_in: in, required, type="float/fltarr(m)"
-     *      Bricaud A coefficient for the wavelengths given in `lambda_in`
-     *
-     *    b_in: in, required, type="float/fltarr(m)"
-     *      Bricaud B coefficient for the wavelengths given in `lambda_in`
-     *
-     *    aph_in: in, required, type="float/fltarr(m)/fltarr(m,n)"
-     *     phytoplankton absorption for the wavelengths given in `lambda_in` (column dimension m), for 1 or more records (if >1: row dimension n)
-     *
-     *    adg_in: in, required, type="float/fltarr(m)/fltarr(m,n)"
-     *     CDOM+detritus absorption for the wavelengths given in `lambda_in` (column dimension m), for 1 or more records (if >1: row dimension n)
-     *
-     *    bbp_in: in, required, type="float/fltarr(m)/fltarr(m,n)"
-     *      particulate back-scattering for the wavelengths given in `lambda_in` (column dimension m), for 1 or more records (if >1: row dimension n)
-     *
-     *    rrs_blue_in: in, required, type="float/fltarr(n)"
-     *      below water remote sensing reflection in the blue band (443 nm), for 1 or more records (if >1: column dimension n)
-     *
-     *    rrs_green_in: in, required, type="float/fltarr(n)"
-     *      below water remote sensing reflection in the green band (547 or 555 or 560 nm, depending on sensor used), for 1 or more records (if >1: column dimension n)
-     *
-     *    lambda_out: in, required, type="float/fltarr(m)"
-     *     end wavelengths to which `aph_in`, `adg_in` and `bbp_in` should be evolved towards
-     *
-     *     the dimension m is equal to the dimension m of `lambda_in`
-     *
-     *    a_out: in, required, type="float/fltarr(m)"
-     *     Bricaud A coefficient for the wavelengths given in `lambda_out`
-     *
-     *    b_out: in, required, type="float/fltarr(m)"
-     *     Bricaud B coefficient for the wavelengths given in `lambda_out`
-     *
+     * @param lambda_in: in, required, type="float/fltarr(m)"
+     *                   start wavelength(s) of the spectral model, in general the start wavelength used is the same for each of the individual conversions
+     *                   <p/>
+     *                   a_in: in, required, type="float/fltarr(m)"
+     *                   Bricaud A coefficient for the wavelengths given in `lambda_in`
+     *                   <p/>
+     *                   b_in: in, required, type="float/fltarr(m)"
+     *                   Bricaud B coefficient for the wavelengths given in `lambda_in`
+     *                   <p/>
+     *                   aph_in: in, required, type="float/fltarr(m)/fltarr(m,n)"
+     *                   phytoplankton absorption for the wavelengths given in `lambda_in` (column dimension m), for 1 or more records (if >1: row dimension n)
+     *                   <p/>
+     *                   adg_in: in, required, type="float/fltarr(m)/fltarr(m,n)"
+     *                   CDOM+detritus absorption for the wavelengths given in `lambda_in` (column dimension m), for 1 or more records (if >1: row dimension n)
+     *                   <p/>
+     *                   bbp_in: in, required, type="float/fltarr(m)/fltarr(m,n)"
+     *                   particulate back-scattering for the wavelengths given in `lambda_in` (column dimension m), for 1 or more records (if >1: row dimension n)
+     *                   <p/>
+     *                   rrs_blue_in: in, required, type="float/fltarr(n)"
+     *                   below water remote sensing reflection in the blue band (443 nm), for 1 or more records (if >1: column dimension n)
+     *                   <p/>
+     *                   rrs_green_in: in, required, type="float/fltarr(n)"
+     *                   below water remote sensing reflection in the green band (547 or 555 or 560 nm, depending on sensor used), for 1 or more records (if >1: column dimension n)
+     *                   <p/>
+     *                   lambda_out: in, required, type="float/fltarr(m)"
+     *                   end wavelengths to which `aph_in`, `adg_in` and `bbp_in` should be evolved towards
+     *                   <p/>
+     *                   the dimension m is equal to the dimension m of `lambda_in`
+     *                   <p/>
+     *                   a_out: in, required, type="float/fltarr(m)"
+     *                   Bricaud A coefficient for the wavelengths given in `lambda_out`
+     *                   <p/>
+     *                   b_out: in, required, type="float/fltarr(m)"
+     *                   Bricaud B coefficient for the wavelengths given in `lambda_out`
      * @return array of
-     *    aph_out: out, type="float/fltarr(m)/fltarr(m,n)"
-     *     phytoplankton absorption for the wavelengths given in `lambda_out` (column dimension m), for 1 or more records (if >1: row dimension n), obtained using Bricaud formula starting from values in `aph_in`
-     *
-     *    adg_out: out, type="float/fltarr(m)/fltarr(m,n)"
-     *     CDOM+detritus absorption for the wavelengths given in `lambda_out` (column dimension m), for 1 or more records (if >1: row dimension n), obtained applying QAAv5 spectral slopes starting from values in `adg_in`.
-     *
-     *    bbp_out: out, type="float/fltarr(m)/fltarr(m,n)"
-     *      particulate back-scattering for the wavelengths given in `lambda_out` (column dimension m), for 1 or more records (if >1: row dimension n), obtained applying QAAv5 spectral slopes starting from value in `bbp_in`
+     *         aph_out: out, type="float/fltarr(m)/fltarr(m,n)"
+     *         phytoplankton absorption for the wavelengths given in `lambda_out` (column dimension m), for 1 or more records (if >1: row dimension n), obtained using Bricaud formula starting from values in `aph_in`
+     *         <p/>
+     *         adg_out: out, type="float/fltarr(m)/fltarr(m,n)"
+     *         CDOM+detritus absorption for the wavelengths given in `lambda_out` (column dimension m), for 1 or more records (if >1: row dimension n), obtained applying QAAv5 spectral slopes starting from values in `adg_in`.
+     *         <p/>
+     *         bbp_out: out, type="float/fltarr(m)/fltarr(m,n)"
+     *         particulate back-scattering for the wavelengths given in `lambda_out` (column dimension m), for 1 or more records (if >1: row dimension n), obtained applying QAAv5 spectral slopes starting from value in `bbp_in`
      */
     public static double[] iopSpectralModel(double lambda_in, double a_in, double b_in, double aph_in, double adg_in, double bbp_in, double rrs_blue_in, double rrs_green_in,
                                             double lambda_out, double a_out, double b_out) {
@@ -158,7 +167,7 @@ public class IopSpectralModel {
         double yy = 2.0 * (1.0 - 1.2 * Math.exp(-0.9 * rat));
 
         // Chla concentration; Bricaud et al. (1995)
-        double Chla = Math.pow((aph_in / a_in) ,(1 / (1 - b_in)));
+        double Chla = Math.pow((aph_in / a_in), (1 / (1 - b_in)));
 
         //IOPs for input wavelengths
         double ll = lambda_out - lambda_in;
@@ -166,6 +175,6 @@ public class IopSpectralModel {
         double adg_out = adg_in * Math.exp(-sdg * ll);
         double bbp_out = bbp_in * Math.pow((lambda_in / lambda_out), yy);
 
-        return new double[] {aph_out, adg_out, bbp_out};
+        return new double[]{aph_out, adg_out, bbp_out};
     }
 }

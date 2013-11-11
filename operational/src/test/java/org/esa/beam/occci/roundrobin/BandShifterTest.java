@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class BandShifterTest {
 
@@ -162,5 +164,13 @@ public class BandShifterTest {
 
         final double[] rrs_out = BandShifter.toSeaWifs(qaaSpectrum, qaaAt443);
         assertArrayEquals(rrs_expected, rrs_out, 1e-8);
+    }
+
+    @Test
+    public void testIsCorrected() {
+         assertTrue(BandShifter.isCorrected(new double[2]));
+
+        assertFalse(BandShifter.isCorrected(null));
+        assertFalse(BandShifter.isCorrected(new double[0]));
     }
 }

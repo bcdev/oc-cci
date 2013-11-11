@@ -118,11 +118,19 @@ class InSituSpectrum {
         return getMeasurementsArray(qaaMeasurements);
     }
 
+    public SpectralMeasurement[] getQaaMeasurementsArray() {
+        return qaaMeasurements;
+    }
+
     public double[] getMerisMeasurements() {
         if (!isCompleteMeris()) {
             throw new IllegalStateException("Incomplete spectrum");
         }
         return getMeasurementsArray(merisMeasurements);
+    }
+
+    public SpectralMeasurement[] getMerisMeasurementsArray() {
+        return merisMeasurements;
     }
 
     double[] getModisMeasurements() {
@@ -132,11 +140,19 @@ class InSituSpectrum {
         return getMeasurementsArray(modisMeasurements);
     }
 
+    public SpectralMeasurement[] getModisMeasurementsArray() {
+        return modisMeasurements;
+    }
+
     double[] getSeaWifsMeasurements() {
         if (!isCompleteSeaWiFS()) {
             throw new IllegalStateException("Incomplete spectrum");
         }
         return getMeasurementsArray(seaWiFSMeasurements);
+    }
+
+    public SpectralMeasurement[] getSeaWiFSsMeasurementsArray() {
+        return seaWiFSMeasurements;
     }
 
     float[] getMeasurementsFloat() {

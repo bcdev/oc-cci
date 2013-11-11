@@ -26,23 +26,14 @@ public class IopSpectralModelTest {
 
     @Test
     public void testGetABBricaud() throws Exception {
-        double[] abBricaud = IopSpectralModel.getABBricaud(443.0);
-        assertNotNull(abBricaud);
-        assertEquals(2, abBricaud.length);
-        assertEquals(0.0394, abBricaud[0], 1e-8);
-        assertEquals(0.3435, abBricaud[1], 1e-8);
-
-        abBricaud = IopSpectralModel.getABBricaud(547.0);
-        assertNotNull(abBricaud);
-        assertEquals(2, abBricaud.length);
-        assertEquals(0.00845, abBricaud[0], 1e-8);
-        assertEquals(0.0625, abBricaud[1], 1e-8);
-
-        abBricaud = IopSpectralModel.getABBricaud(620.0);
-        assertNotNull(abBricaud);
-        assertEquals(2, abBricaud.length);
-        assertEquals(0.0065, abBricaud[0], 1e-8);
-        assertEquals(0.064, abBricaud[1], 1e-8);
+        assertCorrectBricaudAt(443.0, 0.0394, 0.3435);
+        assertCorrectBricaudAt(547.0, 0.00845, 0.0625);
+        assertCorrectBricaudAt(620.0, 0.0065, 0.064);
+        assertCorrectBricaudAt(441.0, 0.04005, 0.3355);
+        assertCorrectBricaudAt(489.0, 0.02765, 0.365);
+        assertCorrectBricaudAt(668.0, 0.0176, 0.143);
+        assertCorrectBricaudAt(411.0, 0.0318, 0.2845);
+        assertCorrectBricaudAt(491.0, 0.02705, 0.3585);
     }
 
     @Test
@@ -85,5 +76,13 @@ public class IopSpectralModelTest {
         assertEquals(0.014138943881420582, result[0], 1e-8);
         assertEquals(0.0140527425854202, result[1], 1e-8);
         assertEquals(0.0028047002794939677, result[2], 1e-8);
+    }
+
+    private void assertCorrectBricaudAt(double wl, double expectedA, double expectedB) {
+        double[] abBricaud = IopSpectralModel.getABBricaud(wl);
+        assertNotNull(abBricaud);
+        assertEquals(2, abBricaud.length);
+        assertEquals(expectedA, abBricaud[0], 1e-8);
+        assertEquals(expectedB, abBricaud[1], 1e-8);
     }
 }

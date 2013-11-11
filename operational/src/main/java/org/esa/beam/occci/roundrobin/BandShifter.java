@@ -18,17 +18,12 @@ class BandShifter {
         final Sensor toMeris = SensorFactory.createToMeris(spectrum);
         final CorrectionContext context = new CorrectionContext(toMeris);
         final BandShiftCorrection bandShiftCorrection = new BandShiftCorrection(context);
-        double[] rrs_corrected = null;
-        if (spectrum.isCompleteMeris()) {
-            rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
-        } else if (spectrum.isCompleteModis()) {
-            rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
-        } else if (spectrum.isCompleteSeaWiFS()) {
-            rrs_corrected = correctFromSeaWifs(spectrum, qaaAt443, bandShiftCorrection);
-        } else if (spectrum.isCompleteQaa()) {
-            rrs_corrected = correctFromQaa(spectrum, qaaAt443, bandShiftCorrection);
+
+        double[] rrs_corrected = bandShift(spectrum, qaaAt443, bandShiftCorrection);
+        if (isCorrected(rrs_corrected)) {
+            return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
         }
-        return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
+        return null;
     }
 
     /**
@@ -40,17 +35,12 @@ class BandShifter {
         final Sensor toModis = SensorFactory.createToModis(spectrum);
         final CorrectionContext context = new CorrectionContext(toModis);
         final BandShiftCorrection bandShiftCorrection = new BandShiftCorrection(context);
-        double[] rrs_corrected = null;
-        if (spectrum.isCompleteMeris()) {
-            rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
-        } else if (spectrum.isCompleteModis()) {
-            rrs_corrected = correctFromModis(spectrum, qaaAt443, bandShiftCorrection);
-        } else if (spectrum.isCompleteSeaWiFS()) {
-            rrs_corrected = correctFromSeaWifs(spectrum, qaaAt443, bandShiftCorrection);
-        } else if (spectrum.isCompleteQaa()) {
-            rrs_corrected = correctFromQaa(spectrum, qaaAt443, bandShiftCorrection);
+
+        double[] rrs_corrected = bandShift(spectrum, qaaAt443, bandShiftCorrection);
+        if (isCorrected(rrs_corrected)) {
+            return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
         }
-        return bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
+        return null;
     }
 
     /**
@@ -62,6 +52,17 @@ class BandShifter {
         final Sensor toSeaWifs = SensorFactory.createToSeaWifs(spectrum);
         final CorrectionContext context = new CorrectionContext(toSeaWifs);
         final BandShiftCorrection bandShiftCorrection = new BandShiftCorrection(context);
+
+        double[] rrs_corrected = bandShift(spectrum, qaaAt443, bandShiftCorrection);
+        if (isCorrected(rrs_corrected)) {
+            final double[] correctedAveraged = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
+            return Arrays.copyOf(correctedAveraged, correctedAveraged.length - 1);
+        }
+        return null;
+
+    }
+
+    private static double[] bandShift(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
         double[] rrs_corrected = null;
         if (spectrum.isCompleteMeris()) {
             rrs_corrected = correctFromMeris(spectrum, qaaAt443, bandShiftCorrection);
@@ -72,8 +73,7 @@ class BandShifter {
         } else if (spectrum.isCompleteQaa()) {
             rrs_corrected = correctFromQaa(spectrum, qaaAt443, bandShiftCorrection);
         }
-        final double[] correcteAveraged = bandShiftCorrection.weightedAverageEqualCorrectionProducts(rrs_corrected);
-        return Arrays.copyOf(correcteAveraged, correcteAveraged.length - 1);
+        return rrs_corrected;
     }
 
     private static double[] correctFromModis(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
@@ -90,5 +90,9 @@ class BandShifter {
 
     private static double[] correctFromQaa(InSituSpectrum spectrum, double[] qaaAt443, BandShiftCorrection bandShiftCorrection) {
         return bandShiftCorrection.correctBandshift(spectrum.getQaaMeasurements(), spectrum.getQaaWavelengths(), qaaAt443);
+    }
+
+    public static boolean isCorrected(double[] rrs_corrected) {
+        return rrs_corrected != null && rrs_corrected.length > 0;
     }
 }
