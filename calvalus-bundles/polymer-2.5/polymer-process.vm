@@ -33,6 +33,7 @@ echo PROCESS_ROWS $sline $eline  >> parameters.txt
 
 #[[
 POLYMER=./polymer-2.5
+POLY_PYTHON=./polymer-python
 
 # create links to auxdata
 ln -sf ${POLYMER}/auxdata .
@@ -41,10 +42,22 @@ ln -sf ${POLYMER}/LUTS .
 ln -sf ${POLYMER}/rayleigh .
 ln -sf ${POLYMER}/smile .
 
+suffix="hdf"
+if grep -E "OUTPUT_FORMAT\ +NETCDF" parameters.txt; then
+  suffix="nc"
+fi
+
+export LD_LIBRARY_PATH="${POLY_PYTHON}/pylib"
+export PYTHONPATH="${POLY_PYTHON}/pyshared"
+./get_meteo_calvalus.py ${inFileName} >> parameters.txt
+
 # append input,output to parameters.txt
-outFile=${inFileName:0:8}2${inFileName:9:$((${#inFileName} - 12))}.hdf
+outFile=$(basename ${inFileName} .N1).polymer.${suffix}
 echo INPUT_FILE $inFile >> parameters.txt
 echo OUTPUT_FILE $outFile >> parameters.txt
+
+# for debugging purpose
+# cat parameters.txt
 
 function handle_progress() {
   line=$1

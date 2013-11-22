@@ -33,6 +33,7 @@ echo PROCESS_ROWS $sline $eline  >> parameters.txt
 
 #[[
 POLYMER=./polymer-2.7
+POLY_PYTHON=./polymer-python
 
 # create links to auxdata
 ln -sf ${POLYMER}/auxdata .
@@ -43,9 +44,9 @@ if grep -E "OUTPUT_FORMAT\ +NETCDF" parameters.txt; then
   suffix="nc"
 fi
 
-export LD_LIBRARY_PATH="${POLYMER}/pylib"
-export PYTHONPATH="${POLYMER}/pyshared"
-${POLYMER}/get_meteo_calvalus.py ${inFileName} >> parameters.txt
+export LD_LIBRARY_PATH="${POLY_PYTHON}/pylib"
+export PYTHONPATH="${POLY_PYTHON}/pyshared"
+./get_meteo_calvalus.py ${inFileName} >> parameters.txt
 
 # append input,output to parameters.txt
 outFile=$(basename ${inFileName} .N1).polymer.${suffix}
