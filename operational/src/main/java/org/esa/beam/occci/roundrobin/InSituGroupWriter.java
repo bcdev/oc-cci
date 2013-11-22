@@ -42,9 +42,9 @@ public class InSituGroupWriter {
             measurementsArray = original.getQaaMeasurementsArray();
         }
 
-        merisWriter.write(meris, measurementsArray, original.getDateTime(), original.getLat(), original.getLon());
-        modisWriter.write(modis, measurementsArray, original.getDateTime(), original.getLat(), original.getLon());
-        seawifsWriter.write(seaWifs, measurementsArray, original.getDateTime(), original.getLat(), original.getLon());
+        merisWriter.write(meris, measurementsArray, original);
+        modisWriter.write(modis, measurementsArray, original);
+        seawifsWriter.write(seaWifs, measurementsArray, original);
     }
 
     void close() {

@@ -28,6 +28,8 @@ class SpectrumBuilder {
     private static final int SEAWIFS_BAND_555_IDX = 43;
     private static final int SEAWIFS_BAND_670_IDX = 45;
 
+    private static final int SUBDATASET_RRS_1_IDX = 142;
+
     public static InSituSpectrum create(String[] csvRecords) {
         final InSituSpectrum spectrum = new InSituSpectrum();
 
@@ -36,6 +38,10 @@ class SpectrumBuilder {
         parseMerisSpectrum(csvRecords, spectrum);
         parseModisSpectrum(csvRecords, spectrum);
         parseSeaWiFSSpectrum(csvRecords, spectrum);
+
+        if (csvRecords.length > SUBDATASET_RRS_1_IDX) {
+            spectrum.setSubdatasetRrs_1(csvRecords[SUBDATASET_RRS_1_IDX]);
+        }
 
         return spectrum;
     }

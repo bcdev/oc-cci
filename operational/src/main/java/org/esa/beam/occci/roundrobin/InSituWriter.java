@@ -27,6 +27,7 @@ class InSituWriter {
         } else {
             throw new IllegalArgumentException("Unsupported sensor: " + sensorName);
         }
+        headerLineBuilder.append("\tsubdataset_rrs_1");
         return new InSituWriter(outputStream, headerLineBuilder.toString());
     }
 
@@ -39,16 +40,16 @@ class InSituWriter {
         printWriter.println(headerLine);
     }
 
-    void write(double[] rss, SpectralMeasurement[] originalSpectrum, String date, String lat, String lon) {
+    void write(double[] rss, SpectralMeasurement[] originalMeasurements, InSituSpectrum originalSpectrum) {
         if (rss == null) {
             return;
         }
         final StringBuilder builder = new StringBuilder(512);
-        builder.append(date);
+        builder.append(originalSpectrum.getDateTime());
         builder.append("\t");
-        builder.append(lat);
+        builder.append(originalSpectrum.getLat());
         builder.append("\t");
-        builder.append(lon);
+        builder.append(originalSpectrum.getLon());
         builder.append("\t");
 
         for (double rs : rss) {
@@ -56,7 +57,10 @@ class InSituWriter {
             builder.append("\t");
         }
 
-        for (SpectralMeasurement spectralMeasurement : originalSpectrum) {
+        builder.append(originalSpectrum.getSubdatasetRrs_1());
+        builder.append("\t");
+
+        for (SpectralMeasurement spectralMeasurement : originalMeasurements) {
             builder.append(spectralMeasurement.getMeasurement());
             builder.append("\t");
             builder.append(spectralMeasurement.getWavelength());

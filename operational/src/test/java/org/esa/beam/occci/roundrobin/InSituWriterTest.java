@@ -59,7 +59,7 @@ public class InSituWriterTest {
         merisWriter.writeHeader();
         merisWriter.close();
 
-        assertEquals("time\tlat\tlon\trrs_413\trrs_443\trrs_490\trrs_510\trrs_560\trrs_620\trrs_665" + newline, outputStream.toString());
+        assertEquals("time\tlat\tlon\trrs_413\trrs_443\trrs_490\trrs_510\trrs_560\trrs_620\trrs_665\tsubdataset_rrs_1" + newline, outputStream.toString());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class InSituWriterTest {
         merisWriter.writeHeader();
         merisWriter.close();
 
-        assertEquals("time\tlat\tlon\trrs_412\trrs_443\trrs_488\trrs_531\trrs_547\trrs_667\trrs_678" + newline, outputStream.toString());
+        assertEquals("time\tlat\tlon\trrs_412\trrs_443\trrs_488\trrs_531\trrs_547\trrs_667\trrs_678\tsubdataset_rrs_1" + newline, outputStream.toString());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class InSituWriterTest {
         merisWriter.writeHeader();
         merisWriter.close();
 
-        assertEquals("time\tlat\tlon\trrs_412\trrs_443\trrs_490\trrs_510\trrs_555\trrs_670" + newline, outputStream.toString());
+        assertEquals("time\tlat\tlon\trrs_412\trrs_443\trrs_490\trrs_510\trrs_555\trrs_670\tsubdataset_rrs_1" + newline, outputStream.toString());
     }
 
     // @todo 2 tb/tb add tests for writing tb 2013-11-11

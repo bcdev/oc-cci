@@ -259,6 +259,17 @@ public class SpectrumBuilderTest {
     }
 
     @Test
+    public void testParseSubdatasetRrs_1() {
+        final String[] csvRecord = createEmptyStringArray(143);
+        csvRecord[142] = "Nasenmann";
+
+        final InSituSpectrum spectrum = SpectrumBuilder.create(csvRecord);
+        assertNotNull(spectrum);
+
+        assertEquals("Nasenmann", spectrum.getSubdatasetRrs_1());
+    }
+
+    @Test
     public void testReadCompleteLine() throws IOException {
         final String line = "2009-08-24T19:18:22Z,41.300000,-70.550000,0.0037194,412.7,0.0045512,442,0.0068333,490.9,,,,,,,0.00228,668.1,,,,,0.0037194,412.7,0.0045512,442,0.0068333,490.9,0.008975,531.4,0.0089148,551.1,0.00228,668.1,,,0.0037194,412.7,0.0045512,442,0.0068333,490.9,,,0.0089148,551.1,0.00228,668.1,1.939545,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,aoc_MVCO,aoc_MVCO,Hui_Feng_and_Heidi_M._Sosik,,,,0,,,,,,,0,,,,,,,,0";
         final CharArrayReader reader = new CharArrayReader(line.toCharArray());
@@ -329,6 +340,8 @@ public class SpectrumBuilderTest {
         value = spectrum.getSeaWiFSSpectralValue(5);
         assertEquals(0.00228, value.getMeasurement(), 1e-8);
         assertEquals(668.1, value.getWavelength(), 1e-8);
+
+        assertEquals("aoc_MVCO", spectrum.getSubdatasetRrs_1());
     }
 
     private String[] createEmptyStringArray(int size) {

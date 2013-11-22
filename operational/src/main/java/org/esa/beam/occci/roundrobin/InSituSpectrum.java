@@ -14,12 +14,14 @@ class InSituSpectrum {
     private String dateTime;
     private String lat;
     private String lon;
+    private String subdatasetRrs_1;
 
     InSituSpectrum() {
         qaaMeasurements = new SpectralMeasurement[NUM_QAA_VALUES];
         merisMeasurements = new SpectralMeasurement[NUM_MERIS_VALUES];
         modisMeasurements = new SpectralMeasurement[NUM_MODIS_VALUES];
         seaWiFSMeasurements = new SpectralMeasurement[NUM_SEAWIFS_VALUES];
+        subdatasetRrs_1 = "";
     }
 
     SpectralMeasurement getQaaSpectralValue(int index) {
@@ -187,6 +189,14 @@ class InSituSpectrum {
 
     void setLon(String lon) {
         this.lon = lon;
+    }
+
+    void setSubdatasetRrs_1(String subdatasetRrs_1) {
+        this.subdatasetRrs_1 = subdatasetRrs_1;
+    }
+
+    String getSubdatasetRrs_1() {
+        return subdatasetRrs_1;
     }
 
     private void checkValidQaaIndex(int index) {

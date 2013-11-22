@@ -16,6 +16,11 @@ public class InSituSpectrumTest {
     }
 
     @Test
+    public void testConstruction() {
+         assertNotNull(inSituSpectrum.getSubdatasetRrs_1());
+    }
+
+    @Test
     public void testSetGetQaaSpectralValue() {
         final double wavelength = 517.4;
         final double measurementValue = 1.8;
@@ -448,6 +453,18 @@ public class InSituSpectrumTest {
         for (int i = 0; i < 6; i++) {
             assertEquals(9 + i, measurements[i], 1e-8);
         }
+    }
+
+    @Test
+    public void testSetGetSubdatasetRrs_1() {
+         final String subdatasetRrs_1 = "hoppla";
+         final String subdatasetRrs_2 = "hier komm ich";
+
+        inSituSpectrum.setSubdatasetRrs_1(subdatasetRrs_1);
+        assertEquals(subdatasetRrs_1, inSituSpectrum.getSubdatasetRrs_1());
+
+        inSituSpectrum.setSubdatasetRrs_1(subdatasetRrs_2);
+        assertEquals(subdatasetRrs_2, inSituSpectrum.getSubdatasetRrs_1());
     }
 
     private void addSpectralMeasurement(double wavelength, double value, int index) {
