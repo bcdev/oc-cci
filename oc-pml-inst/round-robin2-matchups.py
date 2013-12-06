@@ -8,7 +8,12 @@ from daemon import Daemon
 ################################################################################
 year = '2008'
 processors = ['l2gen', 'ocnnrd', 'polymer', "megs"]
-regions = ['SPG', 'NA']
+sensors = ['MERIS', 'MODIS', 'SEAWIFS']
+sensorEodata = {
+    'MERIS' :   { 'root' : 'MER_RR__1P/r03', 'suffix' : 'N1' },
+    'MODIS' :   { 'root' : 'MODIS_L1B/OBPG', 'suffix' : 'L1B_LAC' },
+    'SEAWIFS' : { 'root' : 'SEAWIFS_L1B/OBPG', 'suffix' : 'L1B_LAC' }
+}
 processorConfig = {'l2gen': {'processorBundleName': 'seadas',
                              'processorBundleVersion': '7.0',
                              'processorName': 'l2gen',
@@ -30,33 +35,29 @@ processorConfig = {'l2gen': {'processorBundleName': 'seadas',
                             'needsFormatting': False}
 }
 
-inputs = ['MER_RR']
+#inputs = ['MER_RR']
 hosts = [('localhost', 4)]
 types = [('template-step.py', 4)]
 ################################################################################
 
 class RoundRobin2(Daemon):
     def run(self):
-        pm = PMonitor(inputs, request='round-robin2', logdir='log', hosts=hosts, types=types)
+        pm = PMonitor(sensors, request='round-robin2-matchups', logdir='log', hosts=hosts, types=types)
 
-        for region in regions:
+        for sensor in sensors:
+            eodata = sensorEodata[sensor]
             for processor in processors:
-                nameProcess = 'round-robin-process-' + processor + '-' + region
-                params = ['round-robin-\${processor}-\${region}-process.xml',
+                nameProcess = 'round-robin-matchup-' + processor + '-' + sensor
+                params = ['round-robin-\${processor}-\${sensor}-matchup.xml',
                           'processor', processor,
-                          'region', region,
+                          'sensor', sensor,
+                          'eodataRoot', eodata['root'],
+                          'eodataSuffix', eodata['suffix'],
                           'processorBundleName', processorConfig[processor]['processorBundleName'],
                           'processorBundleVersion', processorConfig[processor]['processorBundleVersion'],
                           'processorName', processorConfig[processor]['processorName']
                 ]
-                pm.execute('template-step.py', inputs, [nameProcess], parameters=params, logprefix=nameProcess)
-                if processorConfig[processor]['needsFormatting']:
-                    nameFormat = 'round-robin-format-' + processor + '-' + region
-                    params = ['round-robin-\${processor}-\${region}-format.xml',
-                              'processor', processor,
-                              'region', region
-                    ]
-                    pm.execute('template-step.py', [nameProcess], [nameFormat], parameters=params, logprefix=nameFormat)
+                pm.execute('template-step.py', [sensor], [nameProcess], parameters=params, logprefix=nameProcess)
 
         #======================================================
         pm.wait_for_completion()

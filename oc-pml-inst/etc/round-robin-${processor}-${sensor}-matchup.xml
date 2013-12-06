@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<wps:Execute service="WPS"
+             version="1.0.0"
+             xmlns:wps="http://www.opengis.net/wps/1.0.0"
+             xmlns:ows="http://www.opengis.net/ows/1.1">
+
+    <ows:Identifier>MA</ows:Identifier>
+
+    <wps:DataInputs>
+        <wps:Input>
+            <ows:Identifier>productionName</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>oc round-robin2 ${processor} ${sensor} matchup</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>processorBundleName</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>${processorBundleName}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>processorBundleVersion</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>${processorBundleVersion}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>processorName</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>${processorName}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.output.dir</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>/calvalus/projects/oc-rr2/matchup/${processor}/${sensor}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>inputPath</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>/calvalus/eodata/${eodataRoot}/${yyyy}/${MM}/${dd}/.*${eodataSuffix}$</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>processorParameters</ows:Identifier>
+            <wps:Data>
+                <wps:ComplexData>
+                    <parameters></parameters>
+                </wps:ComplexData>
+            </wps:Data>
+        </wps:Input>
+
+
+        <wps:Input>
+             <ows:Identifier>macroPixelSize</ows:Identifier>
+             <wps:Data>
+                 <wps:LiteralData>3</wps:LiteralData>
+             </wps:Data>
+         </wps:Input>
+        <wps:Input>
+             <ows:Identifier>maxTimeDifference</ows:Identifier>
+             <wps:Data>
+                 <wps:LiteralData>3</wps:LiteralData>
+             </wps:Data>
+         </wps:Input>
+        <wps:Input>
+             <ows:Identifier>filteredMeanCoeff</ows:Identifier>
+             <wps:Data>
+                 <wps:LiteralData>1.5</wps:LiteralData>
+             </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>filterOverlapping</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>true</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>recordSourceUrl</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>hdfs://master00:9000/calvalus/projects/cc-rr2/insitu/${sensor}.csv</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.hadoop.mapred.max.map.failures.percent</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>2</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.hadoop.mapred.job.queue.name</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>lc</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+    </wps:DataInputs>
+</wps:Execute>
+
