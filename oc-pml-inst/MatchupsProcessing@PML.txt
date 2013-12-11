@@ -1,0 +1,262 @@
+
+Matchup processing on Calvalus @ PML
+=====================================
+
+This document should in a concise document describe how to setup Calvalus 
+on the PML cluster and how to run the matchups for the 2nd Round-Robin
+on MODIS and SeaWiFS data.
+
+
+1) Install the software
+=======================
+
+1.1) Calvalus
+-------------
+
+Prerequisites:
+To use the Calvalus software a Java JDK 1.6 from Oracle is required.
+Apache Hadoop has to be of Version 1.x.
+Both software packages have to be installed on all nodes of the cluster.
+A Namenode and a Tasktracker service have to be running.
+
+The Calvalus software archive consist of:
+ - the the Calvalus software bundle
+ - the BEAM software bundle
+ - the CPT (Calvalus production tool)
+ - a sample configuration file for the CPT ("calvalus.config")
+
+The CPT tool can be used to install/uninstall software bundle and processing request.
+For a more detailed description see chapter 7 of the Software User Manual.
+
+To let the CPT know with which cluster it should connect the
+supplied "calvalus.config" should be adapted.
+
+It is mostly sufficient to change the hostname of the Namenode and the Tasktracker.
+These are the configuration keys: "calvalus.hadoop.fs.default.name" and "calvalus.hadoop.mapred.job.tracker"
+The adapted configuration file should then be placed into
+the directory $HOME/.calvalus/ of the user that uses the CPT tool.
+
+The CPT tool is a Java JAR containing all required dependencies. It can be invoked with:
+
+java -jar cpt.jar
+
+For help:
+java -jar cpt.jar --help
+
+In case an older system is already present. These files first have be removed:
+
+java -jar cpt.jar --uninstall beam-4.11.1
+java -jar cpt.jar --uninstall calvalus-1.7
+
+The remaining step is to install the BEAM and the Calvalus bundle into the HDFS:
+
+java -jar cpt.jar --deploy beam-bundle/*.jar beam-4.11.1
+java -jar cpt.jar --deploy calvalus-bundle/*.jar calvalus-1.7
+
+Whereas the name of the BEAM and Calvalus bundle are given in the "calvalus.hadoop.calvalus.calvalus.bundle" and
+the "calvalus.hadoop.calvalus.beam.bundle" configuration property.
+
+To validate the bundle deployment you can use the "hadoop fs" tool:
+hadoop fs -ls /calvalus/software/1.0
+
+This should list two sub-directories.
+
+
+1.2) EOData Processors
+----------------------
+For actual processing with Calvalus system bundles of EOData processor need to be present.
+Here we are describing how to install the processors that are needed for the 2nd Round robin have to be installed.
+
+For this taks 3 different processors need to present, namely l2gen, polymer and forwardNN.
+The installation always includes as a first step a removal of an (maybe) existing old version
+to have an defined state afterwards:
+
+l2gen:
+------
+java -jar cpt.jar --uninstall seadas-7.0
+java -jar cpt.jar --deploy seadas-7.0-bundle/* seadas-7.0
+
+polymer:
+--------
+java -jar cpt.jar --uninstall polymer-3.0
+java -jar cpt.jar --deploy polymer-3.0-bundle/* polymer-3.0
+
+forwardNN:
+----------
+java -jar cpt.jar --uninstall ocnnrd-1.0
+java -jar cpt.jar --deploy ocnnrd-1.0-bundle/* ocnnrd-1.0
+
+
+1.3) The controlling oc-pml pmonitor instance with workflows
+------------------------------------------------------------
+The instance is resposible for starting and monitoring jobs.
+this is especilly important of complex workflows are combined of multiple jobs 
+where the execution of one job is dependent on the successfull completion of another job.
+
+The instance conntains some subdirectory for:
+- Python source code
+- the cpt.jar
+- workflow templates
+- step script
+- logfiles
+- request files
+
+The instance contains a "myoc" script that has be adpated to the installation and that sets some
+environment variables for use in the workflow and step scripts.
+Before using any of the workflows is is neccessary to "source" the "myoc" script.
+To signal that this has happened the prompt will contain "(OC)" afterwards.
+
+To install is uncomproes is with:
+tar xf oc-pml-inst.tar.gz
+
+and adjust the environment variable (OC_INST) in the myoc script.
+So that it contains the installation directory of the instance.
+
+
+2) EOData
+=========
+
+The EOData processor installed in step 1.2) need EOData as their primary input.
+These producst have to be on the HDFS so they are accessible to the Calvalus system.
+
+The given pathes are the default as they are on the BC Calvalus system and
+can mostly be changed in configuration.
+
+In general EOData on the Calvalus system is located under the /calvalus/eodata directory.
+Below this point it is structured in the following way:
+/calvaus/eodata/${productType}/${revision}/${year}/${month}/${day}/
+
+2.1) MODIS L1B_LAC & GEO
+------------------------
+For the MODIS L1B files from the OBPG group we choose "MODIS_L1B" as productType
+and "OBPG" as revision.
+
+They are named like "A2006131132000.L1B_LAC".
+With the following structure A${year}${doy}${hour}${minute}${second}.L1B_LAC
+Where the given point in time is the time of the first scanline.
+
+The GEO file that are needed for l2gen and polymer are matching these L1B product 
+and follow the following naming pattern: A${year}${doy}${hour}${minute}${second}.GEO
+
+An example pair would be:
+/calvalus/eodata/MODIS_L1B/OBPG/2006/05/11/A2006131132000.L1B_LAC
+/calvalus/eodata/MODIS_L1B/OBPG/2006/05/11/A2006131132000.GEO
+
+2.3) SeaWiFS L1B_LAC
+--------------------
+For the SeaWiFS L1B files from the OBPG group we choose "SEAWIFS_L1B" as productType
+and "OBPG" as revision.
+
+They are named like "S2006131120520.L1B_LAC".
+With the following structure A${year}${doy}${hour}${minute}${second}.L1B_LAC
+Where the given point in time is the time of the first scanline.
+
+An example would be:
+/calvalus/eodata/SEAWIFS_L1B/OBPG/2006/05/11/S2006131120520.L1B_LAC
+
+2.4 Ingesting eodata with cpt
+-----------------------------
+EOData can be ingested into the Calvalus system using CPT.
+The proghramm will create subdirectories and place the files into them according to their date.
+java -jar cpt.jar --ingestion fileOrDirectory --producttype PRODUCT_TYPE --revision REVISION --filenamepattern "N.*L1B_LAC"
+
+This command ingests all EOData products that are mentioned ny the fileOrDirectory expression into the system.
+The specified values for PRODUCT_TYPE and REVISION are used to use the right place in the directory hierarchy.
+the files are tested agains the given filename pattern. thi spattern is an Regex and not a shell glob.
+
+
+3) Auxdata
+==========
+
+The EOData processor installed in step 1.2) need in addition to the EOData auxiliary data.
+This auxdata has to be on the HDFS so they are accessible to the Calvalus system.
+
+The given pathes are the default as they are on the BC Calvalus system and
+can mostly be changed in configuration.
+
+In general Auxdata on the Calvalus system is located under the /calvalus/auxiliary directory.
+As the following auxdata files all origin from the seadas group they are structured in a common
+hierarchy: /calvalus/auxiliary/seadas/anc/${year}/${doy}/
+
+3.1) NCEP
+----------------
+NCEP data is needed for processing l2gen, forwardNN and polymer.
+It follows either one of two naming patterns:
+N${year}${doy}${hour}_MET_NCEPN_6h.hdf or
+S${year}${doy}${hour}_NCEP.MET
+
+An example is: N200613100_MET_NCEPN_6h.hdf
+
+NCEP data is available on a 6 hour granularity. This results in four files per day:
+/calvalus/auxiliary/seadas/anc/2006/131/N200613100_MET_NCEPN_6h.hdf
+/calvalus/auxiliary/seadas/anc/2006/131/N200613106_MET_NCEPN_6h.hdf
+/calvalus/auxiliary/seadas/anc/2006/131/N200613112_MET_NCEPN_6h.hdf
+/calvalus/auxiliary/seadas/anc/2006/131/N200613118_MET_NCEPN_6h.hdf
+
+3.2) ozone data (TOMSOMI, TOVS or TOAST)
+----------------------------------------
+Ozone data is needed for processing l2gen, forwardNN and polymer.
+It is used (in this priority) from TOMSOMI, TOVS or TOAST.
+
+Depending on the soure the data follows different naming schemas:
+N${year}${doy}00_O3_TOMSOMI_24h.hdf
+S${year}${doy}00${doy}23_TOVS.OZONE
+S${year}${doy}00${doy}23_TOAST.OZONE
+
+Ozoe data is avaliabe once four every 24 hours. An example is:
+/calvalus/auxiliary/seadas/anc/2006/131/N200613100_O3_TOMSOMI_24h.hdf
+
+
+3.3) SST and SEAICE
+-------------------
+In addition to the auxdata resources given in 4.1) and 4.2) 
+l2gen need SST and SEAICE auxdata.
+
+SEAICE is named:
+N${year}${doy}00_SEAICE_NSIDC_24h.hdf
+and SST is named:
+N${year}${doy}_SST_OIV2AVAM_24h.nc 
+
+To complete the example from above:
+/calvalus/auxiliary/seadas/anc/2006/131/N200613100_SEAICE_NSIDC_24h.hdf
+/calvalus/auxiliary/seadas/anc/2006/131/N2006131_SST_OIV2AVAM_24h.nc
+
+3.4) Summary
+------------
+To summarize the different Auxdata files needed for processing. Here the content of the Auxdata directory
+for 11.05.2006. It is in the subdirecory: /calvalus/auxiliary/seadas/anc/2006/131/
+and consist of the following files:
+
+N200613100_MET_NCEPN_6h.hdf
+N200613100_O3_TOMSOMI_24h.hdf
+N200613100_SEAICE_NSIDC_24h.hdf
+N200613106_MET_NCEPN_6h.hdf
+N200613112_MET_NCEPN_6h.hdf
+N200613118_MET_NCEPN_6h.hdf
+N2006131_SST_OIV2AVAM_24h.nc
+
+
+
+4) How to do 2nd RR matchup processing
+======================================
+Once EOData, Auxdata and the software is in place.
+The system is ready to run the matchup extarction.
+
+First step: copy the insitu-data into the cluster:
+-----------
+.....
+
+Second step: execute the matchup workflow:
+------------
+.....
+
+Third step: Monitor the progress
+-----------
+The progress can be monitored in the instance by looking into the XXX.status file.
+On the jobtracker is a web insterface to monitor individual jobs:
+http://tasktracker:50030/
+
+Fourth step: Get the results
+------------
+...
+
