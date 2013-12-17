@@ -55,6 +55,8 @@ tar xf polymer-data-v2.7.tar.gz
 tar xf polymer-src-v2.7.tar.gz
 cd POLYMER
 # patch Makefile using Makefile.diff (adapt !!)
+# change define of VERBOSE in common.h to be always 1 !!!
+# otherwise the progress reporting will fail, and the task will be killed
 make
 
 
