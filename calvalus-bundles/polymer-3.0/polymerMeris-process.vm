@@ -33,7 +33,7 @@ echo PROCESS_ROWS $sline $eline  >> parameters.txt
 
 #[[
 POLYMER=./polymer-3.0beta1
-POLY_PYTHON=./calvalus_pyhdf
+POLY_PYTHON=./polymer-python
 
 # create links to auxdata
 ln -sf ${POLYMER}/auxdata .

@@ -61,7 +61,7 @@ make
 
 
 # add calvalus integration with python modules into bundle
-cp calvalus_pyhdf.tar.gz .
+cp polymer_python.tar.gz .
 
 -----------------------------------------------------------------------
 3) create archive
