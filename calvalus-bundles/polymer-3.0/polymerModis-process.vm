@@ -23,10 +23,10 @@ echo >> parameters.txt
 
 #set( $Double = 0.0 )
 
-#set( $Dsline = $inputRectangle.y )
+#set( $Dsline = $productRectangle.height - ( $inputRectangle.y + $inputRectangle.height) )
 #set( $sline = $Double.valueOf($Dsline).intValue() )
 
-#set( $Deline = $inputRectangle.y + $inputRectangle.height )
+#set( $Deline = $productRectangle.height - $inputRectangle.y )
 #set( $eline = $Double.valueOf($Deline).intValue() )
 
 echo PROCESS_ROWS $sline $eline  >> parameters.txt
