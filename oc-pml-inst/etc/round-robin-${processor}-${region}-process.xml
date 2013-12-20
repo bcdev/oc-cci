@@ -11,7 +11,7 @@
         <wps:Input>
             <ows:Identifier>productionName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>oc round-robin2 ${processor} ${region} process</wps:LiteralData>
+                <wps:LiteralData>OC-CCI round-robin2 ${processor} ${region} process</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
@@ -60,15 +60,6 @@
             <ows:Identifier>maxDate</ows:Identifier>
             <wps:Data>
                 <wps:LiteralData>2008-12-31</wps:LiteralData>
-            </wps:Data>
-        </wps:Input>
-
-        <wps:Input>
-            <ows:Identifier>processorParameters</ows:Identifier>
-            <wps:Data>
-                <wps:ComplexData>
-                    <parameters></parameters>
-                </wps:ComplexData>
             </wps:Data>
         </wps:Input>
 

@@ -11,7 +11,7 @@
         <wps:Input>
             <ows:Identifier>productionName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>oc round-robin2 ${processor} ${sensor} matchup</wps:LiteralData>
+                <wps:LiteralData>OC-CCI round-robin2 ${processor} ${sensor} matchup</wps:LiteralData>
             </wps:Data>
         </wps:Input>
         <wps:Input>
@@ -49,14 +49,22 @@
             </wps:Data>
         </wps:Input>
 
+
+        <!-- TODO for testing -->
         <wps:Input>
-            <ows:Identifier>processorParameters</ows:Identifier>
-            <wps:Data>
-                <wps:ComplexData>
-                    <parameters></parameters>
-                </wps:ComplexData>
-            </wps:Data>
-        </wps:Input>
+             <ows:Identifier>minDate</ows:Identifier>
+             <wps:Data>
+                 <wps:LiteralData>2006-05-11</wps:LiteralData>
+             </wps:Data>
+         </wps:Input>
+         <wps:Input>
+             <ows:Identifier>maxDate</ows:Identifier>
+             <wps:Data>
+                 <wps:LiteralData>2006-05-11</wps:LiteralData>
+             </wps:Data>
+         </wps:Input>
+        <!-- TODO for testing -->
+
 
 
         <wps:Input>
@@ -65,16 +73,17 @@
                  <wps:LiteralData>3</wps:LiteralData>
              </wps:Data>
          </wps:Input>
+
         <wps:Input>
              <ows:Identifier>maxTimeDifference</ows:Identifier>
              <wps:Data>
-                 <wps:LiteralData>3</wps:LiteralData>
+                 <wps:LiteralData>3.0</wps:LiteralData>
              </wps:Data>
          </wps:Input>
         <wps:Input>
              <ows:Identifier>filteredMeanCoeff</ows:Identifier>
              <wps:Data>
-                 <wps:LiteralData>1.5</wps:LiteralData>
+                 <wps:LiteralData>2.5</wps:LiteralData>
              </wps:Data>
         </wps:Input>
         <wps:Input>
@@ -86,7 +95,7 @@
         <wps:Input>
             <ows:Identifier>recordSourceUrl</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>hdfs://master00:9000/calvalus/projects/cc-rr2/insitu/${sensor}.csv</wps:LiteralData>
+                <wps:LiteralData>hdfs://${namenode}${pointData}</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -98,9 +107,9 @@
         </wps:Input>
 
         <wps:Input>
-            <ows:Identifier>calvalus.hadoop.mapred.job.queue.name</ows:Identifier>
+            <ows:Identifier>autoStaging</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>lc</wps:LiteralData>
+                <wps:LiteralData>true</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
