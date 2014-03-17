@@ -80,8 +80,7 @@ public class QaaAlgorithm implements QaaAlgo {
         final double[] bbp = new double[wavelengths.length];
         final double[] bb = new double[wavelengths.length];
         for (int i = 0; i < bbp.length; i++) {
-            final double ratio_wl = reference_wavelength / wavelengths[i];
-            bbp[i] = bbp_555 * Math.pow(ratio_wl, N);
+            bbp[i] = bbp_555 * Math.pow(reference_wavelength / wavelengths[i], N);
             bb[i] = bbp[i] + bbw[i];
         }
 
@@ -113,7 +112,7 @@ public class QaaAlgorithm implements QaaAlgo {
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
             result.setAtot((float) a[i], i);
-            result.setBbp((float) bb[i], i);
+            result.setBbp((float) bbp[i], i);
         }
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {

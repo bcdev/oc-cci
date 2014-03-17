@@ -29,36 +29,36 @@ public class QaaAlgorithmv6SeadasTest {
         final QaaAlgo algorithm = new QaaAlgorithmv6Seadas(new SeaWifsConfig());
 
         final QaaResult result = algorithm.process(rrs_in, null);
-        final float[] a_total = result.getAtot();
-        assertEquals(1.376624, a_total[0], 1e-6);
-        assertEquals(1.114580, a_total[1], 1e-6);
-        assertEquals(0.566514, a_total[2], 1e-6);
-        assertEquals(0.448758, a_total[3], 1e-6);
-        assertEquals(0.270145, a_total[4], 1e-6);
-        assertEquals(0.567642, a_total[5], 1e-6);
+        final float[] atot = result.getAtot();
+        assertEquals(1.376624, atot[0], 1e-6);
+        assertEquals(1.114580, atot[1], 1e-6);
+        assertEquals(0.566514, atot[2], 1e-6);
+        assertEquals(0.448758, atot[3], 1e-6);
+        assertEquals(0.270145, atot[4], 1e-6);
+        assertEquals(0.567642, atot[5], 1e-6);
 
-        final float[] bb_spm = result.getBbp();
-        assertEquals(0.055704, bb_spm[0], 1e-6);
-        assertEquals(0.053813, bb_spm[1], 1e-6);
-        assertEquals(0.051861, bb_spm[2], 1e-6);
-        assertEquals(0.051244, bb_spm[3], 1e-6);
-        assertEquals(0.050152, bb_spm[4], 1e-6);
-        assertEquals(0.048410, bb_spm[5], 1e-6);
+        final float[] bbp = result.getBbp();
+        assertEquals(0.049912, bbp[0], 1e-6);
+        assertEquals(0.049567, bbp[1], 1e-6);
+        assertEquals(0.049092, bbp[2], 1e-6);
+        assertEquals(0.048905, bbp[3], 1e-6);
+        assertEquals(0.048511, bbp[4], 1e-6);
+        assertEquals(0.047647, bbp[5], 1e-6);
 
-        final float[] a_pig = result.getAph();
-        assertEquals(0.621739, a_pig[0], 1e-6);
-        assertEquals(0.669095, a_pig[1], 1e-6);
-        assertEquals(0.357394, a_pig[2], 1e-6);
-        assertEquals(0.279009, a_pig[3], 1e-6);
-        assertEquals(0.147630, a_pig[4], 1e-6);
-        assertEquals(0.124183, a_pig[5], 1e-6);
+        final float[] aph = result.getAph();
+        assertEquals(0.621739, aph[0], 1e-6);
+        assertEquals(0.669095, aph[1], 1e-6);
+        assertEquals(0.357394, aph[2], 1e-6);
+        assertEquals(0.279009, aph[3], 1e-6);
+        assertEquals(0.147630, aph[4], 1e-6);
+        assertEquals(0.124183, aph[5], 1e-6);
 
-        final float[] a_ys = result.getAdg();
-        assertEquals(0.750334, a_ys[0], 1e-6);
-        assertEquals(0.438416, a_ys[1], 1e-6);
-        assertEquals(0.194120, a_ys[2], 1e-6);
-        assertEquals(0.137249, a_ys[3], 1e-6);
-        assertEquals(0.062914, a_ys[4], 1e-6);
-        assertEquals(0.008571, a_ys[5], 1e-6);
+        final float[] adg = result.getAdg();
+        assertEquals(0.750334, adg[0], 1e-6);
+        assertEquals(0.438416, adg[1], 1e-6);
+        assertEquals(0.194120, adg[2], 1e-6);
+        assertEquals(0.137249, adg[3], 1e-6);
+        assertEquals(0.062914, adg[4], 1e-6);
+        assertEquals(0.008571, adg[5], 1e-6);
     }
 }
