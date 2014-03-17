@@ -112,13 +112,13 @@ public class QaaAlgorithm implements QaaAlgo {
         }
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
-            result.setA_Total((float) a[i], i);
-            result.setBB_SPM((float) bb[i], i);
+            result.setAtot((float) a[i], i);
+            result.setBbp((float) bb[i], i);
         }
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
-            result.setA_PIG((float) aph[i], i);
-            result.setA_YS((float) adg[i], i);
+            result.setAph((float) aph[i], i);
+            result.setAdg((float) adg[i], i);
         }
 
         return result;

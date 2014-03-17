@@ -29,7 +29,7 @@ public class QaaAlgorithmv6SeadasTest {
         final QaaAlgo algorithm = new QaaAlgorithmv6Seadas(new SeaWifsConfig());
 
         final QaaResult result = algorithm.process(rrs_in, null);
-        final float[] a_total = result.getA_Total();
+        final float[] a_total = result.getAtot();
         assertEquals(1.376624, a_total[0], 1e-6);
         assertEquals(1.114580, a_total[1], 1e-6);
         assertEquals(0.566514, a_total[2], 1e-6);
@@ -37,7 +37,7 @@ public class QaaAlgorithmv6SeadasTest {
         assertEquals(0.270145, a_total[4], 1e-6);
         assertEquals(0.567642, a_total[5], 1e-6);
 
-        final float[] bb_spm = result.getBB_SPM();
+        final float[] bb_spm = result.getBbp();
         assertEquals(0.055704, bb_spm[0], 1e-6);
         assertEquals(0.053813, bb_spm[1], 1e-6);
         assertEquals(0.051861, bb_spm[2], 1e-6);
@@ -45,7 +45,7 @@ public class QaaAlgorithmv6SeadasTest {
         assertEquals(0.050152, bb_spm[4], 1e-6);
         assertEquals(0.048410, bb_spm[5], 1e-6);
 
-        final float[] a_pig = result.getA_PIG();
+        final float[] a_pig = result.getAph();
         assertEquals(0.621739, a_pig[0], 1e-6);
         assertEquals(0.669095, a_pig[1], 1e-6);
         assertEquals(0.357394, a_pig[2], 1e-6);
@@ -53,7 +53,7 @@ public class QaaAlgorithmv6SeadasTest {
         assertEquals(0.147630, a_pig[4], 1e-6);
         assertEquals(0.124183, a_pig[5], 1e-6);
 
-        final float[] a_ys = result.getA_YS();
+        final float[] a_ys = result.getAdg();
         assertEquals(0.750334, a_ys[0], 1e-6);
         assertEquals(0.438416, a_ys[1], 1e-6);
         assertEquals(0.194120, a_ys[2], 1e-6);

@@ -12,7 +12,7 @@ public class ResultMapperTest {
     @Test
     public void testAssign_a_pig() {
         final QaaConfig config = new QaaConfig();
-        config.setAPigOutIndices(new int[]{1, 2});
+        config.setAphOutIndices(new int[]{1, 2});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[2]);
@@ -27,7 +27,7 @@ public class ResultMapperTest {
     @Test
     public void testAssign_a_total() {
         final QaaConfig config = new QaaConfig();
-        config.setATotalOutIndices(new int[]{1, 3, 4});
+        config.setAtotOutIndices(new int[]{1, 3, 4});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[3]);
@@ -43,7 +43,7 @@ public class ResultMapperTest {
     @Test
     public void testAssign_a_ys() {
         final QaaConfig config = new QaaConfig();
-        config.setAYsOutIndices(new int[]{0, 2});
+        config.setAdgOutIndices(new int[]{0, 2});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[2]);
@@ -58,7 +58,7 @@ public class ResultMapperTest {
     @Test
     public void testAssign_bb_spm() {
         final QaaConfig config = new QaaConfig();
-        config.setBbSpmOutIndices(new int[]{0, 2, 4});
+        config.setBbpOutIndices(new int[]{0, 2, 4});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[3]);
@@ -85,10 +85,10 @@ public class ResultMapperTest {
     @Test
     public void testAssign_mixed() {
         final QaaConfig config = new QaaConfig();
-        config.setAPigOutIndices(new int[]{0});
-        config.setATotalOutIndices(new int[]{1});
-        config.setAYsOutIndices(new int[]{2});
-        config.setBbSpmOutIndices(new int[]{3});
+        config.setAphOutIndices(new int[]{0});
+        config.setAtotOutIndices(new int[]{1});
+        config.setAdgOutIndices(new int[]{2});
+        config.setBbpOutIndices(new int[]{3});
 
         final ResultMapper mapper = new ResultMapper(config);
         final VectorImpl vector = new VectorImpl(new float[4]);
@@ -104,25 +104,25 @@ public class ResultMapperTest {
 
     private QaaResult createQaaResult() {
         final QaaResult qaaResult = new QaaResult();
-        qaaResult.setA_PIG(1.f, 0);
-        qaaResult.setA_PIG(2.f, 1);
-        qaaResult.setA_PIG(3.f, 2);
+        qaaResult.setAph(1.f, 0);
+        qaaResult.setAph(2.f, 1);
+        qaaResult.setAph(3.f, 2);
 
-        qaaResult.setA_Total(4.f, 0);
-        qaaResult.setA_Total(5.f, 1);
-        qaaResult.setA_Total(6.f, 2);
-        qaaResult.setA_Total(7.f, 3);
-        qaaResult.setA_Total(8.f, 4);
+        qaaResult.setAtot(4.f, 0);
+        qaaResult.setAtot(5.f, 1);
+        qaaResult.setAtot(6.f, 2);
+        qaaResult.setAtot(7.f, 3);
+        qaaResult.setAtot(8.f, 4);
 
-        qaaResult.setA_YS(9.f, 0);
-        qaaResult.setA_YS(10.f, 1);
-        qaaResult.setA_YS(11.f, 2);
+        qaaResult.setAdg(9.f, 0);
+        qaaResult.setAdg(10.f, 1);
+        qaaResult.setAdg(11.f, 2);
 
-        qaaResult.setBB_SPM(12.f, 0);
-        qaaResult.setBB_SPM(13.f, 1);
-        qaaResult.setBB_SPM(14.f, 2);
-        qaaResult.setBB_SPM(15.f, 3);
-        qaaResult.setBB_SPM(16.f, 4);
+        qaaResult.setBbp(12.f, 0);
+        qaaResult.setBbp(13.f, 1);
+        qaaResult.setBbp(14.f, 2);
+        qaaResult.setBbp(15.f, 3);
+        qaaResult.setBbp(16.f, 4);
         return qaaResult;
     }
 }

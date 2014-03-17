@@ -2,51 +2,51 @@ package org.esa.beam.occci.qaa;
 
 public class QaaResult {
 
-    private float[] A_Total;
-    private float[] BB_SPM;
-    private float[] A_PIG;
-    private float[] A_YS;
+    private float[] atot;
+    private float[] bbp;
+    private float[] aph;
+    private float[] adg;
     private int flags;
 
     public QaaResult() {
-        A_Total = new float[QaaConstants.NUM_IOP_BANDS];
-        BB_SPM = new float[QaaConstants.NUM_IOP_BANDS];
-        A_PIG = new float[QaaConstants.NUM_IOP_BANDS];
-        A_YS = new float[QaaConstants.NUM_IOP_BANDS];
+        atot = new float[QaaConstants.NUM_IOP_BANDS];
+        bbp = new float[QaaConstants.NUM_IOP_BANDS];
+        aph = new float[QaaConstants.NUM_IOP_BANDS];
+        adg = new float[QaaConstants.NUM_IOP_BANDS];
 
         setValid(true);
     }
 
-    public void setA_Total(float a_total, int bandIndex) {
-        A_Total[bandIndex] = a_total;
+    public void setAtot(float atot, int bandIndex) {
+        this.atot[bandIndex] = atot;
     }
 
-    public float[] getA_Total() {
-        return A_Total;
+    public float[] getAtot() {
+        return atot;
     }
 
-    public void setBB_SPM(float bb_spm, int bandIndex) {
-        BB_SPM[bandIndex] = bb_spm;
+    public void setBbp(float bbp, int bandIndex) {
+        this.bbp[bandIndex] = bbp;
     }
 
-    public float[] getBB_SPM() {
-        return BB_SPM;
+    public float[] getBbp() {
+        return bbp;
     }
 
-    public void setA_PIG(float a_pig, int bandIndex) {
-        A_PIG[bandIndex] = a_pig;
+    public void setAph(float aph, int bandIndex) {
+        this.aph[bandIndex] = aph;
     }
 
-    public float[] getA_PIG() {
-        return A_PIG;
+    public float[] getAph() {
+        return aph;
     }
 
-    public void setA_YS(float a_ys, int bandIndex) {
-        A_YS[bandIndex] = a_ys;
+    public void setAdg(float adg, int bandIndex) {
+        this.adg[bandIndex] = adg;
     }
 
-    public float[] getA_YS() {
-        return A_YS;
+    public float[] getAdg() {
+        return adg;
     }
 
     @SuppressWarnings("PointlessBitwiseExpression")
@@ -141,28 +141,28 @@ public class QaaResult {
     }
 
     private void setMeasurementsTo(float value) {
-        for (int i = 0; i < A_PIG.length; i++) {
-            A_PIG[i] = value;
+        for (int i = 0; i < aph.length; i++) {
+            aph[i] = value;
         }
 
-        for (int i = 0; i < A_Total.length; i++) {
-            A_Total[i] = value;
+        for (int i = 0; i < atot.length; i++) {
+            atot[i] = value;
         }
 
-        for (int i = 0; i < A_YS.length; i++) {
-            A_YS[i] = value;
+        for (int i = 0; i < adg.length; i++) {
+            adg[i] = value;
         }
 
-        for (int i = 0; i < BB_SPM.length; i++) {
-            BB_SPM[i] = value;
+        for (int i = 0; i < bbp.length; i++) {
+            bbp[i] = value;
         }
     }
 
     public void infinityAsNaN() {
-        infinityAsNaN(A_PIG);
-        infinityAsNaN(A_Total);
-        infinityAsNaN(A_YS);
-        infinityAsNaN(BB_SPM);
+        infinityAsNaN(aph);
+        infinityAsNaN(atot);
+        infinityAsNaN(adg);
+        infinityAsNaN(bbp);
     }
 
     private static void infinityAsNaN(float[] floats) {

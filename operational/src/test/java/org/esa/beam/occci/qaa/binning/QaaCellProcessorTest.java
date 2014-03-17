@@ -16,8 +16,8 @@ public class QaaCellProcessorTest {
         final VectorImpl outVector = new VectorImpl(rrs_in);
 
         final QaaConfig config = createConfig();
-        config.setAPigOutIndices(new int[]{0, 1, 2});
-        config.setATotalOutIndices(new int[]{2, 3, 4});
+        config.setAphOutIndices(new int[]{0, 1, 2});
+        config.setAtotOutIndices(new int[]{2, 3, 4});
 
         final VariableContext varCtx = createVariableContext();
 
@@ -44,8 +44,8 @@ public class QaaCellProcessorTest {
         final VectorImpl outVector = new VectorImpl(rrs_in);
 
         final QaaConfig config = createConfig();
-        config.setAYsOutIndices(new int[]{0, 2});
-        config.setBbSpmOutIndices(new int[]{0, 2, 3, 4});
+        config.setAdgOutIndices(new int[]{0, 2});
+        config.setBbpOutIndices(new int[]{0, 2, 3, 4});
 
         final VariableContext varCtx = createVariableContext();
 
@@ -69,10 +69,10 @@ public class QaaCellProcessorTest {
     public void testCreateOutputFeatureNames_MERIS_no_bb_spm() {
         final QaaConfig config = new QaaConfig();
         config.setSensorName(QaaConstants.MERIS);
-        config.setAPigOutIndices(new int[]{0, 1});
-        config.setATotalOutIndices(new int[]{2, 3});
-        config.setAYsOutIndices(new int[]{4, 5});
-        config.setBbSpmOutIndices(new int[0]);
+        config.setAphOutIndices(new int[]{0, 1});
+        config.setAtotOutIndices(new int[]{2, 3});
+        config.setAdgOutIndices(new int[]{4, 5});
+        config.setBbpOutIndices(new int[0]);
 
         final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
@@ -85,10 +85,10 @@ public class QaaCellProcessorTest {
     public void testCreateOutputFeatureNames_MODIS_no_a_pig() {
         final QaaConfig config = new QaaConfig();
         config.setSensorName(QaaConstants.MODIS);
-        config.setAPigOutIndices(new int[0]);
-        config.setATotalOutIndices(new int[]{2, 3});
-        config.setAYsOutIndices(new int[]{4});
-        config.setBbSpmOutIndices(new int[]{3, 4, 5});
+        config.setAphOutIndices(new int[0]);
+        config.setAtotOutIndices(new int[]{2, 3});
+        config.setAdgOutIndices(new int[]{4});
+        config.setBbpOutIndices(new int[]{3, 4, 5});
 
         final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
@@ -101,10 +101,10 @@ public class QaaCellProcessorTest {
     public void testCreateOutputFeatureNames_SEAWIFS_no_a_total() {
         final QaaConfig config = new QaaConfig();
         config.setSensorName(QaaConstants.SEAWIFS);
-        config.setAPigOutIndices(new int[]{0, 1, 5});
-        config.setATotalOutIndices(new int[0]);
-        config.setAYsOutIndices(new int[]{4});
-        config.setBbSpmOutIndices(new int[]{3, 4, 5});
+        config.setAphOutIndices(new int[]{0, 1, 5});
+        config.setAtotOutIndices(new int[0]);
+        config.setAdgOutIndices(new int[]{4});
+        config.setBbpOutIndices(new int[]{3, 4, 5});
 
         final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
         assertNotNull(featureNames);

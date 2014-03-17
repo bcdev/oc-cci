@@ -121,29 +121,29 @@ public class QaaDescriptorTest {
     @Test
     public void testValidateConfig_invalidA_pig_out_indices() {
         final QaaConfig config = createValidConfig();
-        config.setAPigOutIndices(new int[]{-1});
+        config.setAphOutIndices(new int[]{-1});
 
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid a_pig_out index: -1. Must be in [0, 2]", expected.getMessage());
+            assertEquals("Invalid aph_out index: -1. Must be in [0, 2]", expected.getMessage());
         }
 
-        config.setAPigOutIndices(new int[]{3});
+        config.setAphOutIndices(new int[]{3});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid a_pig_out index: 3. Must be in [0, 2]", expected.getMessage());
+            assertEquals("Invalid aph_out index: 3. Must be in [0, 2]", expected.getMessage());
         }
 
-        config.setAPigOutIndices(new int[]{0, 1, 0, 2});
+        config.setAphOutIndices(new int[]{0, 1, 0, 2});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid number of a_pig_out indices: 4. Must be in [0, 3]", expected.getMessage());
+            assertEquals("Invalid number of aph_out indices: 4. Must be in [0, 3]", expected.getMessage());
         }
     }
 
@@ -151,57 +151,57 @@ public class QaaDescriptorTest {
     public void testValidateConfig_invalidA_total_out_indices() {
         final QaaConfig config = createValidConfig();
 
-        config.setATotalOutIndices(new int[]{-1});
+        config.setAtotOutIndices(new int[]{-1});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid a_total_out index: -1. Must be in [0, 4]", expected.getMessage());
+            assertEquals("Invalid atot_out index: -1. Must be in [0, 4]", expected.getMessage());
         }
 
-        config.setATotalOutIndices(new int[]{5});
+        config.setAtotOutIndices(new int[]{5});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid a_total_out index: 5. Must be in [0, 4]", expected.getMessage());
+            assertEquals("Invalid atot_out index: 5. Must be in [0, 4]", expected.getMessage());
         }
 
-        config.setATotalOutIndices(new int[]{0, 1, 0, 2, 3, 4});
+        config.setAtotOutIndices(new int[]{0, 1, 0, 2, 3, 4});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid number of a_total_out indices: 6. Must be in [0, 5]", expected.getMessage());
+            assertEquals("Invalid number of atot_out indices: 6. Must be in [0, 5]", expected.getMessage());
         }
     }
 
     @Test
     public void testValidateConfig_invalidA_ys_out_indices() {
         final QaaConfig config = createValidConfig();
-        config.setAYsOutIndices(new int[]{-1});
+        config.setAdgOutIndices(new int[]{-1});
 
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid a_ys_out index: -1. Must be in [0, 2]", expected.getMessage());
+            assertEquals("Invalid adg_out index: -1. Must be in [0, 2]", expected.getMessage());
         }
 
-        config.setAYsOutIndices(new int[]{3});
+        config.setAdgOutIndices(new int[]{3});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid a_ys_out index: 3. Must be in [0, 2]", expected.getMessage());
+            assertEquals("Invalid adg_out index: 3. Must be in [0, 2]", expected.getMessage());
         }
 
-        config.setAYsOutIndices(new int[]{0, 1, 0, 2});
+        config.setAdgOutIndices(new int[]{0, 1, 0, 2});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid number of a_ys_out indices: 4. Must be in [0, 3]", expected.getMessage());
+            assertEquals("Invalid number of adg_out indices: 4. Must be in [0, 3]", expected.getMessage());
         }
     }
 
@@ -209,28 +209,28 @@ public class QaaDescriptorTest {
     public void testValidateConfig_invalidBb_spm_out_indices() {
         final QaaConfig config = createValidConfig();
 
-        config.setBbSpmOutIndices(new int[]{-1});
+        config.setBbpOutIndices(new int[]{-1});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid bb_spm_out index: -1. Must be in [0, 4]", expected.getMessage());
+            assertEquals("Invalid bbp_out index: -1. Must be in [0, 4]", expected.getMessage());
         }
 
-        config.setBbSpmOutIndices(new int[]{5});
+        config.setBbpOutIndices(new int[]{5});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid bb_spm_out index: 5. Must be in [0, 4]", expected.getMessage());
+            assertEquals("Invalid bbp_out index: 5. Must be in [0, 4]", expected.getMessage());
         }
 
-        config.setBbSpmOutIndices(new int[]{0, 1, 0, 2, 3, 4});
+        config.setBbpOutIndices(new int[]{0, 1, 0, 2, 3, 4});
         try {
             QaaDescriptor.validate(config);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
-            assertEquals("Invalid number of bb_spm_out indices: 6. Must be in [0, 5]", expected.getMessage());
+            assertEquals("Invalid number of bbp_out indices: 6. Must be in [0, 5]", expected.getMessage());
         }
     }
 
@@ -238,10 +238,10 @@ public class QaaDescriptorTest {
         final QaaConfig config = new QaaConfig();
         config.setSensorName(QaaConstants.MODIS);
         config.setBandNames(new String[]{"one", "two", "three", "four", "five", "six"});
-        config.setAPigOutIndices(new int[]{0, 1, 2});
-        config.setATotalOutIndices(new int[]{0, 1, 2, 3, 4});
-        config.setAYsOutIndices(new int[]{0, 1, 2});
-        config.setBbSpmOutIndices(new int[]{0, 1, 2, 3, 4});
+        config.setAphOutIndices(new int[]{0, 1, 2});
+        config.setAtotOutIndices(new int[]{0, 1, 2, 3, 4});
+        config.setAdgOutIndices(new int[]{0, 1, 2});
+        config.setBbpOutIndices(new int[]{0, 1, 2, 3, 4});
         return config;
     }
 

@@ -11,21 +11,21 @@ public class QaaConfigTest {
     public void testConstruction() {
         final QaaConfig config = new QaaConfig();
 
-        final int[] a_total_out_indices = config.getATotalOutIndices();
-        assertNotNull(a_total_out_indices);
-        assertEquals(0, a_total_out_indices.length);
+        final int[] atotOutIndices = config.getAtotOutIndices();
+        assertNotNull(atotOutIndices);
+        assertEquals(0, atotOutIndices.length);
 
-        final int[] a_pig_out_indices = config.getAPigOutIndices();
-        assertNotNull(a_pig_out_indices);
-        assertEquals(0, a_pig_out_indices.length);
+        final int[] aphOutIndices = config.getAphOutIndices();
+        assertNotNull(aphOutIndices);
+        assertEquals(0, aphOutIndices.length);
 
-        final int[] a_ys_out_indices = config.getAYsOutIndices();
-        assertNotNull(a_ys_out_indices);
-        assertEquals(0, a_ys_out_indices.length);
+        final int[] adgOutIndices = config.getAdgOutIndices();
+        assertNotNull(adgOutIndices);
+        assertEquals(0, adgOutIndices.length);
 
-        final int[] bb_spm_out_indices = config.getBbSpmOutIndices();
-        assertNotNull(bb_spm_out_indices);
-        assertEquals(0, bb_spm_out_indices.length);
+        final int[] bbpOutIndices = config.getBbpOutIndices();
+        assertNotNull(bbpOutIndices);
+        assertEquals(0, bbpOutIndices.length);
 
         final String[] bandNames = config.getBandNames();
         assertNotNull(bandNames);

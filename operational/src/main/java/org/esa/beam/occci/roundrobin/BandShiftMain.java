@@ -29,9 +29,9 @@ public class BandShiftMain {
                 final QaaResult qaaResult = qaaAlgorithm.process(spectrum.getMeasurementsFloat(), null);
 
                 final double[] qaaAt443 = new double[3];
-                qaaAt443[0] = qaaResult.getA_PIG()[1];
-                qaaAt443[1] = qaaResult.getA_YS()[1];
-                qaaAt443[2] = qaaResult.getBB_SPM()[1];
+                qaaAt443[0] = qaaResult.getAph()[1];
+                qaaAt443[1] = qaaResult.getAdg()[1];
+                qaaAt443[2] = qaaResult.getBbp()[1];
 
                 final double[] merisRss = BandShifter.toMeris(spectrum, qaaAt443);
                 final double[] modisRss = BandShifter.toModis(spectrum, qaaAt443);

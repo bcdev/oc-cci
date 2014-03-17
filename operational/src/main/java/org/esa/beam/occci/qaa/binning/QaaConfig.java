@@ -25,30 +25,30 @@ public class QaaConfig extends CellProcessorConfig {
     @Parameter(description = "A comma separated list of band indices defining the output total absorption" +
             "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 5.",
             defaultValue = "0,1,2,3,4")
-    private int[] aTotalOutIndices;
+    private int[] atotOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output suspended matter" +
             "backscattering bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 5.",
             defaultValue = "0,1,2,3,4")
-    private int[] bbSpmOutIndices;
+    private int[] bbpOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output pigment absorption" +
             "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 5.",
             defaultValue = "0,1,2")
-    private int[] aPigOutIndices;
+    private int[] aphOutIndices;
 
     @Parameter(description = "A comma separated list of band indices defining the output yellow substance absorption" +
             "coefficient bands. Indices correspond to the input reflectance band wavelengths. Maximum index = 5.",
             defaultValue = "0,1,2")
-    private int[] aYsOutIndices;
+    private int[] adgOutIndices;
 
     public QaaConfig() {
         super("QAA");
 
-        aTotalOutIndices = new int[0];
-        aPigOutIndices = new int[0];
-        aYsOutIndices = new int[0];
-        bbSpmOutIndices = new int[0];
+        atotOutIndices = new int[0];
+        aphOutIndices = new int[0];
+        adgOutIndices = new int[0];
+        bbpOutIndices = new int[0];
         bandNames = new String[0];
     }
 
@@ -60,36 +60,36 @@ public class QaaConfig extends CellProcessorConfig {
         this.bandNames = bandNames;
     }
 
-    public int[] getATotalOutIndices() {
-        return aTotalOutIndices;
+    public int[] getAtotOutIndices() {
+        return atotOutIndices;
     }
 
-    public void setATotalOutIndices(int[] aTotalOutIndices) {
-        this.aTotalOutIndices = aTotalOutIndices;
+    public void setAtotOutIndices(int[] atotOutIndices) {
+        this.atotOutIndices = atotOutIndices;
     }
 
-    public int[] getBbSpmOutIndices() {
-        return bbSpmOutIndices;
+    public int[] getBbpOutIndices() {
+        return bbpOutIndices;
     }
 
-    public void setBbSpmOutIndices(int[] bbSpmOutIndices) {
-        this.bbSpmOutIndices = bbSpmOutIndices;
+    public void setBbpOutIndices(int[] bbpOutIndices) {
+        this.bbpOutIndices = bbpOutIndices;
     }
 
-    public int[] getAPigOutIndices() {
-        return aPigOutIndices;
+    public int[] getAphOutIndices() {
+        return aphOutIndices;
     }
 
-    public void setAPigOutIndices(int[] aPigOutIndices) {
-        this.aPigOutIndices = aPigOutIndices;
+    public void setAphOutIndices(int[] aphOutIndices) {
+        this.aphOutIndices = aphOutIndices;
     }
 
-    public int[] getAYsOutIndices() {
-        return aYsOutIndices;
+    public int[] getAdgOutIndices() {
+        return adgOutIndices;
     }
 
-    public void setAYsOutIndices(int[] aYsOutIndices) {
-        this.aYsOutIndices = aYsOutIndices;
+    public void setAdgOutIndices(int[] aYsOutIndices) {
+        this.adgOutIndices = aYsOutIndices;
     }
 
     public String getSensorName() {

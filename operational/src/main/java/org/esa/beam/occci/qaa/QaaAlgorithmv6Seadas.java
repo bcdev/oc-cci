@@ -148,24 +148,24 @@ public class QaaAlgorithmv6Seadas implements QaaAlgo {
 
         /* ZP Lee, 17 August 2007 (get_qaa.c)*/
         for (int i = 0; i < a.length; i++) {
-            if (a[i] > 0) {
+            if (a[i] > 0 && !Double.isNaN(a[i])) {
                 a[i] = Math.max(a[i], aw[i] * 1.05);
             }
         }
         for (int i = 0; i < bb.length; i++) {
-            if (bb[i] > 0) {
+            if (bb[i] > 0 && !Double.isNaN(bb[i])) {
                 bb[i] = Math.max(bb[i], bbw[i] * 1.05);
             }
         }
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
-            result.setA_Total((float) a[i], i);
-            result.setBB_SPM((float) bb[i], i);
+            result.setAtot((float) a[i], i);
+            result.setBbp((float) bb[i], i);
         }
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
-            result.setA_PIG((float) aph[i], i);
-            result.setA_YS((float) adg[i], i);
+            result.setAph((float) aph[i], i);
+            result.setAdg((float) adg[i], i);
         }
 
         return result;

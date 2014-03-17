@@ -6,73 +6,69 @@ import org.esa.beam.occci.qaa.QaaResult;
 
 public class ResultMapper {
 
-    private final int[] a_pig_src;
-    private final int[] a_pig_dest;
+    private final int[] aph_src;
+    private final int[] aph_dest;
 
-    private final int[] a_total_src;
-    private final int[] a_total_dest;
+    private final int[] atot_src;
+    private final int[] atot_dest;
 
-    private final int[] a_ys_src;
-    private final int[] a_ys_dest;
+    private final int[] adg_src;
+    private final int[] adg_dest;
 
-    private final int[] bb_spm_src;
-    private final int[] bb_spm_dest;
+    private final int[] bbp_src;
+    private final int[] bbp_dest;
 
     public ResultMapper(QaaConfig config) {
         int outIndex = 0;
 
-        a_pig_src = config.getAPigOutIndices();
-        a_pig_dest = new int[a_pig_src.length];
-        for (int i = 0; i < a_pig_dest.length; i++) {
-            a_pig_dest[i] = outIndex;
+        aph_src = config.getAphOutIndices();
+        aph_dest = new int[aph_src.length];
+        for (int i = 0; i < aph_dest.length; i++) {
+            aph_dest[i] = outIndex;
             ++outIndex;
         }
 
-        a_total_src = config.getATotalOutIndices();
-        a_total_dest = new int[a_total_src.length];
-        for (int i = 0; i < a_total_dest.length; i++) {
-            a_total_dest[i] = outIndex;
+        atot_src = config.getAtotOutIndices();
+        atot_dest = new int[atot_src.length];
+        for (int i = 0; i < atot_dest.length; i++) {
+            atot_dest[i] = outIndex;
             ++outIndex;
         }
 
-        a_ys_src = config.getAYsOutIndices();
-        a_ys_dest = new int[a_ys_src.length];
-        for (int i = 0; i < a_ys_dest.length; i++) {
-            a_ys_dest[i] = outIndex;
+        adg_src = config.getAdgOutIndices();
+        adg_dest = new int[adg_src.length];
+        for (int i = 0; i < adg_dest.length; i++) {
+            adg_dest[i] = outIndex;
             ++outIndex;
         }
 
-        bb_spm_src = config.getBbSpmOutIndices();
-        bb_spm_dest = new int[bb_spm_src.length];
-        for (int i = 0; i < bb_spm_dest.length; i++) {
-            bb_spm_dest[i] = outIndex;
+        bbp_src = config.getBbpOutIndices();
+        bbp_dest = new int[bbp_src.length];
+        for (int i = 0; i < bbp_dest.length; i++) {
+            bbp_dest[i] = outIndex;
             ++outIndex;
         }
     }
 
     public void assign(QaaResult result, WritableVector outVector) {
-        final float[] a_pig = result.getA_PIG();
-        for (int i = 0; i < a_pig_src.length; i++) {
-            final float value = a_pig[a_pig_src[i]];
-            outVector.set(a_pig_dest[i], value);
+        final float[] aph = result.getAph();
+        for (int i = 0; i < aph_src.length; i++) {
+            outVector.set(aph_dest[i], aph[aph_src[i]]);
         }
 
-        final float[] a_total = result.getA_Total();
-        for (int i = 0; i < a_total_src.length; i++) {
-            final float value = a_total[a_total_src[i]];
-            outVector.set(a_total_dest[i], value);
+        final float[] atot = result.getAtot();
+        for (int i = 0; i < atot_src.length; i++) {
+            outVector.set(atot_dest[i], atot[atot_src[i]]);
         }
 
-        final float[] a_ys = result.getA_YS();
-        for (int i = 0; i < a_ys_src.length; i++) {
-            final float value = a_ys[a_ys_src[i]];
-            outVector.set(a_ys_dest[i], value);
+        final float[] adg = result.getAdg();
+        for (int i = 0; i < adg_src.length; i++) {
+            outVector.set(adg_dest[i], adg[adg_src[i]]);
         }
 
-        final float[] bb_spm = result.getBB_SPM();
-        for (int i = 0; i < bb_spm_src.length; i++) {
-            final float value = bb_spm[bb_spm_src[i]];
-            outVector.set(bb_spm_dest[i], value);
+        final float[] bbp = result.getBbp();
+        for (int i = 0; i < bbp_src.length; i++) {
+            outVector.set(bbp_dest[i], bbp[bbp_src[i]]);
         }
     }
 }

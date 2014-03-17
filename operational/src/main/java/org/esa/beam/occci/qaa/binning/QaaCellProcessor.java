@@ -40,24 +40,24 @@ public class QaaCellProcessor extends CellProcessor {
         final ArrayList<String> featureNameList = new ArrayList<String>();
 
         final double[] wavelengths = sensorConfig.getWavelengths();
-        final int[] a_pig_out_indices = config.getAPigOutIndices();
-        for (int a_pig_out_index : a_pig_out_indices) {
-            featureNameList.add("aph_" + QaaDescriptor.getWavelengthInt(wavelengths, a_pig_out_index));
+        final int[] aphOutIndices = config.getAphOutIndices();
+        for (int i : aphOutIndices) {
+            featureNameList.add("aph_" + QaaDescriptor.getWavelengthInt(wavelengths, i));
         }
 
-        final int[] a_total_out_indices = config.getATotalOutIndices();
-        for (int a_total_out_index : a_total_out_indices) {
-            featureNameList.add("atot_" + QaaDescriptor.getWavelengthInt(wavelengths, a_total_out_index));
+        final int[] atotOutIndices = config.getAtotOutIndices();
+        for (int i : atotOutIndices) {
+            featureNameList.add("atot_" + QaaDescriptor.getWavelengthInt(wavelengths, i));
         }
 
-        final int[] a_ys_out_indices = config.getAYsOutIndices();
-        for (int a_ys_out_index : a_ys_out_indices) {
-            featureNameList.add("adg_" + QaaDescriptor.getWavelengthInt(wavelengths, a_ys_out_index));
+        final int[] adgOutIndices = config.getAdgOutIndices();
+        for (int i : adgOutIndices) {
+            featureNameList.add("adg_" + QaaDescriptor.getWavelengthInt(wavelengths, i));
         }
 
-        final int[] bb_spm_out_indices = config.getBbSpmOutIndices();
-        for (int bb_spm_out_index : bb_spm_out_indices) {
-            featureNameList.add("bbp_" + QaaDescriptor.getWavelengthInt(wavelengths, bb_spm_out_index));
+        final int[] bbpOutIndices = config.getBbpOutIndices();
+        for (int i : bbpOutIndices) {
+            featureNameList.add("bbp_" + QaaDescriptor.getWavelengthInt(wavelengths, i));
         }
         return featureNameList.toArray(new String[featureNameList.size()]);
     }

@@ -213,10 +213,10 @@ public class PostMergingProcessor extends CellProcessor {
             QaaConfig qaaConfig = new QaaConfig();
             qaaConfig.setSensorName(QaaConstants.SEAWIFS);
             qaaConfig.setBandNames(BAND_NAMES);
-            qaaConfig.setATotalOutIndices(ALL_IOPS);
-            qaaConfig.setBbSpmOutIndices(ALL_IOPS);
-            qaaConfig.setAPigOutIndices(ALL_IOPS);
-            qaaConfig.setAYsOutIndices(ALL_IOPS);
+            qaaConfig.setAtotOutIndices(ALL_IOPS);
+            qaaConfig.setBbpOutIndices(ALL_IOPS);
+            qaaConfig.setAphOutIndices(ALL_IOPS);
+            qaaConfig.setAdgOutIndices(ALL_IOPS);
             return new PostMergingProcessor(varCtx, qaaConfig);
         }
 

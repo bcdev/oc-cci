@@ -84,10 +84,10 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
             QaaConfig qaaConfig = new QaaConfig();
             qaaConfig.setSensorName(QaaConstants.MODIS);
             qaaConfig.setBandNames(modisRrsFeatures);
-            qaaConfig.setATotalOutIndices(new int[0]);
-            qaaConfig.setBbSpmOutIndices(new int[]{1});
-            qaaConfig.setAPigOutIndices(new int[]{1});
-            qaaConfig.setAYsOutIndices(new int[]{1});
+            qaaConfig.setAtotOutIndices(new int[0]);
+            qaaConfig.setBbpOutIndices(new int[]{1});
+            qaaConfig.setAphOutIndices(new int[]{1});
+            qaaConfig.setAdgOutIndices(new int[]{1});
             CellProcessor qaaProcessor = new QaaCellProcessor(qaaVarCtx, qaaConfig);
 
             String[] qaaOutFeatures = qaaProcessor.getOutputFeatureNames();

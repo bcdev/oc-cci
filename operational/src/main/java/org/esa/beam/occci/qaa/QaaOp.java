@@ -147,19 +147,19 @@ public class QaaOp extends PixelOperator {
 
     static void writeResult(WritableSample[] targetSamples, QaaResult qaaResult) {
         int sampleIndex = 0;
-        for (float anA_total : qaaResult.getA_Total()) {
+        for (float anA_total : qaaResult.getAtot()) {
             targetSamples[sampleIndex++].set(anA_total);
         }
 
-        for (float aBb_spm : qaaResult.getBB_SPM()) {
+        for (float aBb_spm : qaaResult.getBbp()) {
             targetSamples[sampleIndex++].set(aBb_spm);
         }
 
-        for (float anA_pig : qaaResult.getA_PIG()) {
+        for (float anA_pig : qaaResult.getAph()) {
             targetSamples[sampleIndex++].set(anA_pig);
         }
 
-        for (float a_y : qaaResult.getA_YS()) {
+        for (float a_y : qaaResult.getAdg()) {
             targetSamples[sampleIndex++].set(a_y);
         }
     }

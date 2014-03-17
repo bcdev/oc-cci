@@ -6,11 +6,6 @@ import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.occci.qaa.QaaConstants;
-import org.esa.beam.occci.qaa.SensorConfig;
-import org.esa.beam.occci.qaa.SensorConfigFactory;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class QaaDescriptor implements CellProcessorDescriptor {
 
@@ -56,43 +51,43 @@ public class QaaDescriptor implements CellProcessorDescriptor {
             throw new IllegalArgumentException("Illegal number of input bands: must provide six reflectance band names");
         }
 
-        final int[] a_pig_out_indices = config.getAPigOutIndices();
-        if (a_pig_out_indices.length > 3) {
-            throw new IllegalArgumentException("Invalid number of a_pig_out indices: " + a_pig_out_indices.length + ". Must be in [0, 3]");
+        final int[] aphOutIndices = config.getAphOutIndices();
+        if (aphOutIndices.length > 3) {
+            throw new IllegalArgumentException("Invalid number of aph_out indices: " + aphOutIndices.length + ". Must be in [0, 3]");
         }
-        for (int a_pig_out_index : a_pig_out_indices) {
-            if (a_pig_out_index < 0 || a_pig_out_index > 2) {
-                throw new IllegalArgumentException("Invalid a_pig_out index: " + a_pig_out_index + ". Must be in [0, 2]");
+        for (int index : aphOutIndices) {
+            if (index < 0 || index > 2) {
+                throw new IllegalArgumentException("Invalid aph_out index: " + index + ". Must be in [0, 2]");
             }
         }
 
-        final int[] a_total_out_indices = config.getATotalOutIndices();
-        if (a_total_out_indices.length > 5) {
-            throw new IllegalArgumentException("Invalid number of a_total_out indices: " + a_total_out_indices.length + ". Must be in [0, 5]");
+        final int[] atotOutIndices = config.getAtotOutIndices();
+        if (atotOutIndices.length > 5) {
+            throw new IllegalArgumentException("Invalid number of atot_out indices: " + atotOutIndices.length + ". Must be in [0, 5]");
         }
-        for (int a_total_out_index : a_total_out_indices) {
-            if (a_total_out_index < 0 || a_total_out_index > 4) {
-                throw new IllegalArgumentException("Invalid a_total_out index: " + a_total_out_index + ". Must be in [0, 4]");
+        for (int index : atotOutIndices) {
+            if (index < 0 || index > 4) {
+                throw new IllegalArgumentException("Invalid atot_out index: " + index + ". Must be in [0, 4]");
             }
         }
 
-        final int[] a_ys_out_indices = config.getAYsOutIndices();
-        if (a_ys_out_indices.length > 3) {
-            throw new IllegalArgumentException("Invalid number of a_ys_out indices: " + a_ys_out_indices.length + ". Must be in [0, 3]");
+        final int[] adgOutIndices = config.getAdgOutIndices();
+        if (adgOutIndices.length > 3) {
+            throw new IllegalArgumentException("Invalid number of adg_out indices: " + adgOutIndices.length + ". Must be in [0, 3]");
         }
-        for (int a_ys_out_index : a_ys_out_indices) {
-            if (a_ys_out_index < 0 || a_ys_out_index > 2) {
-                throw new IllegalArgumentException("Invalid a_ys_out index: " + a_ys_out_index + ". Must be in [0, 2]");
+        for (int index : adgOutIndices) {
+            if (index < 0 || index > 2) {
+                throw new IllegalArgumentException("Invalid adg_out index: " + index + ". Must be in [0, 2]");
             }
         }
 
-        final int[] bb_spm_out_indices = config.getBbSpmOutIndices();
-        if (bb_spm_out_indices.length > 5) {
-            throw new IllegalArgumentException("Invalid number of bb_spm_out indices: " + bb_spm_out_indices.length + ". Must be in [0, 5]");
+        final int[] bbpOutIndices = config.getBbpOutIndices();
+        if (bbpOutIndices.length > 5) {
+            throw new IllegalArgumentException("Invalid number of bbp_out indices: " + bbpOutIndices.length + ". Must be in [0, 5]");
         }
-        for (int bb_spm_out_index : bb_spm_out_indices) {
-            if (bb_spm_out_index < 0 || bb_spm_out_index > 4) {
-                throw new IllegalArgumentException("Invalid bb_spm_out index: " + bb_spm_out_index + ". Must be in [0, 4]");
+        for (int index : bbpOutIndices) {
+            if (index < 0 || index > 4) {
+                throw new IllegalArgumentException("Invalid bbp_out index: " + index + ". Must be in [0, 4]");
             }
         }
     }
