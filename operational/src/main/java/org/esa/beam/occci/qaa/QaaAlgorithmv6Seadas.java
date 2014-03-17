@@ -119,12 +119,10 @@ public class QaaAlgorithmv6Seadas implements QaaAlgo {
         final double Y = 2.0 * (1.0 - 1.2 * exp(-0.9 * ratio));
 
         /* Step 5 */
-        // Estimation of bbp and bb at all wavelengths
-        final double[] bbp = new double[wavelengths.length];
+        // Estimation of  bb at all wavelengths
         final double[] bb = new double[wavelengths.length];
-        for (int i = 0; i < bbp.length; i++) {
-            bbp[i] = bbpRef * pow(wavelengths[idxRef] / wavelengths[i], Y);
-            bb[i] = bbp[i] + bbw[i];
+        for (int i = 0; i < bb.length; i++) {
+            bb[i] = bbpRef * pow(wavelengths[idxRef] / wavelengths[i], Y) + bbw[i];
         }
 
          /* Step 6 */
