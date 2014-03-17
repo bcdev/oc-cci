@@ -42,22 +42,22 @@ public class QaaCellProcessor extends CellProcessor {
         final double[] wavelengths = sensorConfig.getWavelengths();
         final int[] a_pig_out_indices = config.getAPigOutIndices();
         for (int a_pig_out_index : a_pig_out_indices) {
-            featureNameList.add("a_pig_" + QaaDescriptor.getWavelengthInt(wavelengths, a_pig_out_index));
+            featureNameList.add("aph_" + QaaDescriptor.getWavelengthInt(wavelengths, a_pig_out_index));
         }
 
         final int[] a_total_out_indices = config.getATotalOutIndices();
         for (int a_total_out_index : a_total_out_indices) {
-            featureNameList.add("a_total_" + QaaDescriptor.getWavelengthInt(wavelengths, a_total_out_index));
+            featureNameList.add("atot_" + QaaDescriptor.getWavelengthInt(wavelengths, a_total_out_index));
         }
 
         final int[] a_ys_out_indices = config.getAYsOutIndices();
         for (int a_ys_out_index : a_ys_out_indices) {
-            featureNameList.add("a_ys_" + QaaDescriptor.getWavelengthInt(wavelengths, a_ys_out_index));
+            featureNameList.add("adg_" + QaaDescriptor.getWavelengthInt(wavelengths, a_ys_out_index));
         }
 
         final int[] bb_spm_out_indices = config.getBbSpmOutIndices();
         for (int bb_spm_out_index : bb_spm_out_indices) {
-            featureNameList.add("bb_spm_" + QaaDescriptor.getWavelengthInt(wavelengths, bb_spm_out_index));
+            featureNameList.add("bbp_" + QaaDescriptor.getWavelengthInt(wavelengths, bb_spm_out_index));
         }
         return featureNameList.toArray(new String[featureNameList.size()]);
     }

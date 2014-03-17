@@ -77,7 +77,7 @@ public class QaaCellProcessorTest {
         final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
 
-        final String[] expected = {"a_pig_413", "a_pig_443", "a_total_490", "a_total_510", "a_ys_560", "a_ys_665"};
+        final String[] expected = {"aph_413", "aph_443", "atot_490", "atot_510", "adg_560", "adg_665"};
         assertArrayEquals(expected, featureNames);
     }
 
@@ -93,7 +93,7 @@ public class QaaCellProcessorTest {
         final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
 
-        final String[] expected = {"a_total_488", "a_total_531", "a_ys_547", "bb_spm_531", "bb_spm_547", "bb_spm_667"};
+        final String[] expected = {"atot_488", "atot_531", "adg_547", "bbp_531", "bbp_547", "bbp_667"};
         assertArrayEquals(expected, featureNames);
     }
 
@@ -109,7 +109,7 @@ public class QaaCellProcessorTest {
         final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
 
-        final String[] expected = {"a_pig_412", "a_pig_443", "a_pig_670", "a_ys_555", "bb_spm_510", "bb_spm_555", "bb_spm_670"};
+        final String[] expected = {"aph_412", "aph_443", "aph_670", "adg_555", "bbp_510", "bbp_555", "bbp_670"};
         assertArrayEquals(expected, featureNames);
     }
 
