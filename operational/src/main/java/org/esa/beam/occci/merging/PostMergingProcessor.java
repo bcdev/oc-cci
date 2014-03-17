@@ -25,7 +25,6 @@ import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.coastcolour.fuzzy.Auxdata;
 import org.esa.beam.coastcolour.fuzzy.FuzzyClassification;
-import org.esa.beam.occci.qaa.ImaginaryNumberException;
 import org.esa.beam.occci.qaa.QaaAlgorithm;
 import org.esa.beam.occci.qaa.QaaConstants;
 import org.esa.beam.occci.qaa.QaaResult;
@@ -109,14 +108,8 @@ public class PostMergingProcessor extends CellProcessor {
         for (int i = 0; i < sensor.length; i++) {
             sensor[i] = inputVector.get(sensorBandIndices[i]);
         }
-        try {
-            qaaAlgorithm.process(rrs, qaaResult);
-        } catch (ImaginaryNumberException e) {
-            BinningUtils.setToInvalid(outputVector);
-            copyRRS(rrs, outputVector);
-            copySensorContribution(sensor, outputVector);
-            return;
-        }
+        qaaAlgorithm.process(rrs, qaaResult);
+        qaaResult.infinityAsNaN();
 
         resultMapper.assign(qaaResult, outputVector);
         copyRRS(rrs, outputVector);

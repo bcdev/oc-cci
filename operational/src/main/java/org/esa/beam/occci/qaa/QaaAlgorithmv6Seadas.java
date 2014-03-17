@@ -49,7 +49,7 @@ public class QaaAlgorithmv6Seadas implements QaaAlgo {
     }
 
     @Override
-    public QaaResult process(float[] Rrsf, QaaResult recycle) throws ImaginaryNumberException {
+    public QaaResult process(float[] Rrsf, QaaResult recycle) {
         QaaResult result = ensureResult(recycle);
         final double[] Rrs = new double[Rrsf.length];
         for (int i = 0; i < Rrsf.length; i++) {
@@ -81,12 +81,7 @@ public class QaaAlgorithmv6Seadas implements QaaAlgo {
         // Coefficients as defined by Gordon et al. (1988) and modified by Lee et al. (2002) to estimate bb/a+bb referred to as U
         final double[] U = new double[Rrs.length];
         for (int i = 0; i < U.length; i++) {
-            final double nom = G0_SQUARE + 4.0 * G1 * rrs[i];
-            if (nom >= 0.0) {
-                U[i] = (sqrt(nom) - G0) / (2.0 * G1);
-            } else {
-                throw new ImaginaryNumberException("Will produce an imaginary number", nom);
-            }
+            U[i] = (sqrt(G0_SQUARE + 4.0 * G1 * rrs[i]) - G0) / (2.0 * G1);
         }
 
         /* Step 2 */
@@ -99,11 +94,7 @@ public class QaaAlgorithmv6Seadas implements QaaAlgo {
         } else {
             final double numer = Rrs[IDX_440] + Rrs[IDX_490];
             final double denom = Rrs[IDX_560] + 5. * (Rrs[IDX_670] / Rrs[IDX_490]) * Rrs[IDX_670];
-            final double quot = numer / denom;
-            if (quot <= 0.0) {
-                throw new ImaginaryNumberException("Will produce an imaginary number", quot);
-            }
-            final double X = log10(quot);
+            final double X = log10(numer / denom);
             final double rho = a_coeffs[0] + a_coeffs[1] * X + a_coeffs[2] * X * X;
             aRef = aw[IDX_560] + pow(10.0, rho);
             idxRef = IDX_560;
@@ -153,6 +144,18 @@ public class QaaAlgorithmv6Seadas implements QaaAlgo {
         for (int i = 0; i < adg.length; i++) {
             adg[i] = ag_440 * exp(Slope_adg * (wavelengths[IDX_440] - wavelengths[i]));
             aph[i] = a[i] - adg[i] - aw[i];
+        }
+
+        /* ZP Lee, 17 August 2007 (get_qaa.c)*/
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] > 0) {
+                a[i] = Math.max(a[i], aw[i] * 1.05);
+            }
+        }
+        for (int i = 0; i < bb.length; i++) {
+            if (bb[i] > 0) {
+                bb[i] = Math.max(bb[i], bbw[i] * 1.05);
+            }
         }
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {

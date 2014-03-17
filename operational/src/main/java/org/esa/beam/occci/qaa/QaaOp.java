@@ -136,11 +136,8 @@ public class QaaOp extends PixelOperator {
             for (int i = 0; i < rrs.length; i++) {
                 rrs[i] = sourceSamples[i].getFloat();
             }
-            try {
-                result = qaaAlgorithm.process(rrs, result);
-            } catch (ImaginaryNumberException ine) {
-                result.invalidate();
-            }
+            result = qaaAlgorithm.process(rrs, result);
+            result.infinityAsNaN();
         } else {
             result.invalidate();
         }

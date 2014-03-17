@@ -7,9 +7,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class InSituWriterTest {
 

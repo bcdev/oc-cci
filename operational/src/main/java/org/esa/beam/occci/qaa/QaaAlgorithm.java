@@ -27,7 +27,7 @@ public class QaaAlgorithm implements QaaAlgo {
     }
 
     @Override
-    public QaaResult process(float[] Rrs, QaaResult recycle) throws ImaginaryNumberException {
+    public QaaResult process(float[] Rrs, QaaResult recycle) {
         QaaResult result = ensureResult(recycle);
         final double up_667 = 20.0 * Math.pow(Rrs[IDX_560], 1.5);
         final double lw_667 = 0.9 * Math.pow(Rrs[IDX_560], 1.7);
@@ -57,22 +57,13 @@ public class QaaAlgorithm implements QaaAlgo {
         final double g1 = 0.125;
         final double[] U = new double[Rrs.length];
         for (int i = 0; i < U.length; i++) {
-            final double nom = g0_square + 4.0 * g1 * rrs[i];
-            if (nom >= 0.0) {
-                U[i] = (Math.sqrt(nom) - g0) / (2.0 * g1);
-            } else {
-                throw new ImaginaryNumberException("Will produce an imaginary number", nom);
-            }
+            U[i] = (Math.sqrt(g0_square + 4.0 * g1 * rrs[i]) - g0) / (2.0 * g1);
         }
 
         // Estimation of a at reference wavelength
         final double numer = rrs[IDX_440] + rrs[IDX_490];
         final double denom = rrs[IDX_560] + 5. * (rrs[IDX_670] / rrs[IDX_490]) * rrs[IDX_670];
-        final double quot = numer / denom;
-        if (quot <= 0.0) {
-            throw new ImaginaryNumberException("Will produce an imaginary number", quot);
-        }
-        final double X = Math.log10(quot);
+        final double X = Math.log10(numer / denom);
 
         final double rho = a_coeffs[0] + a_coeffs[1] * X + a_coeffs[2] * X * X;
         final double a_555 = aw[IDX_560] + Math.pow(10.0, rho);

@@ -10,7 +10,7 @@ import java.io.IOException;
 public class BandShiftMain {
 
 
-    public static void main(String[] args) throws IOException, ImaginaryNumberException {
+    public static void main(String[] args) throws IOException {
         final CsvReader csvReader = createInputCsvReader(args[0]);
 
         final InSituGroupWriter inSituGroupWriter = new InSituGroupWriter(new File("."));

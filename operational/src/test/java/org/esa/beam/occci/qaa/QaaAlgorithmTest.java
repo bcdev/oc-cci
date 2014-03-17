@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 public class QaaAlgorithmTest {
 
     @Test
-    public void testProcess_Meris() throws ImaginaryNumberException {
+    public void testProcess_Meris()  {
         final float[] rrs_in = {0.030262154f, 0.031086152f, 0.022717977f, 0.013177891f, 0.0072450927f, 0.0028870495f, 0.0024475828f};
 
         final QaaAlgorithm algorithm = new QaaAlgorithm(new MerisConfig());
@@ -40,7 +40,7 @@ public class QaaAlgorithmTest {
     }
 
     @Test
-    public void testProcess_Modis() throws ImaginaryNumberException {
+    public void testProcess_Modis() {
         final float[] rrs_in = {0.0019080009f, 0.0029860009f, 0.0029160008f, 0.0030800009f, 0.0029520008f, 0.0011980009f};
 
         final QaaAlgorithm algorithm = new QaaAlgorithm(new ModisConfig());
@@ -72,7 +72,7 @@ public class QaaAlgorithmTest {
     }
 
     @Test
-    public void testProcess_SeaWiFS() throws ImaginaryNumberException {
+    public void testProcess_SeaWiFS() {
         final float[] rrs_in = {0.00167972470255084f, 0.00186919071018569f, 0.0027188008445359f, 0.00309262196610828f, 0.00406382197640373f, 0.00120514585009823f};
 
         final QaaAlgorithm algorithm = new QaaAlgorithm(new SeaWifsConfig());
@@ -104,7 +104,7 @@ public class QaaAlgorithmTest {
     }
 
     @Test
-    public void testProcess_Meris_oldCoeffs() throws ImaginaryNumberException {
+    public void testProcess_Meris_oldCoeffs() {
         // this testcase implements a comparison between the old implementation used in te operator and the
         // algorithm supplied by PML - the assertions of the old testcase are used to test the new algorithm with the
         // configuration used by the old algorithm tb 2013-03-01

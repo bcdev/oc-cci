@@ -157,4 +157,19 @@ public class QaaResult {
             BB_SPM[i] = value;
         }
     }
+
+    public void infinityAsNaN() {
+        infinityAsNaN(A_PIG);
+        infinityAsNaN(A_Total);
+        infinityAsNaN(A_YS);
+        infinityAsNaN(BB_SPM);
+    }
+
+    private static void infinityAsNaN(float[] floats) {
+        for (int i = 0; i < floats.length; i++) {
+            if (Float.isInfinite(floats[i])) {
+                floats[i] = Float.NaN;
+            }
+        }
+    }
 }

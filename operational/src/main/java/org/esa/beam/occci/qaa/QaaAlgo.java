@@ -17,5 +17,5 @@
 package org.esa.beam.occci.qaa;
 
 public interface QaaAlgo {
-    QaaResult process(float[] Rrsf, QaaResult recycle) throws ImaginaryNumberException;
+    QaaResult process(float[] Rrsf, QaaResult recycle);
 }
