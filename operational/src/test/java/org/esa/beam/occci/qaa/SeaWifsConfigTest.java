@@ -37,7 +37,7 @@ public class SeaWifsConfigTest {
         assertEquals(490.0, wavelengths[2], 1e-8);
         assertEquals(510.0, wavelengths[3], 1e-8);
         assertEquals(555.0, wavelengths[4], 1e-8);
-        assertEquals(667.0, wavelengths[5], 1e-8);
+        assertEquals(670.0, wavelengths[5], 1e-8);
     }
 
     @Test

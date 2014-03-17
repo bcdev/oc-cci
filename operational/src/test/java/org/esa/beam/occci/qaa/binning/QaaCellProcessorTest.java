@@ -109,7 +109,7 @@ public class QaaCellProcessorTest {
         final String[] featureNames = QaaCellProcessor.createOutputFeatureNames(config);
         assertNotNull(featureNames);
 
-        final String[] expected = {"a_pig_412", "a_pig_443", "a_pig_667", "a_ys_555", "bb_spm_510", "bb_spm_555", "bb_spm_667"};
+        final String[] expected = {"a_pig_412", "a_pig_443", "a_pig_670", "a_ys_555", "bb_spm_510", "bb_spm_555", "bb_spm_670"};
         assertArrayEquals(expected, featureNames);
     }
 
