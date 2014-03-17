@@ -12,17 +12,19 @@ import java.util.ArrayList;
 
 public class QaaCellProcessor extends CellProcessor {
 
-    private final QaaAlgorithm qaaAlgorithm;
+    private final QaaAlgo qaaAlgorithm;
     private final int[] bandIndices;
     private final float[] rrs;
     QaaResult qaaResult;
     private final ResultMapper resultMapper;
 
     public QaaCellProcessor(VariableContext varCtx, QaaConfig config) {
-        super(createOutputFeatureNames(config));
+        this(new QaaAlgorithm(SensorConfigFactory.get(config.getSensorName())), varCtx, config);
+    }
 
-        final SensorConfig sensorConfig = SensorConfigFactory.get(config.getSensorName());
-        qaaAlgorithm = new QaaAlgorithm(sensorConfig);
+    public QaaCellProcessor(QaaAlgo qaaAlgorithm, VariableContext varCtx, QaaConfig config) {
+        super(createOutputFeatureNames(config));
+        this.qaaAlgorithm = qaaAlgorithm;
 
         final String[] bandNames = config.getBandNames();
         bandIndices = BinningUtils.getBandIndices(varCtx, bandNames);

@@ -1,6 +1,6 @@
 package org.esa.beam.occci.qaa;
 
-public class QaaAlgorithm {
+public class QaaAlgorithm implements QaaAlgo {
 
     private static final int IDX_410 = 0; // 415.5nm
     private static final int IDX_440 = 1; // 442.5nm
@@ -26,6 +26,7 @@ public class QaaAlgorithm {
         reference_wavelength = sensorConfig.getReferenceWavelength();
     }
 
+    @Override
     public QaaResult process(float[] Rrs, QaaResult recycle) throws ImaginaryNumberException {
         QaaResult result = ensureResult(recycle);
         final double up_667 = 20.0 * Math.pow(Rrs[IDX_560], 1.5);
