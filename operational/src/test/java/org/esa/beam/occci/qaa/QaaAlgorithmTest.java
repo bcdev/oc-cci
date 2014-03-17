@@ -14,29 +14,29 @@ public class QaaAlgorithmTest {
         final QaaAlgorithm algorithm = new QaaAlgorithm(new MerisConfig());
 
         final QaaResult result = algorithm.process(rrs_in, null);
-        final float[] a_total = result.getAtot();
-        assertEquals(0.0326309, a_total[0], 1e-6);
-        assertEquals(0.0264908, a_total[1], 1e-6);
-        assertEquals(0.0289172, a_total[2], 1e-6);
-        assertEquals(0.0455736, a_total[3], 1e-6);
-        assertEquals(0.0657829, a_total[4], 1e-6);
+        final float[] atot = result.getAtot();
+        assertEquals(0.0326309, atot[0], 1e-6);
+        assertEquals(0.0264908, atot[1], 1e-6);
+        assertEquals(0.0289172, atot[2], 1e-6);
+        assertEquals(0.0455736, atot[3], 1e-6);
+        assertEquals(0.0657829, atot[4], 1e-6);
 
-        final float[] bb_spm = result.getBbp();
-        assertEquals(0.0205040, bb_spm[0], 1e-6);
-        assertEquals(0.0171448, bb_spm[1], 1e-6);
-        assertEquals(0.0133822, bb_spm[2], 1e-6);
-        assertEquals(0.0121625, bb_spm[3], 1e-6);
-        assertEquals(0.00977813, bb_spm[4], 1e-6);
+        final float[] bbp = result.getBbp();
+        assertEquals(0.014772, bbp[0], 1e-6);
+        assertEquals(0.0128989, bbp[1], 1e-6);
+        assertEquals(0.0106138, bbp[2], 1e-6);
+        assertEquals(0.0098237, bbp[3], 1e-6);
+        assertEquals(0.00819854, bbp[4], 1e-6);
 
-        final float[] a_pig = result.getAph();
-        assertEquals(0.00263956, a_pig[0], 1e-6);
-        assertEquals(0.00337634, a_pig[1], 1e-6);
-        assertEquals(0.00614989, a_pig[2], 1e-6);
+        final float[] aph = result.getAph();
+        assertEquals(0.00263956, aph[0], 1e-6);
+        assertEquals(0.00337634, aph[1], 1e-6);
+        assertEquals(0.00614989, aph[2], 1e-6);
 
-        final float[] a_ys = result.getAdg();
-        assertEquals(0.0254953, a_ys[0], 1e-6);
-        assertEquals(0.0160453, a_ys[1], 1e-6);
-        assertEquals(0.0077673, a_ys[2], 1e-6);
+        final float[] adg = result.getAdg();
+        assertEquals(0.0254953, adg[0], 1e-6);
+        assertEquals(0.0160453, adg[1], 1e-6);
+        assertEquals(0.0077673, adg[2], 1e-6);
     }
 
     @Test
@@ -46,29 +46,29 @@ public class QaaAlgorithmTest {
         final QaaAlgorithm algorithm = new QaaAlgorithm(new ModisConfig());
 
         final QaaResult result = algorithm.process(rrs_in, null);
-        final float[] a_total = result.getAtot();
-        assertEquals(0.326133, a_total[0], 1e-6);
-        assertEquals(0.177058, a_total[1], 1e-6);
-        assertEquals(0.147228, a_total[2], 1e-6);
-        assertEquals(0.118495, a_total[3], 1e-6);
-        assertEquals(0.117016, a_total[4], 1e-6);
+        final float[] atot = result.getAtot();
+        assertEquals(0.326133, atot[0], 1e-6);
+        assertEquals(0.177058, atot[1], 1e-6);
+        assertEquals(0.147228, atot[2], 1e-6);
+        assertEquals(0.118495, atot[3], 1e-6);
+        assertEquals(0.117016, atot[4], 1e-6);
 
-        final float[] bb_spm = result.getBbp();
-        assertEquals(0.0131830, bb_spm[0], 1e-6);
-        assertEquals(0.0111027, bb_spm[1], 1e-6);
-        assertEquals(0.00902051, bb_spm[2], 1e-6);
-        assertEquals(0.00765894, bb_spm[3], 1e-6);
-        assertEquals(0.00725599, bb_spm[4], 1e-6);
+        final float[] bbp = result.getBbp();
+        assertEquals(0.007390, bbp[0], 1e-6);
+        assertEquals(0.0068567605, bbp[1], 1e-6);
+        assertEquals(0.0062039173, bbp[2], 1e-6);
+        assertEquals(0.005685087, bbp[3], 1e-6);
+        assertEquals(0.0055131954, bbp[4], 1e-6);
 
-        final float[] a_pig = result.getAph();
-        assertEquals(-0.0426686, a_pig[0], 1e-6);
-        assertEquals(-0.0501741, a_pig[1], 1e-6);
-        assertEquals(0.0267035, a_pig[2], 1e-6);
+        final float[] aph = result.getAph();
+        assertEquals(-0.0426686, aph[0], 1e-6);
+        assertEquals(-0.0501741, aph[1], 1e-6);
+        assertEquals(0.0267035, aph[2], 1e-6);
 
-        final float[] a_ys = result.getAdg();
-        assertEquals(0.364251, a_ys[0], 1e-6);
-        assertEquals(0.220163, a_ys[1], 1e-6);
-        assertEquals(0.106008, a_ys[2], 1e-6);
+        final float[] adg = result.getAdg();
+        assertEquals(0.364251, adg[0], 1e-6);
+        assertEquals(0.220163, adg[1], 1e-6);
+        assertEquals(0.106008, adg[2], 1e-6);
     }
 
     @Test
@@ -78,29 +78,29 @@ public class QaaAlgorithmTest {
         final QaaAlgorithm algorithm = new QaaAlgorithm(new SeaWifsConfig());
 
         final QaaResult result = algorithm.process(rrs_in, null);
-        final float[] a_total = result.getAtot();
-        assertEquals(0.585938, a_total[0], 1e-6);
-        assertEquals(0.477027, a_total[1], 1e-6);
-        assertEquals(0.293892, a_total[2], 1e-6);
-        assertEquals(0.24889, a_total[3], 1e-6);
-        assertEquals(0.176759, a_total[4], 1e-6);
+        final float[] atot = result.getAtot();
+        assertEquals(0.585938, atot[0], 1e-6);
+        assertEquals(0.477027, atot[1], 1e-6);
+        assertEquals(0.293892, atot[2], 1e-6);
+        assertEquals(0.24889, atot[3], 1e-6);
+        assertEquals(0.176759, atot[4], 1e-6);
 
-        final float[] bb_spm = result.getBbp();
-        assertEquals(0.0208942, bb_spm[0], 1e-6);
-        assertEquals(0.0188968, bb_spm[1], 1e-6);
-        assertEquals(0.0168142, bb_spm[2], 1e-6);
-        assertEquals(0.0161515, bb_spm[3], 1e-6);
-        assertEquals(0.0149729, bb_spm[4], 1e-6);
+        final float[] bbp = result.getBbp();
+        assertEquals(0.0151021, bbp[0], 1e-6);
+        assertEquals(0.0146508, bbp[1], 1e-6);
+        assertEquals(0.0140458, bbp[2], 1e-6);
+        assertEquals(0.0138128, bbp[3], 1e-6);
+        assertEquals(0.0133328, bbp[4], 1e-6);
 
-        final float[] a_pig = result.getAph();
-        assertEquals(0.240965, a_pig[0], 1e-6);
-        assertEquals(0.268238, a_pig[1], 1e-6);
-        assertEquals(0.187655, a_pig[2], 1e-6);
+        final float[] aph = result.getAph();
+        assertEquals(0.240965, aph[0], 1e-6);
+        assertEquals(0.268238, aph[1], 1e-6);
+        assertEquals(0.187655, aph[2], 1e-6);
 
-        final float[] a_ys = result.getAdg();
-        assertEquals(0.340423, a_ys[0], 1e-6);
-        assertEquals(0.201719, a_ys[1], 1e-6);
-        assertEquals(0.0912376, a_ys[2], 1e-6);
+        final float[] adg = result.getAdg();
+        assertEquals(0.340423, adg[0], 1e-6);
+        assertEquals(0.201719, adg[1], 1e-6);
+        assertEquals(0.0912376, adg[2], 1e-6);
     }
 
     @Test
@@ -120,28 +120,28 @@ public class QaaAlgorithmTest {
         final QaaAlgorithm algorithm = new QaaAlgorithm(new MerisConfigOldCoeffs());
 
         final QaaResult result = algorithm.process(rrs_in, null);
-        final float[] a_total = result.getAtot();
-        assertEquals(0.03845500573515892f, a_total[0], 1e-4);
-        assertEquals(0.030030209571123123f, a_total[1], 1e-4);
-        assertEquals(0.030713409185409546f, a_total[2], 1e-4);
-        assertEquals(0.046738818287849426f, a_total[3], 1e-4);
-        assertEquals(0.06614950299263f, a_total[4], 1e-4);
+        final float[] atot = result.getAtot();
+        assertEquals(0.03845500573515892f, atot[0], 1e-4);
+        assertEquals(0.030030209571123123f, atot[1], 1e-4);
+        assertEquals(0.030713409185409546f, atot[2], 1e-4);
+        assertEquals(0.046738818287849426f, atot[3], 1e-4);
+        assertEquals(0.06614950299263f, atot[4], 1e-4);
 
-        final float[] bb_spm = result.getBbp();
-        assertEquals(0.007518719881772995f, bb_spm[0], 1e-4);
-        assertEquals(0.006027825176715851f, bb_spm[1], 1e-4);
-        assertEquals(0.004540313966572285f, bb_spm[2], 1e-4);
-        assertEquals(0.0040666270069777966f, bb_spm[3], 1e-4);
-        assertEquals(0.0032066269777715206f, bb_spm[4], 1e-4);
+        final float[] bbp = result.getBbp();
+        assertEquals(0.004216643515974283, bbp[0], 1e-4);
+        assertEquals(0.003661837661638856, bbp[1], 1e-4);
+        assertEquals(0.0030098173301666975, bbp[2], 1e-4);
+        assertEquals(0.0027845455333590508, bbp[3], 1e-4);
+        assertEquals(0.0023214993998408318, bbp[4], 1e-4);
 
-        final float[] a_pig = result.getAph();
-        assertEquals(0.0028468116652220488f, a_pig[0], 1e-4);
-        assertEquals(0.0036492901854217052f, a_pig[1], 1e-4);
-        assertEquals(0.006425064522773027f, a_pig[2], 1e-4);
+        final float[] aph = result.getAph();
+        assertEquals(0.0028468116652220488f, aph[0], 1e-4);
+        assertEquals(0.0036492901854217052f, aph[1], 1e-4);
+        assertEquals(0.006425064522773027f, aph[2], 1e-4);
 
-        final float[] a_ys = result.getAdg();
-        assertEquals(0.030918193981051445f, a_ys[0], 1e-4);
-        assertEquals(0.019170919433236122f, a_ys[1], 1e-4);
-        assertEquals(0.009288343600928783f, a_ys[2], 1e-4);
+        final float[] adg = result.getAdg();
+        assertEquals(0.030918193981051445f, adg[0], 1e-4);
+        assertEquals(0.019170919433236122f, adg[1], 1e-4);
+        assertEquals(0.009288343600928783f, adg[2], 1e-4);
     }
 }

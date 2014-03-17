@@ -42,12 +42,12 @@ public class QaaOpTest {
         assertEquals(0.0657829, getSample(targetProduct, "a_total_560"), 1e-6);
         assertEquals(0.109646804, getSample(targetProduct, "a_total_665"), 1e-6);
 
-        assertEquals(0.0205040, getSample(targetProduct, "bb_spm_413"), 1e-6);
-        assertEquals(0.0171448, getSample(targetProduct, "bb_spm_443"), 1e-6);
-        assertEquals(0.0133822, getSample(targetProduct, "bb_spm_490"), 1e-6);
-        assertEquals(0.0121625, getSample(targetProduct, "bb_spm_510"), 1e-6);
-        assertEquals(0.00977813, getSample(targetProduct, "bb_spm_560"), 1e-6);
-        assertEquals(0.00665269, getSample(targetProduct, "bb_spm_665"), 1e-6);
+        assertEquals(0.014772, getSample(targetProduct, "bb_spm_413"), 1e-6);
+        assertEquals(0.0128989, getSample(targetProduct, "bb_spm_443"), 1e-6);
+        assertEquals(0.0106138, getSample(targetProduct, "bb_spm_490"), 1e-6);
+        assertEquals(0.0098237, getSample(targetProduct, "bb_spm_510"), 1e-6);
+        assertEquals(0.00819854, getSample(targetProduct, "bb_spm_560"), 1e-6);
+        assertEquals(0.00588059, getSample(targetProduct, "bb_spm_665"), 1e-6);
 
         assertEquals(0.00263956, getSample(targetProduct, "a_pig_413"), 1e-6);
         assertEquals(0.00337634, getSample(targetProduct, "a_pig_443"), 1e-6);

@@ -53,16 +53,13 @@ public class QaaCellProcessorTest {
         final VectorImpl postVector = new VectorImpl(new float[processor.getOutputFeatureNames().length]);
         processor.compute(outVector, postVector);
 
-        // out:     [[a_ys_412, a_ys_488, bb_spm_412 ,bb_spm_488 ,bb_spm_531 ,bb_spm_547]]
-        // a_ys:    [0.35672852396965027, 0.21561411023139954, 0.10381654649972916]
         assertEquals(0.35672852396965027, postVector.get(0), 1e-8);
         assertEquals(0.10381654649972916, postVector.get(1), 1e-8);
 
-        // bb_spm:  [0.01384813990443945, 0.011719915084540844, 0.0095791881904006, 0.008171066641807556, 0.00775269977748394]
-        assertEquals(0.01384813990443945, postVector.get(2), 1e-8);
-        assertEquals(0.0095791881904006, postVector.get(3), 1e-8);
-        assertEquals(0.008171066641807556, postVector.get(4), 1e-8);
-        assertEquals(0.00775269977748394, postVector.get(5), 1e-8);
+        assertEquals(0.008056129328906536, postVector.get(2), 1e-8);
+        assertEquals(0.006762598175555468, postVector.get(3), 1e-8);
+        assertEquals(0.006197216920554638, postVector.get(4), 1e-8);
+        assertEquals(0.006009899545460939, postVector.get(5), 1e-8);
     }
 
     @Test

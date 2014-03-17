@@ -61,7 +61,7 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
         if (QaaConstants.MERIS.equals(config.sensorName)) {
 
             String[] rrsInputFeatures = {"Rrs412_mean", "Rrs443_mean", "Rrs490_mean", "Rrs510_mean", "Rrs560_mean", "Rrs665_mean"};
-            String[] iopInputFeatures = {"a_pig_443_mean", "a_ys_443_mean", "bb_spm_443_mean"};
+            String[] iopInputFeatures = {"aph_443_mean", "adg_443_mean", "bbp_443_mean"};
 
             CellProcessor bandshiftProcessor =new BandShiftCellProcessor(varCtx,
                                                                          Sensor.MERIS_NAME,
