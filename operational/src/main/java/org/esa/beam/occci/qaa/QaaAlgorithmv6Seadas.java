@@ -160,6 +160,10 @@ public class QaaAlgorithmv6Seadas implements QaaAlgo {
                 bb[i] = Math.max(bb[i], bbw[i] * 1.05);
             }
         }
+        markNegativeAsNaN(a);
+        markNegativeAsNaN(bbp);
+        markNegativeAsNaN(aph);
+        markNegativeAsNaN(adg);
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
             result.setAtot((float) a[i], i);
@@ -172,6 +176,14 @@ public class QaaAlgorithmv6Seadas implements QaaAlgo {
         }
 
         return result;
+    }
+
+    private static void markNegativeAsNaN(double[] values) {
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] <= 0) {
+                values[i] = Double.NaN;
+            }
+        }
     }
 
     static QaaResult ensureResult(QaaResult recycle) {
