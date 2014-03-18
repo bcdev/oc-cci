@@ -84,39 +84,46 @@ public class PureWater {
     }
 
     static PureWater readWater(Reader reader) throws IOException {
-        CsvReader csvReader = new CsvReader(reader, new char[]{' '});
-        for (int i = 0; i < 29; i++) {
-            csvReader.readLine();
-        }
-        int count = 0;
-        double[] doubles;
-        double[] lambda = new double[3000];
-        double[] aw = new double[3000];
-        double[] bw = new double[3000];
-        while ((doubles = csvReader.readDoubleRecord()) != null) {
-            lambda[count] = doubles[0];
-            aw[count] = doubles[1];
-            bw[count] = doubles[2];
-            count++;
-        }
-        return new PureWater(Arrays.copyOf(lambda, count), Arrays.copyOf(aw, count), Arrays.copyOf(bw, count));
+        double[][] doubleRecords = readDoubleCSV(reader, 3, 3000);
+        double[] lambda = doubleRecords[0];
+        double[] aw = doubleRecords[1];
+        double[] bw = doubleRecords[2];
+        return new PureWater(lambda, aw, bw);
     }
 
     static PureWater readBWater(Reader reader) throws IOException {
+        double[][] doubleRecords = readDoubleCSV(reader, 2, 3000);
+        double[] lambda = doubleRecords[0];
+        double[] bw = doubleRecords[1];
+        return new PureWater(lambda, null, bw);
+    }
+
+    private static double[][] readDoubleCSV(Reader reader, int numColumns, int maxLines) throws IOException {
         CsvReader csvReader = new CsvReader(reader, new char[]{' '});
-        for (int i = 0; i < 15; i++) {
-            csvReader.readLine();
-        }
         int count = 0;
-        double[] doubles;
-        double[] lambda = new double[3000];
-        double[] bw = new double[3000];
-        while ((doubles = csvReader.readDoubleRecord()) != null) {
-            lambda[count] = doubles[0];
-            bw[count] = doubles[1];
-            count++;
+        String[] stringRecord;
+        double[][] records = new double[numColumns][maxLines];
+        while ((stringRecord = csvReader.readRecord()) != null) {
+            if (stringRecord.length == numColumns && Character.isDigit(stringRecord[0].charAt(0))) {
+                double[] doubleRecord = new double[stringRecord.length];
+                for (int i = 0; i < doubleRecord.length; i++) {
+                    try {
+                        doubleRecord[i] = Double.parseDouble(stringRecord[i]);
+                    } catch (NumberFormatException e) {
+                        throw new IOException(e);
+                    }
+                }
+                for (int i = 0; i < numColumns; i++) {
+                    records[i][count] = doubleRecord[i];
+                }
+                count++;
+            }
         }
-        return new PureWater(Arrays.copyOf(lambda, count), null, Arrays.copyOf(bw, count));
+        double[][] result = new double[numColumns][];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = Arrays.copyOf(records[i], count);
+        }
+        return result;
     }
 
     public double[] getSpectralDataPureWater(double wave) {
