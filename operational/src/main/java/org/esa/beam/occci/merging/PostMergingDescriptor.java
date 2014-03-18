@@ -4,10 +4,10 @@ import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
+import org.esa.beam.occci.qaa.PMLv10Config;
 import org.esa.beam.occci.qaa.QaaAlgorithmv6Seadas;
 import org.esa.beam.occci.qaa.QaaConstants;
 import org.esa.beam.occci.qaa.SensorConfig;
-import org.esa.beam.occci.qaa.SensorConfigFactory;
 import org.esa.beam.occci.qaa.binning.QaaCellProcessor;
 import org.esa.beam.occci.qaa.binning.QaaConfig;
 import org.esa.beam.occci.util.binning.CellProcessorParallel;
@@ -66,7 +66,8 @@ public class PostMergingDescriptor implements CellProcessorDescriptor {
         qaaConfig.setAphOutIndices(ALL_IOPS);
         qaaConfig.setAdgOutIndices(ALL_IOPS);
 
-        SensorConfig sensorConfig = SensorConfigFactory.get(QaaConstants.SEAWIFS);
+//        SensorConfig sensorConfig = SensorConfigFactory.get(QaaConstants.SEAWIFS);
+        SensorConfig sensorConfig = new PMLv10Config();
         return new QaaCellProcessor(new QaaAlgorithmv6Seadas(sensorConfig), varCtx, qaaConfig);
     }
 }
