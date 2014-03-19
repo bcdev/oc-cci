@@ -112,6 +112,23 @@ public class PostMergingDescriptorTest {
         assertEquals(6.72E-004   , values[idxFor("bbp_670", names)], 1e-5f);
     }
 
+    @Test
+    public void testOWT() throws Exception {
+        String[] names = processor.getOutputFeatureNames();
+        float[] values = new float[names.length];
+        processor.compute(input, new VectorImpl(values));
+
+        assertEquals(5.04E-007,   values[idxFor("water_class1", names)], 1e-6f);
+        assertEquals(0.043338194, values[idxFor("water_class2", names)], 1e-6f);
+        assertEquals(0.77421,     values[idxFor("water_class3", names)], 1e-6f);
+        assertEquals(4.51E-006,   values[idxFor("water_class4", names)], 1e-6f);
+        assertEquals(7.38E-020,   values[idxFor("water_class5", names)], 1e-6f);
+        assertEquals(4.31E-006,   values[idxFor("water_class6", names)], 1e-6f);
+        assertEquals(2.60E-004,   values[idxFor("water_class7", names)], 1e-6f);
+        assertEquals(1.34E-006,   values[idxFor("water_class8", names)], 1e-6f);
+        assertEquals(4.29E-007,   values[idxFor("water_class9", names)], 1e-6f);
+    }
+
     private static int idxFor(String bandName, String[] bandNames) {
         for (int i = 0; i < bandNames.length; i++) {
             if (bandName.equals(bandNames[i])) {
