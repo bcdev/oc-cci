@@ -47,6 +47,29 @@ public class PostMergingDescriptorTest {
     }
 
     @Test
+    public void testRrs() throws Exception {
+        String[] names = processor.getOutputFeatureNames();
+        float[] values = new float[names.length];
+        processor.compute(input, new VectorImpl(values));
+        assertEquals(INPUT[0], values[idxFor("Rrs_412", names)], 1e-6f);
+        assertEquals(INPUT[1], values[idxFor("Rrs_443", names)], 1e-6f);
+        assertEquals(INPUT[2], values[idxFor("Rrs_490", names)], 1e-6f);
+        assertEquals(INPUT[3], values[idxFor("Rrs_510", names)], 1e-6f);
+        assertEquals(INPUT[4], values[idxFor("Rrs_555", names)], 1e-6f);
+        assertEquals(INPUT[5], values[idxFor("Rrs_670", names)], 1e-6f);
+    }
+
+    @Test
+    public void testSensor() throws Exception {
+        String[] names = processor.getOutputFeatureNames();
+        float[] values = new float[names.length];
+        processor.compute(input, new VectorImpl(values));
+        assertEquals(INPUT[6], values[idxFor("sensor_0", names)], 1e-6f);
+        assertEquals(INPUT[7], values[idxFor("sensor_1", names)], 1e-6f);
+        assertEquals(INPUT[8], values[idxFor("sensor_2", names)], 1e-6f);
+    }
+
+    @Test
     public void testOC4v6() throws Exception {
         String[] names = processor.getOutputFeatureNames();
         float[] values = new float[names.length];
@@ -97,6 +120,7 @@ public class PostMergingDescriptorTest {
         }
         return -1;
     }
+
     /*
     # BEAM pin export table
     # Product:	ESACCI-OC-L3S-OC_PRODUCTS-MERGED-1D_DAILY_4km_GEO_PML_OC4v6_QAA-20060303-fv1.0
