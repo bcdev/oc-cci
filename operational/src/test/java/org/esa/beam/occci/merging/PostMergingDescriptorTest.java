@@ -39,6 +39,7 @@ public class PostMergingDescriptorTest {
                 "adg_412", "adg_443", "adg_490", "adg_510", "adg_555", "adg_670",
                 "bbp_412", "bbp_443", "bbp_490", "bbp_510", "bbp_555", "bbp_670",
                 "chlor_a",
+                "chlor_a_bias_uncertainty", "chlor_a_rms_uncertainty",
                 "Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670",
                 "sensor_0", "sensor_1", "sensor_2",
                 "water_class1", "water_class2", "water_class3", "water_class4",
@@ -75,6 +76,15 @@ public class PostMergingDescriptorTest {
         float[] values = new float[names.length];
         processor.compute(input, new VectorImpl(values));
         assertEquals(0.15371986f, values[idxFor("chlor_a", names)], 1e-6f);
+    }
+
+    @Test
+    public void testOC4v6_Uncertainty() throws Exception {
+        String[] names = processor.getOutputFeatureNames();
+        float[] values = new float[names.length];
+        processor.compute(input, new VectorImpl(values));
+        assertEquals(0.2661012f, values[idxFor("chlor_a_rms_uncertainty", names)], 1e-6f);
+        assertEquals(-0.03771342f, values[idxFor("chlor_a_bias_uncertainty", names)], 1e-6f);
     }
 
     @Test

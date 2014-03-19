@@ -17,9 +17,13 @@ import java.util.Arrays;
 public class OWTCellProcessor extends CellProcessor {
 
     static final String[] BAND_NAMES = new String[]{"Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670"};
+    static final String WATER_CLASS_PREFIX = "water_class";
 
     private static final int NUM_BANDS = 6;
     private static final int NUM_CLASSES = 16;
+
+    // number of optical water types
+    private static final int NUM_OWTS = 9;
     private static final String MEAN_FILE = "seawifs_means.dat";
     private static final String COV_FILE = "seawifs_covariance.dat";
 
@@ -27,7 +31,7 @@ public class OWTCellProcessor extends CellProcessor {
     private final FuzzyClassification fuzzyClassification;
 
     public OWTCellProcessor(VariableContext varCtx, String[] bandNames) {
-        super(createOutputFeatureNames());
+        super(createWaterClassFeatureNames());
         rrsBandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
 
         try {
@@ -60,18 +64,19 @@ public class OWTCellProcessor extends CellProcessor {
         }
 
         double[] membershipIndicators = fuzzyClassification.computeClassMemberships(rrsBelowWater);
-        // setting the values for the first 8 classes
 
-        for (int i = 0; i < 8; i++) {
+        // setting the values for the first 8 classes
+        for (int i = 0; i < NUM_OWTS - 1; i++) {
             double membershipIndicator = membershipIndicators[i];
             outputVector.set(i, (float) membershipIndicator);
         }
+
         // setting the value for the 9th class to the sum of the last 8 classes
         double ninthClassValue = 0.0;
-        for (int i = 8; i < membershipIndicators.length; i++) {
+        for (int i = NUM_OWTS - 1; i < membershipIndicators.length; i++) {
             ninthClassValue += membershipIndicators[i];
         }
-        outputVector.set(8, (float) ninthClassValue);
+        outputVector.set(NUM_OWTS - 1, (float) ninthClassValue);
     }
 
     /**
@@ -81,10 +86,10 @@ public class OWTCellProcessor extends CellProcessor {
         return aboveWater / (0.52 + 1.7 * aboveWater);
     }
 
-    private static String[] createOutputFeatureNames() {
+    static String[] createWaterClassFeatureNames() {
         final ArrayList<String> featureNameList = new ArrayList<String>();
-        for (int i = 1; i <= 9; i++) {
-            featureNameList.add("water_class" + i);
+        for (int i = 1; i <= NUM_OWTS; i++) {
+            featureNameList.add(WATER_CLASS_PREFIX + i);
         }
         return featureNameList.toArray(new String[featureNameList.size()]);
     }

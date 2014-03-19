@@ -48,28 +48,45 @@ public class PostMergingDescriptor implements CellProcessorDescriptor {
     public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
         Config config = (Config) cellProcessorConfig;
 
-        CellProcessor qaaCellProcessor  = createQaaProcessor(varCtx);
+        CellProcessor qaaCellProcessor = createQaaProcessor(varCtx);
 
         CellProcessor chlor = getChlorProcessor(varCtx, config);
 
         CellProcessor rssIdentityProcessor = new FeatureSelection(varCtx, BAND_NAMES);
         CellProcessor sensorIdentityProcessor = new FeatureSelection(varCtx, "sensor_0", "sensor_1", "sensor_2");
         CellProcessor owtProcessor = new OWTCellProcessor(varCtx, OWTCellProcessor.BAND_NAMES);
-        return new CellProcessorParallel(
+
+        CellProcessor products = new CellProcessorParallel(
                 qaaCellProcessor,
                 chlor,
                 rssIdentityProcessor,
                 sensorIdentityProcessor,
                 owtProcessor);
+
+
+        VariableContext uncertaintyVarCtx = BinningUtils.createVariableContext(products.getOutputFeatureNames());
+        CellProcessor uncertainty = new CellProcessorParallel(
+                new FeatureSelection(uncertaintyVarCtx, qaaCellProcessor.getOutputFeatureNames()),
+
+                new FeatureSelection(uncertaintyVarCtx, chlor.getOutputFeatureNames()),
+                new UncertaintyCellProcessor(uncertaintyVarCtx, "biasFile:TODO", "rmsFile:TODO", chlor.getOutputFeatureNames()),
+
+                new FeatureSelection(uncertaintyVarCtx, rssIdentityProcessor.getOutputFeatureNames()),
+
+                new FeatureSelection(uncertaintyVarCtx, sensorIdentityProcessor.getOutputFeatureNames()),
+                new FeatureSelection(uncertaintyVarCtx, owtProcessor.getOutputFeatureNames())
+        );
+
+        return new CellProcessorSequence(products, uncertainty);
     }
 
     private CellProcessor getChlorProcessor(VariableContext varCtx, Config config) {
-        CellProcessor oc4CellProcessor  = new Oc4v6CellProcessor(varCtx, Oc4v6CellProcessor.BAND_NAMES);
+        CellProcessor oc4CellProcessor = new Oc4v6CellProcessor(varCtx, Oc4v6CellProcessor.BAND_NAMES);
         String[] bandNames = new String[]{Oc4v6CellProcessor.CHLOR_A};
         double[] minValues = new double[]{config.chlMinValue};
         double[] maxValues = new double[]{config.chlMaxValue};
         VariableContext chlorVarCtx = BinningUtils.createVariableContext(oc4CellProcessor.getOutputFeatureNames());
-        CellProcessor filterChlorProcessor  = new ValueFilterCellProcessor(chlorVarCtx, bandNames, minValues, maxValues);
+        CellProcessor filterChlorProcessor = new ValueFilterCellProcessor(chlorVarCtx, bandNames, minValues, maxValues);
         return new CellProcessorSequence(oc4CellProcessor, filterChlorProcessor);
     }
 
