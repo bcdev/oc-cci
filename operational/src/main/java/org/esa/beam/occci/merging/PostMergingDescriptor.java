@@ -5,13 +5,17 @@ import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.cellprocessor.FeatureSelection;
+import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.occci.qaa.PMLv10Config;
 import org.esa.beam.occci.qaa.QaaAlgorithmv6Seadas;
 import org.esa.beam.occci.qaa.QaaConstants;
 import org.esa.beam.occci.qaa.SensorConfig;
 import org.esa.beam.occci.qaa.binning.QaaCellProcessor;
 import org.esa.beam.occci.qaa.binning.QaaConfig;
+import org.esa.beam.occci.util.binning.BinningUtils;
 import org.esa.beam.occci.util.binning.CellProcessorParallel;
+import org.esa.beam.occci.util.binning.CellProcessorSequence;
+import org.esa.beam.occci.util.binning.ValueFilterCellProcessor;
 
 public class PostMergingDescriptor implements CellProcessorDescriptor {
 
@@ -20,6 +24,10 @@ public class PostMergingDescriptor implements CellProcessorDescriptor {
     public static final String NAME = "PostMerging";
 
     public static class Config extends CellProcessorConfig {
+        @Parameter(defaultValue = "0.001")
+        private double chlMinValue = 0.001;
+        @Parameter(defaultValue = "100.0")
+        private double chlMaxValue = 100.0;
 
         public Config() {
             super(NAME);
@@ -38,17 +46,31 @@ public class PostMergingDescriptor implements CellProcessorDescriptor {
 
     @Override
     public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
+        Config config = (Config) cellProcessorConfig;
+
         CellProcessor qaaCellProcessor  = createQaaProcessor(varCtx);
-        CellProcessor oc4CellProcessor  = new Oc4v6CellProcessor(varCtx, Oc4v6CellProcessor.BAND_NAMES);
+
+        CellProcessor chlor = getChlorProcessor(varCtx, config);
+
         CellProcessor rssIdentityProcessor = new FeatureSelection(varCtx, BAND_NAMES);
         CellProcessor sensorIdentityProcessor = new FeatureSelection(varCtx, "sensor_0", "sensor_1", "sensor_2");
         CellProcessor owtProcessor = new OWTCellProcessor(varCtx, OWTCellProcessor.BAND_NAMES);
         return new CellProcessorParallel(
                 qaaCellProcessor,
-                oc4CellProcessor,
+                chlor,
                 rssIdentityProcessor,
                 sensorIdentityProcessor,
                 owtProcessor);
+    }
+
+    private CellProcessor getChlorProcessor(VariableContext varCtx, Config config) {
+        CellProcessor oc4CellProcessor  = new Oc4v6CellProcessor(varCtx, Oc4v6CellProcessor.BAND_NAMES);
+        String[] bandNames = new String[]{Oc4v6CellProcessor.CHLOR_A};
+        double[] minValues = new double[]{config.chlMinValue};
+        double[] maxValues = new double[]{config.chlMaxValue};
+        VariableContext chlorVarCtx = BinningUtils.createVariableContext(oc4CellProcessor.getOutputFeatureNames());
+        CellProcessor filterChlorProcessor  = new ValueFilterCellProcessor(chlorVarCtx, bandNames, minValues, maxValues);
+        return new CellProcessorSequence(oc4CellProcessor, filterChlorProcessor);
     }
 
     public static CellProcessor create(VariableContext varCtx) {
