@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Brockmann Consult GmbH (info@brockmann-consult.de)
+ * Copyright (C) 2014 Brockmann Consult GmbH (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,35 +25,40 @@ import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 
-public class IdentityCellProcessor extends CellProcessor {
+public class ValueFilterCellProcessor extends CellProcessor {
 
-    public static final String NAME = "Identity";
+    public static final String NAME = "ValueFilter";
 
     private final int[] bandIndices;
+    private final double[] minValues;
+    private final double[] maxValues;
 
-    public IdentityCellProcessor(VariableContext varCtx, String... bandNames) {
-        super(createOutputFeatureNames(varCtx, bandNames));
-        if (bandNames == null || bandNames.length == 0) {
-            bandIndices = new int[varCtx.getVariableCount()];
-            for (int i = 0; i < bandIndices.length; i++) {
-                bandIndices[i] = varCtx.getVariableIndex(varCtx.getVariableName(i));
-            }
-        } else {
-            bandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
-        }
+    public ValueFilterCellProcessor(VariableContext varCtx, String[] bandNames, double[] minValues, double[] maxValues) {
+        super(bandNames);
+        this.minValues = minValues;
+        this.maxValues = maxValues;
+        bandIndices = BinningUtils.getBandIndices(varCtx, bandNames);
     }
 
     @Override
-    public void compute(Vector outputVector, WritableVector postVector) {
+    public void compute(Vector inputVector, WritableVector outputVector) {
         for (int i = 0; i < bandIndices.length; i++) {
-            postVector.set(i, outputVector.get(bandIndices[i]));
+            float value = inputVector.get(bandIndices[i]);
+            if (value < minValues[i] || value > maxValues[i]) {
+                value = Float.NaN;
+            }
+            outputVector.set(i, value);
         }
     }
 
     public static class Config extends CellProcessorConfig {
 
-        @Parameter()
+        @Parameter
         private String[] bandNames;
+        @Parameter
+        private double[] minValues;
+        @Parameter
+        private double[] maxValues;
 
         public Config() {
             super(NAME);
@@ -69,25 +74,13 @@ public class IdentityCellProcessor extends CellProcessor {
 
         @Override
         public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
-            IdentityCellProcessor.Config config = (Config) cellProcessorConfig;
-            return new IdentityCellProcessor(varCtx, config.bandNames);
+            ValueFilterCellProcessor.Config config = (Config) cellProcessorConfig;
+            return new ValueFilterCellProcessor(varCtx, config.bandNames, config.minValues, config.maxValues);
         }
 
         @Override
         public CellProcessorConfig createConfig() {
             return new Config();
-        }
-    }
-
-    private static String[] createOutputFeatureNames(VariableContext varCtx, String[] bandNames) {
-        if (bandNames == null || bandNames.length == 0) {
-            String[] features = new String[varCtx.getVariableCount()];
-            for (int i = 0; i < features.length; i++) {
-                features[i] = varCtx.getVariableName(i);
-            }
-            return features;
-        } else {
-            return bandNames;
         }
     }
 }

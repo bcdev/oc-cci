@@ -4,6 +4,7 @@ import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.CellProcessorConfig;
 import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
+import org.esa.beam.binning.cellprocessor.FeatureSelection;
 import org.esa.beam.occci.qaa.PMLv10Config;
 import org.esa.beam.occci.qaa.QaaAlgorithmv6Seadas;
 import org.esa.beam.occci.qaa.QaaConstants;
@@ -11,7 +12,6 @@ import org.esa.beam.occci.qaa.SensorConfig;
 import org.esa.beam.occci.qaa.binning.QaaCellProcessor;
 import org.esa.beam.occci.qaa.binning.QaaConfig;
 import org.esa.beam.occci.util.binning.CellProcessorParallel;
-import org.esa.beam.occci.util.binning.IdentityCellProcessor;
 
 public class PostMergingDescriptor implements CellProcessorDescriptor {
 
@@ -40,8 +40,8 @@ public class PostMergingDescriptor implements CellProcessorDescriptor {
     public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
         CellProcessor qaaCellProcessor  = createQaaProcessor(varCtx);
         CellProcessor oc4CellProcessor  = new Oc4v6CellProcessor(varCtx, Oc4v6CellProcessor.BAND_NAMES);
-        CellProcessor rssIdentityProcessor = new IdentityCellProcessor(varCtx, BAND_NAMES);
-        CellProcessor sensorIdentityProcessor = new IdentityCellProcessor(varCtx, "sensor_0", "sensor_1", "sensor_2");
+        CellProcessor rssIdentityProcessor = new FeatureSelection(varCtx, BAND_NAMES);
+        CellProcessor sensorIdentityProcessor = new FeatureSelection(varCtx, "sensor_0", "sensor_1", "sensor_2");
         CellProcessor owtProcessor = new OWTCellProcessor(varCtx, OWTCellProcessor.BAND_NAMES);
         return new CellProcessorParallel(
                 qaaCellProcessor,
