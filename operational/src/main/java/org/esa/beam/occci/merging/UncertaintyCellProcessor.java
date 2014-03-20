@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class UncertaintyCellProcessor extends CellProcessor {
@@ -75,7 +74,7 @@ public class UncertaintyCellProcessor extends CellProcessor {
     /**
      * the classification sum is used to normalise the classifications
      */
-    public double computeClassificationSum(float[] waterValues) {
+    static double computeClassificationSum(float[] waterValues) {
         double classificationSum = 0;
         boolean foundFill = false;
         for (int classIndex = 0; classIndex < UNCERTAINTY_CLASSES; ++classIndex) {
@@ -101,7 +100,7 @@ public class UncertaintyCellProcessor extends CellProcessor {
      * normalised classification values multiplied by the corresponding
      * uncertainty value
      */
-    public double computeUncertainty(double[] uncertaintyTable, double classificationSum, float[] waterValues) {
+    static double computeUncertainty(double[] uncertaintyTable, double classificationSum, float[] waterValues) {
         double uncertainty = 0;
         // move down through individual classes for this band (in both the input matrix and uncertainty table)
         for (int classIndex = 0; classIndex < UNCERTAINTY_CLASSES; ++classIndex) {
