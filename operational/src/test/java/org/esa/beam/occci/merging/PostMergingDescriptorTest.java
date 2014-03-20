@@ -8,6 +8,8 @@ import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 
@@ -39,11 +41,16 @@ public class PostMergingDescriptorTest {
                 "adg_412", "adg_443", "adg_490", "adg_510", "adg_555", "adg_670",
                 "bbp_412", "bbp_443", "bbp_490", "bbp_510", "bbp_555", "bbp_670",
                 "chlor_a",
-                "chlor_a_bias_uncertainty", "chlor_a_rms_uncertainty",
                 "Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670",
                 "sensor_0", "sensor_1", "sensor_2",
                 "water_class1", "water_class2", "water_class3", "water_class4",
-                "water_class5", "water_class6", "water_class7", "water_class8", "water_class9"};
+                "water_class5", "water_class6", "water_class7", "water_class8", "water_class9",
+                "chlor_a_bias_uncertainty", "chlor_a_rms_uncertainty",
+                "Rrs_412_bias_uncertainty", "Rrs_443_bias_uncertainty", "Rrs_490_bias_uncertainty",
+                "Rrs_510_bias_uncertainty", "Rrs_555_bias_uncertainty", "Rrs_670_bias_uncertainty",
+                "Rrs_412_rms_uncertainty", "Rrs_443_rms_uncertainty", "Rrs_490_rms_uncertainty",
+                "Rrs_510_rms_uncertainty", "Rrs_555_rms_uncertainty", "Rrs_670_rms_uncertainty"
+        };
         assertArrayEquals(expectOutputFeatures, outputFeatureNames);
     }
 
@@ -59,6 +66,52 @@ public class PostMergingDescriptorTest {
         assertEquals(INPUT[4], values[idxFor("Rrs_555", names)], 1e-6f);
         assertEquals(INPUT[5], values[idxFor("Rrs_670", names)], 1e-6f);
     }
+
+    @Test
+    public void testRrs_Uncertainty() throws Exception {
+        String[] names = processor.getOutputFeatureNames();
+        float[] values = new float[names.length];
+        processor.compute(input, new VectorImpl(values));
+//        System.out.println("names = " + Arrays.toString(names));
+//        System.out.println("values = " + Arrays.toString(values));
+        for (int i = 0; i < values.length; i++) {
+            float value = values[i];
+            String name = names[i];
+            if (/*name.startsWith("Rrs") &&*/ name.endsWith("uncertainty"))
+                System.out.println(name + " = " + value);
+
+        }
+        assertEquals(0.0010006025, values[idxFor("Rrs_412_rms_uncertainty", names)], 1e-6f);
+        assertEquals(8.63E-004, values[idxFor("Rrs_443_rms_uncertainty", names)], 1e-6f);
+        assertEquals(0.0012822037, values[idxFor("Rrs_490_rms_uncertainty", names)], 1e-6f);
+        assertEquals(0.0018298769, values[idxFor("Rrs_510_rms_uncertainty", names)], 1e-6f);
+        assertEquals(0.0019287735, values[idxFor("Rrs_555_rms_uncertainty", names)], 1e-6f);
+        assertEquals(0.0018553946, values[idxFor("Rrs_670_rms_uncertainty", names)], 1e-6f);
+
+        assertEquals(-1.42E-004, values[idxFor("Rrs_412_bias_uncertainty", names)], 1e-6f);
+        assertEquals(6.00E-005, values[idxFor("Rrs_443_bias_uncertainty", names)], 1e-6f);
+        assertEquals(-6.89E-005, values[idxFor("Rrs_490_bias_uncertainty", names)], 1e-6f);
+        assertEquals(-1.13E-005, values[idxFor("Rrs_510_bias_uncertainty", names)], 1e-6f);
+        assertEquals(-2.91E-004, values[idxFor("Rrs_555_bias_uncertainty", names)], 1e-6f);
+        assertEquals(3.74E-004, values[idxFor("Rrs_670_bias_uncertainty", names)], 1e-6f);
+
+    }
+    
+    /*
+Rrs_412_bias_uncertainty	-1.42E-004
+Rrs_443_bias_uncertainty	6.00E-005
+Rrs_490_bias_uncertainty	-6.89E-005
+Rrs_510_bias_uncertainty	-1.13E-005
+Rrs_555_bias_uncertainty	-2.91E-004
+Rrs_670_bias_uncertainty	3.74E-004
+
+Rrs_412_rms_uncertainty	0.0010006025
+Rrs_443_rms_uncertainty	8.63E-004
+Rrs_490_rms_uncertainty	0.0012822037
+Rrs_510_rms_uncertainty	0.0018298769
+Rrs_555_rms_uncertainty	0.0019287735
+Rrs_670_rms_uncertainty	0.0018553946
+     */
 
     @Test
     public void testSensor() throws Exception {

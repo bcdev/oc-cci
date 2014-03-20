@@ -48,36 +48,29 @@ public class PostMergingDescriptor implements CellProcessorDescriptor {
     public CellProcessor createCellProcessor(VariableContext varCtx, CellProcessorConfig cellProcessorConfig) {
         Config config = (Config) cellProcessorConfig;
 
+        UncertaintyCellProcessor.UncertaintyAuxdata[] uncertaintyAuxdatas = UncertaintyCellProcessor.loadAuxdata();
+
         CellProcessor qaaCellProcessor = createQaaProcessor(varCtx);
 
         CellProcessor chlor = getChlorProcessor(varCtx, config);
 
         CellProcessor rssIdentityProcessor = new FeatureSelection(varCtx, BAND_NAMES);
         CellProcessor sensorIdentityProcessor = new FeatureSelection(varCtx, "sensor_0", "sensor_1", "sensor_2");
-        CellProcessor owtProcessor = new OWTCellProcessor(varCtx, OWTCellProcessor.BAND_NAMES);
 
-        CellProcessor products = new CellProcessorParallel(
+        CellProcessor owtProcessor = new OWTCellProcessor(varCtx, OWTCellProcessor.BAND_NAMES);
+        VariableContext owtVarCtx = BinningUtils.createVariableContext(owtProcessor.getOutputFeatureNames());
+
+        CellProcessor owtPassThrough = new FeatureSelection(owtVarCtx, owtProcessor.getOutputFeatureNames());
+        CellProcessor uncertaintyProcessor = new UncertaintyCellProcessor(owtVarCtx, uncertaintyAuxdatas);
+        CellProcessor owtUncertaintyProcessor = new CellProcessorParallel(owtPassThrough, uncertaintyProcessor);
+
+        CellProcessor owtUncertaintyIdProcessor = new CellProcessorSequence(owtProcessor, owtUncertaintyProcessor);
+        return new CellProcessorParallel(
                 qaaCellProcessor,
                 chlor,
                 rssIdentityProcessor,
                 sensorIdentityProcessor,
-                owtProcessor);
-
-
-        VariableContext uncertaintyVarCtx = BinningUtils.createVariableContext(products.getOutputFeatureNames());
-        CellProcessor uncertainty = new CellProcessorParallel(
-                new FeatureSelection(uncertaintyVarCtx, qaaCellProcessor.getOutputFeatureNames()),
-
-                new FeatureSelection(uncertaintyVarCtx, chlor.getOutputFeatureNames()),
-                new UncertaintyCellProcessor(uncertaintyVarCtx, "biasFile:TODO", "rmsFile:TODO", chlor.getOutputFeatureNames()),
-
-                new FeatureSelection(uncertaintyVarCtx, rssIdentityProcessor.getOutputFeatureNames()),
-
-                new FeatureSelection(uncertaintyVarCtx, sensorIdentityProcessor.getOutputFeatureNames()),
-                new FeatureSelection(uncertaintyVarCtx, owtProcessor.getOutputFeatureNames())
-        );
-
-        return new CellProcessorSequence(products, uncertainty);
+                owtUncertaintyIdProcessor);
     }
 
     private CellProcessor getChlorProcessor(VariableContext varCtx, Config config) {
