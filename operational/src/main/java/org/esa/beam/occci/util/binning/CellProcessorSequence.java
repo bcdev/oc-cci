@@ -11,15 +11,15 @@ import org.esa.beam.binning.support.VectorImpl;
 public class CellProcessorSequence extends CellProcessor {
 
     private final CellProcessor[] cellProcessors;
-    private final WritableVector[] outputVectors;
+    private final WritableVector[] temporaryVectors;
 
     public CellProcessorSequence(CellProcessor... cellProcessors) {
         super(cellProcessors[cellProcessors.length - 1].getOutputFeatureNames());
         this.cellProcessors = cellProcessors;
-        outputVectors = new WritableVector[cellProcessors.length - 1];
-        for (int i = 0; i < outputVectors.length; i++) {
+        temporaryVectors = new WritableVector[cellProcessors.length - 1];
+        for (int i = 0; i < temporaryVectors.length; i++) {
             CellProcessor cellProcessor = cellProcessors[i];
-            outputVectors[i] = new VectorImpl(new float[cellProcessor.getOutputFeatureNames().length]);
+            temporaryVectors[i] = new VectorImpl(new float[cellProcessor.getOutputFeatureNames().length]);
         }
     }
 
@@ -32,7 +32,7 @@ public class CellProcessorSequence extends CellProcessor {
                 // last processor write to outputVector
                 output = outputVector;
             } else {
-                output = outputVectors[i];
+                output = temporaryVectors[i];
             }
 
             final Vector input;
@@ -40,7 +40,7 @@ public class CellProcessorSequence extends CellProcessor {
                 // first processor read from inputVector
                 input = inputVector;
             } else {
-                input = outputVectors[i - 1];
+                input = temporaryVectors[i - 1];
             }
             cellProcessors[i].compute(input, output);
         }
