@@ -48,10 +48,9 @@ public class CellProcessorParallel extends CellProcessor {
     public void compute(Vector input, WritableVector output) {
         if (output instanceof VectorImpl) {
             VectorImpl outputVector = (VectorImpl) output;
+            final int initialOffset = outputVector.getOffset();
             for (int i = 0; i < cellProcessors.length; i++) {
-                int offset = offsets[i];
-                int size = sizes[i];
-                outputVector.setOffsetAndSize(offset, size);
+                outputVector.setOffsetAndSize(initialOffset + offsets[i], sizes[i]);
                 cellProcessors[i].compute(input, output);
             }
             outputVector.setOffsetAndSize(0, outputFeatureCount);
