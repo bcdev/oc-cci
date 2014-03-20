@@ -123,16 +123,15 @@ public class UncertaintyCellProcessor extends CellProcessor {
         try {
             list.addAll(loadAuxdata("cci_chla_bias.dat", BIAS_SUFFIX, "chlor_a"));
             list.addAll(loadAuxdata("cci_chla_rms.dat", RMS_SUFFIX, "chlor_a"));
+
             list.addAll(loadAuxdata("cci_Rrs_bias.dat", BIAS_SUFFIX, "Rrs", WVLS));
             list.addAll(loadAuxdata("cci_Rrs_rms.dat", RMS_SUFFIX, "Rrs", WVLS));
 
+            list.addAll(loadAuxdata("cci_iop_aph_bias.dat", BIAS_SUFFIX, "aph", WVLS));
+            list.addAll(loadAuxdata("cci_iop_aph_rms.dat", RMS_SUFFIX, "aph", WVLS));
+
             list.addAll(loadAuxdata("cci_iop_adg_bias.dat", BIAS_SUFFIX, "adg", WVLS));
             list.addAll(loadAuxdata("cci_iop_adg_rms.dat", RMS_SUFFIX, "adg", WVLS));
-
-
-
-
-//        UncertaintyCellProcessor.class.getResourceAsStream("rrs/cci_Rrs_rms.dat");
         } catch (IOException e) {
             throw new RuntimeException("Failed to load Uncertainty Auxdata", e);
         }
@@ -150,7 +149,7 @@ public class UncertaintyCellProcessor extends CellProcessor {
     static List<UncertaintyAuxdata> loadAuxdata(String resource, String uncertaintySuffix, String...varName) throws IOException {
         InputStream stream = UncertaintyCellProcessor.class.getResourceAsStream(resource);
         try {
-            return loadAuxdataTransposed(new InputStreamReader(stream), uncertaintySuffix, varName).subList(0, 1);
+            return loadAuxdata(new InputStreamReader(stream), uncertaintySuffix, varName);
         } finally {
             stream.close();
         }
@@ -214,9 +213,6 @@ public class UncertaintyCellProcessor extends CellProcessor {
             this.uncertaintyTable = uncertaintyTable;
             this.varName = varName;
             this.uncertaintySuffix = uncertaintySuffix;
-//            System.out.println("varName = " + varName);
-//            System.out.println("uncertaintySuffix = " + uncertaintySuffix);
-//            System.out.println("uncertaintyTable = " + Arrays.toString(uncertaintyTable));
         }
     }
 }

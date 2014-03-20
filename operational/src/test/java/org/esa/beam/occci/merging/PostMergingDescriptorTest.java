@@ -8,13 +8,17 @@ import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static java.util.Arrays.asList;
+import static org.esa.beam.occci.util.binning.BinningUtils.combine;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 
 public class PostMergingDescriptorTest {
-
+    private static final String[] WVLS = new String[]{"412", "443", "490", "510", "555", "670"};
     private static final String[] BAND_NAMES = {"Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670"};
     private static final float[] INPUT = new float[]{
             0.006186951f, 0.0054932158f, 0.004319099f,
@@ -27,31 +31,60 @@ public class PostMergingDescriptorTest {
     @Before
     public void setUp() throws Exception {
         input = new VectorImpl(INPUT);
-        String[] bands = BinningUtils.combine(BAND_NAMES, "sensor_0", "sensor_1", "sensor_2");
+        String[] bands = combine(BAND_NAMES, "sensor_0", "sensor_1", "sensor_2");
         VariableContext varCtx = BinningUtils.createVariableContext(bands);
         processor = PostMergingDescriptor.create(varCtx);
     }
 
     @Test
     public void testOutputFeatureNames() throws Exception {
-        String[] outputFeatureNames = processor.getOutputFeatureNames();
-        String[] expectOutputFeatures = {
-                "aph_412", "aph_443", "aph_490", "aph_510", "aph_555", "aph_670",
-                "atot_412", "atot_443", "atot_490", "atot_510", "atot_555", "atot_670",
-                "adg_412", "adg_443", "adg_490", "adg_510", "adg_555", "adg_670",
-                "bbp_412", "bbp_443", "bbp_490", "bbp_510", "bbp_555", "bbp_670",
-                "chlor_a",
-                "Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670",
-                "sensor_0", "sensor_1", "sensor_2",
-                "water_class1", "water_class2", "water_class3", "water_class4",
-                "water_class5", "water_class6", "water_class7", "water_class8", "water_class9",
-                "chlor_a_bias_uncertainty", "chlor_a_rms_uncertainty",
-                "Rrs_412_bias_uncertainty", "Rrs_443_bias_uncertainty", "Rrs_490_bias_uncertainty",
-                "Rrs_510_bias_uncertainty", "Rrs_555_bias_uncertainty", "Rrs_670_bias_uncertainty",
-                "Rrs_412_rms_uncertainty", "Rrs_443_rms_uncertainty", "Rrs_490_rms_uncertainty",
-                "Rrs_510_rms_uncertainty", "Rrs_555_rms_uncertainty", "Rrs_670_rms_uncertainty"
-        };
-        assertArrayEquals(expectOutputFeatures, outputFeatureNames);
+
+        String[] iops = {"aph", "atot", "adg", "bbp"};
+        String[] unc = {"bias_uncertainty", "rms_uncertainty"};
+        List<String> expectOutputFeatures = new ArrayList<String>();
+        List<String> allIOPs = combinationsPS(iops, WVLS);
+        expectOutputFeatures.addAll(allIOPs);
+        expectOutputFeatures.add("chlor_a");
+        List<String> rrs = combinationsPS(new String[]{"Rrs"}, WVLS);
+        expectOutputFeatures.addAll(rrs);
+        expectOutputFeatures.addAll(asList("sensor_0", "sensor_1", "sensor_2"));
+        expectOutputFeatures.addAll(asList("water_class1", "water_class2", "water_class3", "water_class4",
+                                           "water_class5", "water_class6", "water_class7", "water_class8", "water_class9"));
+
+        expectOutputFeatures.addAll(combinationsSP(new String[]{"chlor_a"}, unc));
+        expectOutputFeatures.addAll(combinationsSP(rrs.toArray(new String[rrs.size()]), unc));
+
+        List<String> aph = combinationsPS(new String[]{"aph"}, WVLS);
+        expectOutputFeatures.addAll(combinationsSP(aph.toArray(new String[aph.size()]), unc));
+
+        List<String> adg = combinationsPS(new String[]{"adg"}, WVLS);
+        expectOutputFeatures.addAll(combinationsSP(adg.toArray(new String[adg.size()]), unc));
+
+
+        String[] actualFeatures = processor.getOutputFeatureNames();
+        String[] expecteds = expectOutputFeatures.toArray(new String[expectOutputFeatures.size()]);
+        assertArrayEquals(expecteds, actualFeatures);
+
+    }
+
+    private List<String> combinationsPS(String[] prefixes, String... suffixes) {
+        List<String> combinations = new ArrayList<String>(prefixes.length * suffixes.length);
+        for (String prefix : prefixes) {
+            for (String suffix : suffixes) {
+                combinations.add(prefix + "_" + suffix);
+            }
+        }
+        return combinations;
+    }
+
+    private List<String> combinationsSP(String[] prefixes, String... suffixes) {
+        List<String> combinations = new ArrayList<String>(prefixes.length * suffixes.length);
+        for (String suffix : suffixes) {
+            for (String prefix : prefixes) {
+                combinations.add(prefix + "_" + suffix);
+            }
+        }
+        return combinations;
     }
 
     @Test
@@ -74,13 +107,13 @@ public class PostMergingDescriptorTest {
         processor.compute(input, new VectorImpl(values));
 //        System.out.println("names = " + Arrays.toString(names));
 //        System.out.println("values = " + Arrays.toString(values));
-        for (int i = 0; i < values.length; i++) {
-            float value = values[i];
-            String name = names[i];
-            if (/*name.startsWith("Rrs") &&*/ name.endsWith("uncertainty"))
-                System.out.println(name + " = " + value);
-
-        }
+//        for (int i = 0; i < values.length; i++) {
+//            float value = values[i];
+//            String name = names[i];
+//            if (name.startsWith("Rrs") && name.endsWith("uncertainty"))
+//                System.out.println(name + " = " + value);
+//
+//        }
         assertEquals(0.0010006025, values[idxFor("Rrs_412_rms_uncertainty", names)], 1e-6f);
         assertEquals(8.63E-004, values[idxFor("Rrs_443_rms_uncertainty", names)], 1e-6f);
         assertEquals(0.0012822037, values[idxFor("Rrs_490_rms_uncertainty", names)], 1e-6f);
@@ -150,29 +183,29 @@ Rrs_670_rms_uncertainty	0.0018553946
         assertEquals(0.012058698, values[idxFor("aph_443", names)], 1e-5f);
         assertEquals(0.008516298, values[idxFor("aph_490", names)], 1e-5f);
         assertEquals(0.005508071, values[idxFor("aph_510", names)], 1e-5f);
-        assertEquals(2.25E-004  , values[idxFor("aph_555", names)], 1e-5f);
-        assertEquals(Float.NaN  , values[idxFor("aph_670", names)], 1e-5f);
+        assertEquals(2.25E-004, values[idxFor("aph_555", names)], 1e-5f);
+        assertEquals(Float.NaN, values[idxFor("aph_670", names)], 1e-5f);
 
         assertEquals(0.037051506, values[idxFor("atot_412", names)], 1e-5f);
         assertEquals(0.032513037, values[idxFor("atot_443", names)], 1e-5f);
         assertEquals(0.029597668, values[idxFor("atot_490", names)], 1e-5f);
         assertEquals(0.038897656, values[idxFor("atot_510", names)], 1e-5f);
         assertEquals(0.060601648, values[idxFor("atot_555", names)], 1e-5f);
-        assertEquals(0.45561144 , values[idxFor("atot_670", names)], 1e-5f);
+        assertEquals(0.45561144, values[idxFor("atot_670", names)], 1e-5f);
 
-        assertEquals(0.022725413 , values[idxFor("adg_412", names)], 1e-5f);
-        assertEquals(0.014076872 , values[idxFor("adg_443", names)], 1e-5f);
+        assertEquals(0.022725413, values[idxFor("adg_412", names)], 1e-5f);
+        assertEquals(0.014076872, values[idxFor("adg_443", names)], 1e-5f);
         assertEquals(0.0068099326, values[idxFor("adg_490", names)], 1e-5f);
-        assertEquals(0.00499972  , values[idxFor("adg_510", names)], 1e-5f);
+        assertEquals(0.00499972, values[idxFor("adg_510", names)], 1e-5f);
         assertEquals(0.0024946064, values[idxFor("adg_555", names)], 1e-5f);
-        assertEquals(4.22E-004   , values[idxFor("adg_670", names)], 1e-5f);
+        assertEquals(4.22E-004, values[idxFor("adg_670", names)], 1e-5f);
 
-        assertEquals(0.001714396 , values[idxFor("bbp_412", names)], 1e-5f);
+        assertEquals(0.001714396, values[idxFor("bbp_412", names)], 1e-5f);
         assertEquals(0.0014909913, values[idxFor("bbp_443", names)], 1e-5f);
         assertEquals(0.0012279887, values[idxFor("bbp_490", names)], 1e-5f);
         assertEquals(0.0011369907, values[idxFor("bbp_510", names)], 1e-5f);
-        assertEquals(9.66E-004   , values[idxFor("bbp_555", names)], 1e-5f);
-        assertEquals(6.72E-004   , values[idxFor("bbp_670", names)], 1e-5f);
+        assertEquals(9.66E-004, values[idxFor("bbp_555", names)], 1e-5f);
+        assertEquals(6.72E-004, values[idxFor("bbp_670", names)], 1e-5f);
     }
 
     @Test
@@ -181,15 +214,15 @@ Rrs_670_rms_uncertainty	0.0018553946
         float[] values = new float[names.length];
         processor.compute(input, new VectorImpl(values));
 
-        assertEquals(5.04E-007,   values[idxFor("water_class1", names)], 1e-6f);
+        assertEquals(5.04E-007, values[idxFor("water_class1", names)], 1e-6f);
         assertEquals(0.043338194, values[idxFor("water_class2", names)], 1e-6f);
-        assertEquals(0.77421,     values[idxFor("water_class3", names)], 1e-6f);
-        assertEquals(4.51E-006,   values[idxFor("water_class4", names)], 1e-6f);
-        assertEquals(7.38E-020,   values[idxFor("water_class5", names)], 1e-6f);
-        assertEquals(4.31E-006,   values[idxFor("water_class6", names)], 1e-6f);
-        assertEquals(2.60E-004,   values[idxFor("water_class7", names)], 1e-6f);
-        assertEquals(1.34E-006,   values[idxFor("water_class8", names)], 1e-6f);
-        assertEquals(4.29E-007,   values[idxFor("water_class9", names)], 1e-6f);
+        assertEquals(0.77421, values[idxFor("water_class3", names)], 1e-6f);
+        assertEquals(4.51E-006, values[idxFor("water_class4", names)], 1e-6f);
+        assertEquals(7.38E-020, values[idxFor("water_class5", names)], 1e-6f);
+        assertEquals(4.31E-006, values[idxFor("water_class6", names)], 1e-6f);
+        assertEquals(2.60E-004, values[idxFor("water_class7", names)], 1e-6f);
+        assertEquals(1.34E-006, values[idxFor("water_class8", names)], 1e-6f);
+        assertEquals(4.29E-007, values[idxFor("water_class9", names)], 1e-6f);
     }
 
     private static int idxFor(String bandName, String[] bandNames) {
