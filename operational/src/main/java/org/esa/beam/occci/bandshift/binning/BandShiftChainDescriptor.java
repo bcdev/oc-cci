@@ -91,7 +91,7 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
             CellProcessor qaaProcessor = new QaaCellProcessor(qaaVarCtx, qaaConfig);
 
             String[] qaaOutFeatures = qaaProcessor.getOutputFeatureNames();
-            String[] meanPlusQaaFeatures = BinningUtils.combine(meanOutFeatures, qaaOutFeatures);
+            String[] meanPlusQaaFeatures = BinningUtils.concat(meanOutFeatures, qaaOutFeatures);
             VariableContext bandShiftVarCtx = BinningUtils.createVariableContext(meanPlusQaaFeatures);
             CellProcessor bandshiftProcessor = new BandShiftCellProcessor(bandShiftVarCtx,
                                                                           Sensor.MODISA_NAME,

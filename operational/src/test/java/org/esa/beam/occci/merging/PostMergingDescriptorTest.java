@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.esa.beam.occci.util.binning.BinningUtils.combine;
+import static org.esa.beam.occci.util.binning.BinningUtils.concat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -31,7 +31,7 @@ public class PostMergingDescriptorTest {
     @Before
     public void setUp() throws Exception {
         input = new VectorImpl(INPUT);
-        String[] bands = combine(BAND_NAMES, "sensor_0", "sensor_1", "sensor_2");
+        String[] bands = concat(BAND_NAMES, "sensor_0", "sensor_1", "sensor_2");
         VariableContext varCtx = BinningUtils.createVariableContext(bands);
         processor = PostMergingDescriptor.create(varCtx);
     }

@@ -174,7 +174,7 @@ public class SensorMerging extends AbstractAggregator {
 
         @Override
         public String[] getVarNames() {
-            return BinningUtils.combine(rrsFeatureNames, "sensor");
+            return BinningUtils.concat(rrsFeatureNames, "sensor");
         }
     }
 
@@ -198,7 +198,7 @@ public class SensorMerging extends AbstractAggregator {
     }
 
     private static String[] createSpatialFeatureNames(String[] rrsFeatureNames) {
-        return BinningUtils.combine(rrsFeatureNames, "sensor");
+        return BinningUtils.concat(rrsFeatureNames, "sensor");
     }
 
     private static String[] createTemporalFeatureNames(String[] rrsFeatureNames) {
@@ -230,7 +230,7 @@ public class SensorMerging extends AbstractAggregator {
                 return features;
             }
             case MERGING: {
-                return BinningUtils.combine(rrsFeatureNames, "sensor_0", "sensor_1", "sensor_2");
+                return BinningUtils.concat(rrsFeatureNames, "sensor_0", "sensor_1", "sensor_2");
             }
         }
         throw new IllegalArgumentException("Unsupported mode:" + mode);

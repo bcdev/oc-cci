@@ -21,7 +21,7 @@ public class BandShiftCellProcessorTest {
 
     @Test
     public void testThrowsExceptionOnMissingBands() throws IOException {
-        String[] bandNames = BinningUtils.combine(RRS_BAND_NAMES, "does_not_exist");
+        String[] bandNames = BinningUtils.concat(RRS_BAND_NAMES, "does_not_exist");
         final VariableContext ctx = BinningUtils.createVariableContext(RRS_BAND_NAMES);
      try {
             new BandShiftCellProcessor(ctx, "MERIS", bandNames, bandNames, new int[0]);
@@ -37,7 +37,7 @@ public class BandShiftCellProcessorTest {
         final String[] outputFeatureNames = {"Rrs_413", "Rrs_510", "Rrs_490", "Rrs_560", "Rrs_555", "Rrs_665", "Rrs_670"};
         final int[] outCenterWaveLengths = new int[]{413, 510, 490, 560, 555, 665, 670};
 
-        String[] allBands = BinningUtils.combine(RRS_BAND_NAMES, IOP_BAND_NAMES);
+        String[] allBands = BinningUtils.concat(RRS_BAND_NAMES, IOP_BAND_NAMES);
         final VariableContext ctx = BinningUtils.createVariableContext(allBands);
         final BandShiftCellProcessor postProcessor = new BandShiftCellProcessor(ctx, "MODISA", RRS_BAND_NAMES, IOP_BAND_NAMES, outCenterWaveLengths);
 

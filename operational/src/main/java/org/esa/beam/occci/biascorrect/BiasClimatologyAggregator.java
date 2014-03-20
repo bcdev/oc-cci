@@ -265,7 +265,7 @@ public class BiasClimatologyAggregator extends AbstractAggregator {
     }
 
     static String[] createOutputFeatureNames(Config config) {
-        return BinningUtils.combine(config.getVarNames(), "sensor");
+        return BinningUtils.concat(config.getVarNames(), "sensor");
     }
 
     static DateIndexCalculator createDateIndexCalculator(Config config) {
