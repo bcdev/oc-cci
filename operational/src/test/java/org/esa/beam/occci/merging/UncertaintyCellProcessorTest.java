@@ -1,5 +1,6 @@
 package org.esa.beam.occci.merging;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.esa.beam.occci.merging.UncertaintyCellProcessor.computeClassificationSum;
@@ -38,7 +39,8 @@ public class UncertaintyCellProcessorTest {
         double chlaBias = computeUncertainty(chlaBiasTable, classificationSum, WATER_VALUES);
         assertEquals(-0.03771342, chlaBias, 1e-6);
     }
-    
+
+    @Ignore
     @Test
     public void testRrs_412() throws Exception {
         double classificationSum = computeClassificationSum(WATER_VALUES);
