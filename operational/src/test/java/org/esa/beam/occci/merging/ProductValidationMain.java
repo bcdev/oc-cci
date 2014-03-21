@@ -29,16 +29,28 @@ public class ProductValidationMain {
 //            "bbp_412"
 //    };
 
-    private static final String[] COMPARISON_NAMES = {
-                "Rrs_412", "Rrs_412_bias_uncertainty", "Rrs_412_rms_uncertainty",
-                "Rrs_555", "Rrs_555_bias_uncertainty", "Rrs_555_rms_uncertainty"
-        };
-
+//    private static final String[] COMPARISON_NAMES = {
+//                "Rrs_412", "Rrs_412_bias_uncertainty", "Rrs_412_rms_uncertainty",
+//                "Rrs_555", "Rrs_555_bias_uncertainty", "Rrs_555_rms_uncertainty"
+//        };
 
 //    private static final String[] COMPARISON_NAMES = {
 //            "water_class1", "water_class2", "water_class3", "water_class4",
 //            "water_class5", "water_class6", "water_class7", "water_class8", "water_class9"
 //    };
+
+
+    private static final String[] COMPARISON_NAMES = {
+            "chlor_a", "chlor_a_bias_uncertainty", "chlor_a_rms_uncertainty",
+            "adg_412", "adg_412_bias_uncertainty", "adg_412_rms_uncertainty",
+            "aph_412", "aph_412_bias_uncertainty", "aph_412_rms_uncertainty",
+            "atot_412",
+            "bbp_412",
+            "Rrs_412", "Rrs_412_bias_uncertainty", "Rrs_412_rms_uncertainty",
+            "Rrs_555", "Rrs_555_bias_uncertainty", "Rrs_555_rms_uncertainty",
+            "water_class1", "water_class2", "water_class3", "water_class4",
+            "water_class5", "water_class6", "water_class7", "water_class8", "water_class9"
+    };
 
 
     public static void main(String[] args) throws IOException, InvalidRangeException {
@@ -124,7 +136,11 @@ public class ProductValidationMain {
                             expected = Float.NaN;
                         }
                         final float actual = outputValues[compIndices[j]];
-                        if (same(expected, actual)) {
+                        boolean same = same(expected, actual);
+//                        if (COMPARISON_NAMES[j].equals("Rrs_412_rms_uncertainty")) {
+//                            System.out.println(COMPARISON_NAMES[j] + ": expected = " + expected + "  actual = " + actual + "(" + same + ")");
+//                        }
+                        if (same) {
                             countPixelSameData[j]++;
                         } else {
 //                            System.out.println("band     = " + COMPARISON_NAMES[j]);
