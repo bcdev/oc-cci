@@ -18,12 +18,27 @@ public class ProductValidationMain {
     private static final String[] RRS_NAMES = {"Rrs_412", "Rrs_443", "Rrs_490", "Rrs_510", "Rrs_555", "Rrs_670"};
 
 
-    private static final String[] COMPARISON_NAMES = {"chlor_a","chlor_a_bias_uncertainty", "chlor_a_rms_uncertainty"};
+//    private static final String[] COMPARISON_NAMES = {"chlor_a", "chlor_a_bias_uncertainty", "chlor_a_rms_uncertainty"};
+
+//    private static final String[] COMPARISON_NAMES = {"atot_412", "adg_412", "aph_412", "bbp_412"};
+
+//    private static final String[] COMPARISON_NAMES = {
+//            "adg_412", "adg_412_bias_uncertainty", "adg_412_rms_uncertainty",
+//            "aph_412", "aph_412_bias_uncertainty", "aph_412_rms_uncertainty",
+//            "atot_412",
+//            "bbp_412"
+//    };
+
+    private static final String[] COMPARISON_NAMES = {
+                "Rrs_412", "Rrs_412_bias_uncertainty", "Rrs_412_rms_uncertainty",
+                "Rrs_555", "Rrs_555_bias_uncertainty", "Rrs_555_rms_uncertainty"
+        };
+
 
 //    private static final String[] COMPARISON_NAMES = {
 //            "water_class1", "water_class2", "water_class3", "water_class4",
-//            "water_class5", "water_class6", "water_class7", "water_class8", "water_class9"};
-
+//            "water_class5", "water_class6", "water_class7", "water_class8", "water_class9"
+//    };
 
 
     public static void main(String[] args) throws IOException, InvalidRangeException {
@@ -104,18 +119,20 @@ public class ProductValidationMain {
                     processor.compute(inputVector, outputVector);
 
                     for (int j = 0; j < compVars.length; j++) {
-                        final float expected = compData[j][i];
+                        float expected = compData[j][i];
+                        if (expected == compFillValues[j]) {
+                            expected = Float.NaN;
+                        }
                         final float actual = outputValues[compIndices[j]];
-                        final float diff = Math.abs(expected - actual);
-                        if (diff <= 1e-4) {
+                        if (same(expected, actual)) {
                             countPixelSameData[j]++;
                         } else {
-//                        System.out.println("reference = " + compareData[i]);
-//                        System.out.println("computed  = " + outputValues[compareIndex]);
-//                        System.out.println("diff      = " + diff);
-//                        System.out.println("inputValues = " + Arrays.toString(inputValues));
-//                        System.out.println("outputValues = " + Arrays.toString(outputValues));
-//                        System.out.println();
+//                            System.out.println("band     = " + COMPARISON_NAMES[j]);
+//                            System.out.println("expected = " + expected);
+//                            System.out.println("actual   = " + actual);
+//                            System.out.println("inputs   = " + Arrays.toString(inputValues));
+//                            System.out.println("outputs  = " + Arrays.toString(outputValues));
+//                            System.out.println();
                         }
                     }
                 }
@@ -126,11 +143,23 @@ public class ProductValidationMain {
         System.out.println("dt = " + dt);
         System.out.println();
         System.out.println("comparing: " + Arrays.toString(COMPARISON_NAMES));
-        System.out.printf("countPixel         = %,10d%n", countPixel);
-        System.out.printf("countPixelWithData = %,10d%n", countPixelWithData);
+        printNameLabelValue("countPixel", null, countPixel);
+        printNameLabelValue("countPixelWithData", null, countPixelWithData);
         for (int i = 0; i < COMPARISON_NAMES.length; i++) {
-            System.out.printf("countPixelSame[%s]   = %,10d%n", COMPARISON_NAMES[i], countPixelSameData[i]);
-            System.out.printf("countPixelDiffer[%s] = %,10d%n", COMPARISON_NAMES[i], (countPixelWithData - countPixelSameData[i]));
+            printNameLabelValue("countPixelSame", COMPARISON_NAMES[i], countPixelSameData[i]);
+            printNameLabelValue("countPixelDiffer", COMPARISON_NAMES[i], (countPixelWithData - countPixelSameData[i]));
+        }
+    }
+
+    private static boolean same(float v1, float v2) {
+        return Float.isNaN(v1) && Float.isNaN(v2) || Math.abs(v1 - v1) <= 1e-4;
+    }
+
+    private static void printNameLabelValue(String label, String name, int value) {
+        if (name != null) {
+            System.out.printf("%-20s[%-30s] = %,10d%n", label, name, value);
+        } else {
+            System.out.printf("%-20s%-32s = %,10d%n", label, " ", value);
         }
     }
 }
