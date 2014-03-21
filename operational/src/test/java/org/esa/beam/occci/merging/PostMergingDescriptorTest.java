@@ -2,7 +2,6 @@ package org.esa.beam.occci.merging;
 
 import org.esa.beam.binning.CellProcessor;
 import org.esa.beam.binning.VariableContext;
-import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.support.VectorImpl;
 import org.esa.beam.occci.util.binning.BinningUtils;
 import org.junit.Before;
@@ -14,8 +13,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.esa.beam.occci.util.binning.BinningUtils.concat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 public class PostMergingDescriptorTest {
@@ -27,11 +25,9 @@ public class PostMergingDescriptorTest {
             2f, 4f, 6f};
 
     private CellProcessor processor;
-    private Vector input;
 
     @Before
     public void setUp() throws Exception {
-        input = new VectorImpl(INPUT);
         String[] bands = concat(BAND_NAMES, "sensor_0", "sensor_1", "sensor_2");
         VariableContext varCtx = BinningUtils.createVariableContext(bands);
         processor = PostMergingDescriptor.create(varCtx);
@@ -92,7 +88,7 @@ public class PostMergingDescriptorTest {
     public void testRrs() throws Exception {
         String[] names = processor.getOutputFeatureNames();
         float[] values = new float[names.length];
-        processor.compute(input, new VectorImpl(values));
+        processor.compute(new VectorImpl(INPUT), new VectorImpl(values));
         assertEquals(INPUT[0], values[idxFor("Rrs_412", names)], 1e-6f);
         assertEquals(INPUT[1], values[idxFor("Rrs_443", names)], 1e-6f);
         assertEquals(INPUT[2], values[idxFor("Rrs_490", names)], 1e-6f);
@@ -106,7 +102,7 @@ public class PostMergingDescriptorTest {
     public void testRrs_Uncertainty() throws Exception {
         String[] names = processor.getOutputFeatureNames();
         float[] values = new float[names.length];
-        processor.compute(input, new VectorImpl(values));
+        processor.compute(new VectorImpl(INPUT), new VectorImpl(values));
         assertEquals(0.0010006025, values[idxFor("Rrs_412_rms_uncertainty", names)], 1e-6f);
         assertEquals(8.63E-004, values[idxFor("Rrs_443_rms_uncertainty", names)], 1e-6f);
         assertEquals(0.0012822037, values[idxFor("Rrs_490_rms_uncertainty", names)], 1e-6f);
@@ -127,7 +123,7 @@ public class PostMergingDescriptorTest {
     public void testSensor() throws Exception {
         String[] names = processor.getOutputFeatureNames();
         float[] values = new float[names.length];
-        processor.compute(input, new VectorImpl(values));
+        processor.compute(new VectorImpl(INPUT), new VectorImpl(values));
         assertEquals(INPUT[6], values[idxFor("sensor_0", names)], 1e-6f);
         assertEquals(INPUT[7], values[idxFor("sensor_1", names)], 1e-6f);
         assertEquals(INPUT[8], values[idxFor("sensor_2", names)], 1e-6f);
@@ -137,7 +133,7 @@ public class PostMergingDescriptorTest {
     public void testOC4v6() throws Exception {
         String[] names = processor.getOutputFeatureNames();
         float[] values = new float[names.length];
-        processor.compute(input, new VectorImpl(values));
+        processor.compute(new VectorImpl(INPUT), new VectorImpl(values));
         assertEquals(0.15371986f, values[idxFor("chlor_a", names)], 1e-6f);
     }
 
@@ -145,7 +141,7 @@ public class PostMergingDescriptorTest {
     public void testOC4v6_Uncertainty() throws Exception {
         String[] names = processor.getOutputFeatureNames();
         float[] values = new float[names.length];
-        processor.compute(input, new VectorImpl(values));
+        processor.compute(new VectorImpl(INPUT), new VectorImpl(values));
         assertEquals(0.2661012f, values[idxFor("chlor_a_rms_uncertainty", names)], 1e-6f);
         assertEquals(-0.03771342f, values[idxFor("chlor_a_bias_uncertainty", names)], 1e-6f);
     }
@@ -154,7 +150,7 @@ public class PostMergingDescriptorTest {
     public void testQAA() throws Exception {
         String[] names = processor.getOutputFeatureNames();
         float[] values = new float[names.length];
-        processor.compute(input, new VectorImpl(values));
+        processor.compute(new VectorImpl(INPUT), new VectorImpl(values));
 
         assertEquals(0.009442732, values[idxFor("aph_412", names)], 1e-5f);
         assertEquals(0.012058698, values[idxFor("aph_443", names)], 1e-5f);
@@ -189,7 +185,7 @@ public class PostMergingDescriptorTest {
     public void testOWT() throws Exception {
         String[] names = processor.getOutputFeatureNames();
         float[] values = new float[names.length];
-        processor.compute(input, new VectorImpl(values));
+        processor.compute(new VectorImpl(INPUT), new VectorImpl(values));
 
         assertEquals(5.04E-007, values[idxFor("water_class1", names)], 1e-6f);
         assertEquals(0.043338194, values[idxFor("water_class2", names)], 1e-6f);
