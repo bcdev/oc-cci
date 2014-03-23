@@ -58,27 +58,27 @@ public class QaaResult {
         }
     }
 
-    public void setATotalOutOfBounds(boolean outOfBounds) {
+    public void setAtotOutOfBounds(boolean outOfBounds) {
         if (outOfBounds) {
-            flags |= QaaConstants.FLAG_MASK_A_TOTAL_OOB;
+            flags |= QaaConstants.FLAG_MASK_ATOT_OOB;
         } else {
-            flags &= ~QaaConstants.FLAG_MASK_A_TOTAL_OOB;
+            flags &= ~QaaConstants.FLAG_MASK_ATOT_OOB;
         }
     }
 
-    public void setBbSpmOutOfBounds(boolean outOfBounds) {
+    public void setBbpOutOfBounds(boolean outOfBounds) {
         if (outOfBounds) {
-            flags |= QaaConstants.FLAG_MASK_BB_SPM_OOB;
+            flags |= QaaConstants.FLAG_MASK_BBP_OOB;
         } else {
-            flags &= ~QaaConstants.FLAG_MASK_BB_SPM_OOB;
+            flags &= ~QaaConstants.FLAG_MASK_BBP_OOB;
         }
     }
 
-    public void setAPigOutOfBounds(boolean outOfBounds) {
+    public void setAphOutOfBounds(boolean outOfBounds) {
         if (outOfBounds) {
-            flags |= QaaConstants.FLAG_MASK_A_PIG_OOB;
+            flags |= QaaConstants.FLAG_MASK_APH_OOB;
         } else {
-            flags &= ~QaaConstants.FLAG_MASK_A_PIG_OOB;
+            flags &= ~QaaConstants.FLAG_MASK_APH_OOB;
         }
     }
 
@@ -86,19 +86,19 @@ public class QaaResult {
         return flags;
     }
 
-    public void setAYsOutOfBounds(boolean outOfBounds) {
+    public void setAdgOutOfBounds(boolean outOfBounds) {
         if (outOfBounds) {
-            flags |= QaaConstants.FLAG_MASK_A_YS_OOB;
+            flags |= QaaConstants.FLAG_MASK_ADG_OOB;
         } else {
-            flags &= ~QaaConstants.FLAG_MASK_A_YS_OOB;
+            flags &= ~QaaConstants.FLAG_MASK_ADG_OOB;
         }
     }
 
-    public void setAYsNegative(boolean isNegative) {
+    public void setAdgNegative(boolean isNegative) {
         if (isNegative) {
-            flags |= QaaConstants.FLAG_MASK_NEGATIVE_AYS;
+            flags |= QaaConstants.FLAG_MASK_NEGATIVE_ADG;
         } else {
-            flags &= ~QaaConstants.FLAG_MASK_NEGATIVE_AYS;
+            flags &= ~QaaConstants.FLAG_MASK_NEGATIVE_ADG;
         }
     }
 

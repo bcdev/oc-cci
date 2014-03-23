@@ -119,7 +119,7 @@ public class QaaDescriptorTest {
     }
 
     @Test
-    public void testValidateConfig_invalidA_pig_out_indices() {
+    public void testValidateConfig_invalidAph_out_indices() {
         final QaaConfig config = createValidConfig();
         config.setAphOutIndices(new int[]{-1});
 
@@ -148,7 +148,7 @@ public class QaaDescriptorTest {
     }
 
     @Test
-    public void testValidateConfig_invalidA_total_out_indices() {
+    public void testValidateConfig_invalid_atot_out_indices() {
         final QaaConfig config = createValidConfig();
 
         config.setAtotOutIndices(new int[]{-1});
@@ -177,7 +177,7 @@ public class QaaDescriptorTest {
     }
 
     @Test
-    public void testValidateConfig_invalidA_ys_out_indices() {
+    public void testValidateConfig_invalid_adg_out_indices() {
         final QaaConfig config = createValidConfig();
         config.setAdgOutIndices(new int[]{-1});
 
@@ -206,7 +206,7 @@ public class QaaDescriptorTest {
     }
 
     @Test
-    public void testValidateConfig_invalidBb_spm_out_indices() {
+    public void testValidateConfig_invalid_bbp_out_indices() {
         final QaaConfig config = createValidConfig();
 
         config.setBbpOutIndices(new int[]{-1});

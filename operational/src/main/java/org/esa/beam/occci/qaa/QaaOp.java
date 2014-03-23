@@ -25,10 +25,10 @@ public class QaaOp extends PixelOperator {
 
     private static final String PRODUCT_TYPE = "QAA_L2";
 
-    private static final String A_TOTAL_PATTERN = "a_total_%d";
-    private static final String BB_SPM_PATTERN = "bb_spm_%d";
-    private static final String A_PIG_PATTERN = "a_pig_%d";
-    private static final String A_YS_PATTERN = "a_ys_%d";
+    private static final String ATOT_PATTERN = "atot_%d";
+    private static final String BBP_PATTERN = "bbp_%d";
+    private static final String APH_PATTERN = "aph_%d";
+    private static final String ADG_PATTERN = "adg_%d";
 
 
     @SourceProduct(alias = "source", description = "The source product.")
@@ -83,21 +83,21 @@ public class QaaOp extends PixelOperator {
         super.configureTargetProduct(configurer);
         double[] wavelengths = sensorConfig.getWavelengths();
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
-            addBand(configurer, A_TOTAL_PATTERN, wavelengths[i],
+            addBand(configurer, ATOT_PATTERN, wavelengths[i],
                     "Total absorption coefficient of all water constituents at %d nm.");
         }
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
-            addBand(configurer, BB_SPM_PATTERN, wavelengths[i],
+            addBand(configurer, BBP_PATTERN, wavelengths[i],
                     "Backscattering of suspended particulate matter at %d nm.");
         }
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
-            addBand(configurer, A_PIG_PATTERN, wavelengths[i],
+            addBand(configurer, APH_PATTERN, wavelengths[i],
                     "Pigment absorption coefficient at %d nm.");
         }
 
         for (int i = 0; i < QaaConstants.NUM_IOP_BANDS; i++) {
-            addBand(configurer, A_YS_PATTERN, wavelengths[i],
+            addBand(configurer, ADG_PATTERN, wavelengths[i],
                     "Yellow substance absorption coefficient at %d nm.");
         }
 
@@ -147,20 +147,20 @@ public class QaaOp extends PixelOperator {
 
     static void writeResult(WritableSample[] targetSamples, QaaResult qaaResult) {
         int sampleIndex = 0;
-        for (float anA_total : qaaResult.getAtot()) {
-            targetSamples[sampleIndex++].set(anA_total);
+        for (float atot : qaaResult.getAtot()) {
+            targetSamples[sampleIndex++].set(atot);
         }
 
-        for (float aBb_spm : qaaResult.getBbp()) {
-            targetSamples[sampleIndex++].set(aBb_spm);
+        for (float bbp : qaaResult.getBbp()) {
+            targetSamples[sampleIndex++].set(bbp);
         }
 
-        for (float anA_pig : qaaResult.getAph()) {
-            targetSamples[sampleIndex++].set(anA_pig);
+        for (float aph : qaaResult.getAph()) {
+            targetSamples[sampleIndex++].set(aph);
         }
 
-        for (float a_y : qaaResult.getAdg()) {
-            targetSamples[sampleIndex++].set(a_y);
+        for (float adg : qaaResult.getAdg()) {
+            targetSamples[sampleIndex++].set(adg);
         }
     }
 

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 public class ResultMapperTest {
 
     @Test
-    public void testAssign_a_pig() {
+    public void testAssign_aph() {
         final QaaConfig config = new QaaConfig();
         config.setAphOutIndices(new int[]{1, 2});
 
@@ -25,7 +25,7 @@ public class ResultMapperTest {
     }
 
     @Test
-    public void testAssign_a_total() {
+    public void testAssign_atot() {
         final QaaConfig config = new QaaConfig();
         config.setAtotOutIndices(new int[]{1, 3, 4});
 
@@ -41,7 +41,7 @@ public class ResultMapperTest {
     }
 
     @Test
-    public void testAssign_a_ys() {
+    public void testAssign_adg() {
         final QaaConfig config = new QaaConfig();
         config.setAdgOutIndices(new int[]{0, 2});
 
@@ -56,7 +56,7 @@ public class ResultMapperTest {
     }
 
     @Test
-    public void testAssign_bb_spm() {
+    public void testAssign_bbp() {
         final QaaConfig config = new QaaConfig();
         config.setBbpOutIndices(new int[]{0, 2, 4});
 

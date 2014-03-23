@@ -28,9 +28,9 @@ import java.util.Arrays;
  */
 public class BandShiftCorrection {
 
-    private static final int APH_INDEX = 0;  // phytoplankton absorption  (a_pig_*)
-    private static final int ACDM_INDEX = 1; // detritus-gelbstoff absorption
-    private static final int BBP_INDEX = 2;  // particle backscattering
+    private static final int APH_INDEX = 0;  // phytoplankton absorption  (aph_*)
+    private static final int ACDM_INDEX = 1; // detritus-gelbstoff absorption  (adg_*)
+    private static final int BBP_INDEX = 2;  // particle backscattering (bbp_*)
 
     //constants used in the calculation of the below-water-reflectance
     private static final double g0 = 0.089;

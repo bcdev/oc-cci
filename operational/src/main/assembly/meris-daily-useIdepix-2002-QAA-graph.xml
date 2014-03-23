@@ -76,15 +76,15 @@
             <includes>
                 <include>
                     <productId>sourceProducts0</productId>
-                    <name>a_pig_443</name>
+                    <name>aph_443</name>
                 </include>
                 <include>
                     <productId>sourceProducts0</productId>
-                    <name>a_ys_443</name>
+                    <name>adg_443</name>
                 </include>
                 <include>
                     <productId>sourceProducts0</productId>
-                    <name>bb_spm_443</name>
+                    <name>bbp_443</name>
                 </include>
             </includes>
             <geographicError>0.01</geographicError>
