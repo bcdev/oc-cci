@@ -49,11 +49,16 @@ public class CellProcessorParallel extends CellProcessor {
         if (output instanceof VectorImpl) {
             VectorImpl outputVector = (VectorImpl) output;
             final int initialOffset = outputVector.getOffset();
+            int size = outputVector.getSize();
+            if (size != outputFeatureCount)  {
+                String msg = "Size of output vector is '" + size + "' expected to be '" + outputFeatureCount + "'";
+                throw new IllegalArgumentException(msg);
+            }
             for (int i = 0; i < cellProcessors.length; i++) {
                 outputVector.setOffsetAndSize(initialOffset + offsets[i], sizes[i]);
                 cellProcessors[i].compute(input, output);
             }
-            outputVector.setOffsetAndSize(0, outputFeatureCount);
+            outputVector.setOffsetAndSize(initialOffset, outputFeatureCount);
         } else {
             throw new IllegalArgumentException("output vector must be of type 'VectorImpl'");
         }
