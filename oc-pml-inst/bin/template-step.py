@@ -25,7 +25,7 @@ def main(templateName, parameters):
     for key, value in zip(parameters[0::2], parameters[1::2]):
       parameterDict[key] = value
     requestName = Template(templateName).safe_substitute(parameterDict)
-    templateFileName = BASE_DIR + '/etc/' + templateName
+    templateFileName = BASE_DIR + '/templates/' + templateName
     requestFileName = BASE_DIR + '/requests/' + requestName
     generateRequest(templateFileName, requestFileName, parameterDict)
     return subprocess.call(['submit-production.sh', requestFileName])
