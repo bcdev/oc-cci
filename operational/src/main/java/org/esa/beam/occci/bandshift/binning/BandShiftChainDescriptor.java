@@ -6,6 +6,7 @@ import org.esa.beam.binning.CellProcessorDescriptor;
 import org.esa.beam.binning.VariableContext;
 import org.esa.beam.binning.Vector;
 import org.esa.beam.binning.WritableVector;
+import org.esa.beam.binning.cellprocessor.FeatureSelection;
 import org.esa.beam.binning.support.VectorImpl;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.occci.bandshift.Sensor;
@@ -14,6 +15,7 @@ import org.esa.beam.occci.qaa.binning.QaaCellProcessor;
 import org.esa.beam.occci.qaa.binning.QaaConfig;
 import org.esa.beam.occci.util.binning.BinningUtils;
 import org.esa.beam.occci.util.binning.CellProcessorParallel;
+import org.esa.beam.occci.util.binning.CellProcessorSequence;
 import org.esa.beam.occci.util.binning.MarkSensorProcessor;
 import org.esa.beam.occci.util.binning.SumToMeanCellProcessor;
 
@@ -61,16 +63,30 @@ public class BandShiftChainDescriptor implements CellProcessorDescriptor {
         if (QaaConstants.MERIS.equals(config.sensorName)) {
 
             String[] rrsInputFeatures = {"Rrs412_mean", "Rrs443_mean", "Rrs490_mean", "Rrs510_mean", "Rrs560_mean", "Rrs665_mean"};
-            String[] iopInputFeatures = {"aph_443_mean", "adg_443_mean", "bbp_443_mean"};
 
-            CellProcessor bandshiftProcessor =new BandShiftCellProcessor(varCtx,
+            QaaConfig qaaConfig = new QaaConfig();
+            qaaConfig.setSensorName(QaaConstants.MERIS);
+            qaaConfig.setBandNames(rrsInputFeatures);
+            qaaConfig.setAtotOutIndices(new int[0]);
+            qaaConfig.setBbpOutIndices(new int[]{1});
+            qaaConfig.setAphOutIndices(new int[]{1});
+            qaaConfig.setAdgOutIndices(new int[]{1});
+            CellProcessor qaaProcessor = new QaaCellProcessor(varCtx, qaaConfig);
+            String[] iopFeatureNames = qaaProcessor.getOutputFeatureNames();
+
+            CellProcessor rrsPassThrough = new FeatureSelection(varCtx, rrsInputFeatures);
+            CellProcessor qaaPlusRrs = new CellProcessorParallel(rrsPassThrough, qaaProcessor);
+            VariableContext qaaPlusRrsVarCtx = BinningUtils.createVariableContext(qaaPlusRrs.getOutputFeatureNames());
+
+            CellProcessor bandshiftProcessor =new BandShiftCellProcessor(qaaPlusRrsVarCtx,
                                                                          Sensor.MERIS_NAME,
                                                                          rrsInputFeatures,
-                                                                         iopInputFeatures,
+                                                                         iopFeatureNames,
                                                                          BS_OUTPUT_CENTER_WAVELENGTHS);
 
+            CellProcessor bandshiftProcessorSequence = new CellProcessorSequence(qaaPlusRrs, bandshiftProcessor);
             CellProcessor markProcessor = new MarkSensorProcessor(0);
-            return new CellProcessorParallel(bandshiftProcessor, markProcessor);
+            return new CellProcessorParallel(bandshiftProcessorSequence, markProcessor);
         } else if (QaaConstants.MODIS.equals(config.sensorName)) {
 
             String[] modisSumFeatures = {"Rrs_412_sum", "Rrs_443_sum", "Rrs_488_sum", "Rrs_531_sum", "Rrs_547_sum", "Rrs_667_sum"};

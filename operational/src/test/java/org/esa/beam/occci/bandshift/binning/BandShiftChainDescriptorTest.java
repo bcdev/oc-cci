@@ -22,24 +22,23 @@ public class BandShiftChainDescriptorTest {
         config.setSensorName(QaaConstants.MERIS);
         BandShiftChainDescriptor descriptor = new BandShiftChainDescriptor();
         String[] merisBinnedDailyFeatures = {
-                "Rrs412_mean", "Rrs443_mean", "Rrs490_mean", "Rrs510_mean", "Rrs560_mean", "Rrs665_mean",
-                "aph_443_mean", "adg_443_mean", "bbp_443_mean"};
+                "Rrs412_mean", "Rrs443_mean", "Rrs490_mean", "Rrs510_mean", "Rrs560_mean", "Rrs665_mean"};
         VariableContext varCtx = BinningUtils.createVariableContext(merisBinnedDailyFeatures);
         CellProcessor processor = descriptor.createCellProcessor(varCtx, config);
 
         assertArrayEquals(BANDSHIFTED_FEATURES, processor.getOutputFeatureNames());
 
-
-        Vector input = new VectorImpl(new float[]{0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.1f, 0.2f, 0.3f});
+        final float[] rrs = {0.012084f, 0.0089211f, 0.0062153f, 0.0021173f, 0.0014871f, 0.0010871f};
+        Vector input = new VectorImpl(rrs);
         WritableVector output = new VectorImpl(new float[BANDSHIFTED_FEATURES.length]);
         processor.compute(input, output);
 
-        assertEquals(0.0991176962852478, output.get(0), 1e-6f);
-        assertEquals(0.20000000298023224, output.get(1), 1e-6f);
-        assertEquals(0.30000001192092896, output.get(2), 1e-6f);
-        assertEquals(0.4000000059604645, output.get(3), 1e-6f);
-        assertEquals(0.49425825476646423, output.get(4), 1e-6f);
-        assertEquals(0.5753246545791626, output.get(5), 1e-6f);
+        assertEquals(0.012153108604252338, output.get(0), 1e-6f);
+        assertEquals(0.008921099826693535, output.get(1), 1e-6f);
+        assertEquals(0.006215299945324659, output.get(2), 1e-6f);
+        assertEquals(0.0021172999404370785, output.get(3), 1e-6f);
+        assertEquals(0.0015832344070076942, output.get(4), 1e-6f);
+        assertEquals(0.0010357934515923262, output.get(5), 1e-6f);
         assertEquals(0.0f, output.get(6), 1e-6f);
     }
 
