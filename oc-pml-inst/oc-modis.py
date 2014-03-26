@@ -74,7 +74,7 @@ class OcModis(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'modis/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
-                               'outputPath', 'modis/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'modis/daily-bs/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-modis-daily-bs' ]
                 #pm.execute('template-step.py', modisFormatInputs, [modisFormatBSName], parameters=params, logprefix=modisFormatBSName)
 
@@ -88,7 +88,7 @@ class OcModis(Daemon):
         params = ['l3format-\${prefix}-\${date}.xml', \
                        'date', '5years', \
                        'inputPath', 'modis/bias-map-parts/part-*', \
-                       'outputPath', 'modis/bias-map-netcdf-mapped', \
+                       'outputPath', 'modis/bias-map-netcdf-geo', \
                        'prefix', 'OC-modis-bias' ]
         #pm.execute('template-step.py', [modisBiasMapName], [modisBiasFormatName], parameters=params, logprefix=modisBiasFormatName)
 

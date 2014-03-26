@@ -74,7 +74,7 @@ class OcSeawifs(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'seawifs/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
-                               'outputPath', 'seawifs/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'seawifs/daily-bs/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-seawifs-daily-bs' ]
                 #pm.execute('template-step.py', seawifsFormatInputs, [seawifsFormatBSName], parameters=params, logprefix=seawifsFormatBSName)
 
@@ -88,7 +88,7 @@ class OcSeawifs(Daemon):
         params = ['l3format-\${prefix}-\${date}.xml', \
                        'date', '5years', \
                        'inputPath', 'seawifs/bias-map-parts/part-*', \
-                       'outputPath', 'seawifs/bias-map-netcdf-mapped', \
+                       'outputPath', 'seawifs/bias-map-netcdf-geo', \
                        'prefix', 'OC-seawifs-bias' ]
         #pm.execute('template-step.py', [seawifsBiasMapName], [seawifsBiasFormatName], parameters=params, logprefix=seawifsBiasFormatName)
 

@@ -92,7 +92,7 @@ class OcMeris(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'meris/daily/' + year + '/' + month + '/????-??-??-L3-1/part-*', \
-                               'outputPath', 'meris/daily/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'meris/daily/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-meris-daily' ]
                 #pm.execute('template-step.py', merisDailyFormatInputs, [merisFormatName], parameters=params, logprefix=merisFormatName)
 
@@ -100,7 +100,7 @@ class OcMeris(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'meris/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
-                               'outputPath', 'meris/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'meris/daily-bs/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-meris-daily-bs' ]
                 #pm.execute('template-step.py', merisDailyBSFormatInputs, [merisFormatBSName], parameters=params, logprefix=merisFormatBSName)
 
@@ -114,7 +114,7 @@ class OcMeris(Daemon):
         params = ['l3format-\${prefix}-\${date}.xml', \
                        'date', '5years', \
                        'inputPath', 'meris/bias-map-parts/part-*', \
-                       'outputPath', 'meris/bias-map-netcdf-mapped', \
+                       'outputPath', 'meris/bias-map-netcdf-geo', \
                        'prefix', 'OC-meris-bias' ]
         #pm.execute('template-step.py', [merisBiasMapName], [merisBiasFormatName], parameters=params, logprefix=merisBiasFormatName)
 

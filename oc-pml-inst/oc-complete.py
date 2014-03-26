@@ -93,7 +93,7 @@ class OcComplete(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'meris/daily/' + year + '/' + month + '/????-??-??-L3-1/part-*', \
-                               'outputPath', 'meris/daily/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'meris/daily/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-meris-daily' ]
                 #pm.execute('template-step.py', merisDailyFormatInputs, [merisFormatName], parameters=params, logprefix=merisFormatName)
 
@@ -101,7 +101,7 @@ class OcComplete(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'meris/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
-                               'outputPath', 'meris/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'meris/daily-bs/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-meris-daily-bs' ]
                 #pm.execute('template-step.py', merisDailyBSFormatInputs, [merisFormatBSName], parameters=params, logprefix=merisFormatBSName)
 
@@ -115,7 +115,7 @@ class OcComplete(Daemon):
         params = ['l3format-\${prefix}-\${date}.xml', \
                        'date', '5years', \
                        'inputPath', 'meris/bias-map-parts/part-*', \
-                       'outputPath', 'meris/bias-map-netcdf-mapped', \
+                       'outputPath', 'meris/bias-map-netcdf-geo', \
                        'prefix', 'OC-meris-bias' ]
         #pm.execute('template-step.py', [merisBiasMapName], [merisBiasFormatName], parameters=params, logprefix=merisBiasFormatName)
 
@@ -154,7 +154,7 @@ class OcComplete(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'modis/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
-                               'outputPath', 'modis/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'modis/daily-bs/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-modis-daily-bs' ]
                 #pm.execute('template-step.py', modisFormatInputs, [modisFormatBSName], parameters=params, logprefix=modisFormatBSName)
 
@@ -168,7 +168,7 @@ class OcComplete(Daemon):
         params = ['l3format-\${prefix}-\${date}.xml', \
                        'date', '5years', \
                        'inputPath', 'modis/bias-map-parts/part-*', \
-                       'outputPath', 'modis/bias-map-netcdf-mapped', \
+                       'outputPath', 'modis/bias-map-netcdf-geo', \
                        'prefix', 'OC-modis-bias' ]
         #pm.execute('template-step.py', [modisBiasMapName], [modisBiasFormatName], parameters=params, logprefix=modisBiasFormatName)
 
@@ -207,7 +207,7 @@ class OcComplete(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'seawifs/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
-                               'outputPath', 'seawifs/daily-bs/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'seawifs/daily-bs/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-seawifs-daily-bs' ]
                 #pm.execute('template-step.py', seawifsFormatInputs, [seawifsFormatBSName], parameters=params, logprefix=seawifsFormatBSName)
 
@@ -221,7 +221,7 @@ class OcComplete(Daemon):
         params = ['l3format-\${prefix}-\${date}.xml', \
                        'date', '5years', \
                        'inputPath', 'seawifs/bias-map-parts/part-*', \
-                       'outputPath', 'seawifs/bias-map-netcdf-mapped', \
+                       'outputPath', 'seawifs/bias-map-netcdf-geo', \
                        'prefix', 'OC-seawifs-bias' ]
         #pm.execute('template-step.py', [seawifsBiasMapName], [seawifsBiasFormatName], parameters=params, logprefix=seawifsBiasFormatName)
 
@@ -258,7 +258,7 @@ class OcComplete(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'merged-daily/' + year + '/' + month + '/????-??-??-parts/part-*', \
-                               'outputPath', 'merged-daily/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'merged-daily/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-merged-daily' ]
                 pm.execute('template-step.py', formatMergedInputs, [mergedFormatName], parameters=params, logprefix=mergedFormatName)
 

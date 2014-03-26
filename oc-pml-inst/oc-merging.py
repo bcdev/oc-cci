@@ -69,7 +69,7 @@ class OcMerging(Daemon):
                 params = ['l3format-\${prefix}-\${date}.xml', \
                                'date', month + '-' + year, \
                                'inputPath', 'merged-daily/' + year + '/' + month + '/????-??-??-parts/part-*', \
-                               'outputPath', 'merged-daily/' + year + '/' + month + '/netcdf-mapped', \
+                               'outputPath', 'merged-daily/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-merged-daily' ]
                 pm.execute('template-step.py', formatMergedInputs, [mergedFormatName], parameters=params, logprefix=mergedFormatName)
 
