@@ -72,7 +72,7 @@
             <wps:Data>
                 <wps:ComplexData>
                     <parameters>
-                        <idepixDir>/calvalus/projects/oc/Idepix4v1/${year}/${month}</idepixDir>
+                        <idepixDir>/calvalus/projects/oc-pml/meris/idepix/${year}/${month}</idepixDir>
                     </parameters>
                 </wps:ComplexData>
             </wps:Data>

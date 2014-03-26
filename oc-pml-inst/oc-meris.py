@@ -56,12 +56,21 @@ class OcMeris(Daemon):
                 merisDailyFormatInputs = []
                 merisDailyBSFormatInputs = []
                 (minDate, maxDate) = getMinMaxDate(year, month)
+
+                idepixName = 'idepix-' + str(minDate)
+                params = ['meris-idepix-\${year}-\${month}.xml', \
+                          'minDate', str(minDate), \
+                          'maxDate', str(maxDate), \
+                          'year', year, \
+                          'month', month ]
+                pm.execute('template-step.py', ['MERIS_L1B'], [idepixName], parameters=params, logprefix=idepixName)
+
                 polymerName = 'polymer-' + str(minDate)
                 params = ['meris-polymer-\${year}-\${month}.xml', \
-                              'minDate', str(minDate), \
-                              'maxDate', str(maxDate), \
-                              'year', year, \
-                              'month', month ]
+                          'minDate', str(minDate), \
+                          'maxDate', str(maxDate), \
+                          'year', year, \
+                          'month', month ]
                 pm.execute('template-step.py', ['MERIS_L1B'], [polymerName], parameters=params, logprefix=polymerName)
 
                 # for now because we have not more test-data
@@ -74,7 +83,7 @@ class OcMeris(Daemon):
                               'date', str(singleDay), \
                               'year', year, \
                               'month', month ]
-                    pm.execute('template-step.py', [polymerName], [merisDailyName], parameters=params, logprefix=merisDailyName)
+                    pm.execute('template-step.py', [idepixName, polymerName], [merisDailyName], parameters=params, logprefix=merisDailyName)
                     merisDailyFormatInputs.append(merisDailyName)
 
                     merisDailyBSName = 'meris-daily-bs-' + str(singleDay)
