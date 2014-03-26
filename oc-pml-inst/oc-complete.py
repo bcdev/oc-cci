@@ -58,7 +58,7 @@ class OcComplete(Daemon):
                 merisDailyBSFormatInputs = []
                 (minDate, maxDate) = getMinMaxDate(year, month)
                 polymerName = 'polymer-' + str(minDate)
-                params = ['polymer-\${year}-\${month}.xml', \
+                params = ['meris-polymer-\${year}-\${month}.xml', \
                               'minDate', str(minDate), \
                               'maxDate', str(maxDate), \
                               'year', year, \
