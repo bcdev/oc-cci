@@ -71,6 +71,5 @@ public class QaaCellProcessor extends CellProcessor {
         qaaResult = qaaAlgorithm.process(rrs, qaaResult);
         qaaResult.infinityAsNaN();
         resultMapper.assign(qaaResult, outputVector);
-
     }
 }
