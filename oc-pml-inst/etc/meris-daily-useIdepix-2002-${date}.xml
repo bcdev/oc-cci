@@ -31,7 +31,7 @@
         <wps:Input>
             <ows:Identifier>processorName</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>meris-daily-useIdepix-2002-QAA</wps:LiteralData>
+                <wps:LiteralData>meris-daily-useIdepix-2002</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
@@ -144,22 +144,10 @@
                                 <type>AVG</type>
                                 <varName>Rrs665</varName>
                             </aggregator>
-                            <aggregator>
-                                <type>AVG</type>
-                                <varName>aph_443</varName>
-                            </aggregator>
-                            <aggregator>
-                                <type>AVG</type>
-                                <varName>adg_443</varName>
-                            </aggregator>
-                            <aggregator>
-                                <type>AVG</type>
-                                <varName>bbp_443</varName>
-                            </aggregator>
                         </aggregators>
                         <postProcessor>
                             <type>Selection</type>
-                            <varNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,aph_443_mean,adg_443_mean,bbp_443_mean</varNames>
+                            <varNames>Rrs412_mean,Rrs443_mean,Rrs490_mean,Rrs510_mean,Rrs560_mean,Rrs665_mean,aph_443_mean</varNames>
                         </postProcessor>
                     </parameters>
                 </wps:ComplexData>

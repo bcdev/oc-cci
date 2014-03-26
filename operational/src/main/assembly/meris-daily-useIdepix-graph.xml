@@ -4,7 +4,7 @@
     <version>1.0</version>
 
     <header>
-      <target refid="polymerPlusIdepixPlusQaa" />
+      <target refid="polymerPlusIdepix" />
       <source name="polymer">${inputPath}</source>
       <source name="idepix">$parameters.getProperty("idepixDir")/L2_of_${filename}.seq</source>
     </header>
@@ -45,46 +45,6 @@
                 <include>
                     <productId>sourceProducts1</productId>
                     <name>sun_zenith_band</name>
-                </include>
-            </includes>
-            <geographicError>0.01</geographicError>
-        </parameters>
-    </node>
-
-    <node id="qaa">
-        <operator>OC-CCI.QaaIOP</operator>
-        <sources>
-            <source>polymerPlusIdepix</source>
-        </sources>
-
-        <parameters>
-            <reflectanceBandNames>Rw412,Rw443,Rw490,Rw510,Rw560,Rw620</reflectanceBandNames>
-            <sensorName>MERIS</sensorName>
-            <validPixelExpression>not(l1_flags.INVALID or cloud_classif_flags.F_LAND or cloud_classif_flags.F_SNOW_ICE) and ( (bitmask &amp; 31) == 0 ) and (Rw412 &lt;= 0.12) and (sun_zenith_band &lt;= 80.0)</validPixelExpression>
-            <divideByPI>true</divideByPI>
-        </parameters>
-    </node>
-
-    <node id="polymerPlusIdepixPlusQaa">
-        <operator>Merge</operator>
-        <sources>
-            <masterProduct>polymerPlusIdepix</masterProduct>
-            <sourceProducts>qaa</sourceProducts>
-        </sources>
-
-        <parameters>
-            <includes>
-                <include>
-                    <productId>sourceProducts0</productId>
-                    <name>aph_443</name>
-                </include>
-                <include>
-                    <productId>sourceProducts0</productId>
-                    <name>adg_443</name>
-                </include>
-                <include>
-                    <productId>sourceProducts0</productId>
-                    <name>bbp_443</name>
                 </include>
             </includes>
             <geographicError>0.01</geographicError>
