@@ -40,7 +40,7 @@ public class SensorMerging extends AbstractAggregator {
 
     private final Mode mode;
     private final int numRrs;
-    private final int[] rssBandIndices;
+    private final int[] inputBandIndices;
 
 
     public SensorMerging(VariableContext varCtx, Mode mode, String... rrsFeatureNames) {
@@ -51,7 +51,7 @@ public class SensorMerging extends AbstractAggregator {
         );
         this.mode = mode;
         this.numRrs = rrsFeatureNames.length;
-        this.rssBandIndices = BinningUtils.getBandIndices(varCtx, rrsFeatureNames);
+        this.inputBandIndices = BinningUtils.getBandIndices(varCtx, getSpatialFeatureNames());
     }
 
     @Override
@@ -61,8 +61,8 @@ public class SensorMerging extends AbstractAggregator {
 
     @Override
     public void aggregateSpatial(BinContext ctx, Observation observationVector, WritableVector spatialVector) {
-        for (int i = 0; i < rssBandIndices.length; i++) {
-            spatialVector.set(i, observationVector.get(rssBandIndices[i]));
+        for (int i = 0; i < inputBandIndices.length; i++) {
+            spatialVector.set(i, observationVector.get(inputBandIndices[i]));
         }
     }
 

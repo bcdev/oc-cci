@@ -75,7 +75,7 @@ class OcMeris(Daemon):
 
                 # for now because we have not more test-data
                 minDate = datetime.date(int(year), int(month), 1)
-                maxDate = datetime.date(int(year), int(month), 9)
+                maxDate = datetime.date(int(year), int(month), 1)
 
                 for singleDay in dateRange(minDate, maxDate):
                     merisDailyName = 'meris-daily-' + str(singleDay)
@@ -103,7 +103,8 @@ class OcMeris(Daemon):
                                'inputPath', 'meris/daily/' + year + '/' + month + '/????-??-??-L3-1/part-*', \
                                'outputPath', 'meris/daily/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-meris-daily' ]
-                #pm.execute('template-step.py', merisDailyFormatInputs, [merisFormatName], parameters=params, logprefix=merisFormatName)
+                # (debug only / user product ?) daily binned
+                pm.execute('template-step.py', merisDailyFormatInputs, [merisFormatName], parameters=params, logprefix=merisFormatName)
 
                 merisFormatBSName = 'meris-daily-bs-format-' + month + '-' + year
                 params = ['l3format-\${prefix}-\${date}.xml', \
@@ -111,7 +112,8 @@ class OcMeris(Daemon):
                                'inputPath', 'meris/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
                                'outputPath', 'meris/daily-bs/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-meris-daily-bs' ]
-                #pm.execute('template-step.py', merisDailyBSFormatInputs, [merisFormatBSName], parameters=params, logprefix=merisFormatBSName)
+                # debug only daily binned band-shifted
+                pm.execute('template-step.py', merisDailyBSFormatInputs, [merisFormatBSName], parameters=params, logprefix=merisFormatBSName)
 
         merisBiasMapName = 'meris-bias-map'
         params = ['bias-map-\${sensor}.xml', \
@@ -125,7 +127,8 @@ class OcMeris(Daemon):
                        'inputPath', 'meris/bias-map-parts/part-*', \
                        'outputPath', 'meris/bias-map-netcdf-geo', \
                        'prefix', 'OC-meris-bias' ]
-        #pm.execute('template-step.py', [merisBiasMapName], [merisBiasFormatName], parameters=params, logprefix=merisBiasFormatName)
+        # debug only bias map
+        pm.execute('template-step.py', [merisBiasMapName], [merisBiasFormatName], parameters=params, logprefix=merisBiasFormatName)
 
         #======================================================
         pm.wait_for_completion()

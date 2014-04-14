@@ -55,7 +55,7 @@ class OcModis(Daemon):
 
                 # for now because we have not more test-data
                 minDate = datetime.date(int(year), int(month), 1)
-                maxDate = datetime.date(int(year), int(month), 9)
+                maxDate = datetime.date(int(year), int(month), 1)
 
                 for singleDay in dateRange(minDate, maxDate):
                     modisDailyBSName = 'modis-daily-bs-' + str(singleDay)
@@ -63,7 +63,7 @@ class OcModis(Daemon):
                                'date', str(singleDay), \
                                'year', year, \
                                'month', month ,\
-                               'doy', '%03d' % (singleDay.timetuple().tm_yday)  ]
+                               'day', '%02d' % (singleDay.day)  ]
                     pm.execute('template-step.py', ['MODIS_L3_daily'], [modisDailyBSName], parameters=params, logprefix=modisDailyBSName)
 
                     modisFormatInputs.append(modisDailyBSName)
@@ -76,7 +76,8 @@ class OcModis(Daemon):
                                'inputPath', 'modis/daily-bs/' + year + '/' + month + '/????-??-??/part-*', \
                                'outputPath', 'modis/daily-bs/' + year + '/' + month + '/netcdf-geo', \
                                'prefix', 'OC-modis-daily-bs' ]
-                #pm.execute('template-step.py', modisFormatInputs, [modisFormatBSName], parameters=params, logprefix=modisFormatBSName)
+                # debug only daily binned band-shifted
+                pm.execute('template-step.py', modisFormatInputs, [modisFormatBSName], parameters=params, logprefix=modisFormatBSName)
 
         modisBiasMapName = 'modis-bias-map'
         params = ['bias-map-\${sensor}.xml', \
@@ -90,7 +91,8 @@ class OcModis(Daemon):
                        'inputPath', 'modis/bias-map-parts/part-*', \
                        'outputPath', 'modis/bias-map-netcdf-geo', \
                        'prefix', 'OC-modis-bias' ]
-        #pm.execute('template-step.py', [modisBiasMapName], [modisBiasFormatName], parameters=params, logprefix=modisBiasFormatName)
+        # debug only bias map
+        pm.execute('template-step.py', [modisBiasMapName], [modisBiasFormatName], parameters=params, logprefix=modisBiasFormatName)
 
         #======================================================
         pm.wait_for_completion()

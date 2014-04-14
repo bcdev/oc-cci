@@ -54,7 +54,7 @@ class OcMerging(Daemon):
 
                 # for now because we have not more test-data
                 minDate = datetime.date(int(year), int(month), 1)
-                maxDate = datetime.date(int(year), int(month), 9)
+                maxDate = datetime.date(int(year), int(month), 1)
 
                 for singleDay in dateRange(minDate, maxDate):
                     mergedName = 'merged-daily-' + str(singleDay)

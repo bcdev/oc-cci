@@ -38,7 +38,7 @@
         <wps:Input>
             <ows:Identifier>inputPath</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>/calvalus/projects/oc-pml/modis/daily/${year}/A${year}${doy}.L3b_DAY_RRS.main</wps:LiteralData>
+                <wps:LiteralData>/calvalus/eodata/MODIS-NASA/L3b/${year}/${month}/${day}/A${year}*.L3b_DAY_RRS.main</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 

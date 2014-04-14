@@ -2,7 +2,7 @@
 # OC environment setup
 # usage:  . myoc
 
-export OC_INST=/home/hadoop/oc-pml-inst
+export OC_INST=/users/rsg/ach/scratch_local/beam-workspace/oc-cci/oc-pml-inst
 
 export OC_LOG=$OC_INST/log
 
@@ -11,7 +11,7 @@ mkdir -p $OC_INST/requests
 
 export OC_PRODUCTION_JAR=$OC_INST/lib/cpt.jar
 export OC_BEAM_VERSION=beam-4.11.1
-export OC_CALVALUS_VERSION=calvalus-1.7
+export OC_CALVALUS_VERSION=calvalus-1.8
 
 export PYTHONPATH=$OC_INST:$OC_INST/src:$PYTHONPATH
 export PATH=$OC_INST/bin:$PATH
