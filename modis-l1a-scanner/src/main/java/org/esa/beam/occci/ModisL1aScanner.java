@@ -17,14 +17,22 @@
 package org.esa.beam.occci;
 
 import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
+import ucar.nc2.iosp.IOServiceProvider;
+import ucar.nc2.iosp.hdf4.H4iosp;
 import ucar.nc2.iosp.hdf4.ODLparser;
+import ucar.unidata.io.RandomAccessFile;
+import ucar.unidata.io.UncompressInputStream;
 import ucar.unidata.io.bzip2.CBZip2InputStream;
 
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,9 +40,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Extracts start-time,ned-time and bounding polygon from a MODIS L1A file
@@ -62,11 +74,17 @@ public class ModisL1aScanner {
             }
         }
         for (String filename : args) {
+            long t0 = System.currentTimeMillis();
             try {
-                processSingleFile(filename);
+//                processSingleFileWithCopying(filename);
+                processSingleFileInMemory(filename);
             } catch (IOException ignore) {
                 System.err.println("Error while processing:" + filename);
                 ignore.printStackTrace();
+            } finally {
+                long t1 = System.currentTimeMillis();
+                long delta = t1 - t0;
+                //System.err.println("delta = " + delta);
             }
         }
         boolean sucess = tmpDir.delete();
@@ -75,7 +93,29 @@ public class ModisL1aScanner {
         }
     }
 
-    private static void processSingleFile(String arg) throws IOException {
+    private static void processSingleFileInMemory(String arg) throws IOException {
+        File modisL1aFile = new File(arg);
+        String absolutePath = modisL1aFile.getAbsolutePath();
+        System.err.println("processing absolutePath = " + absolutePath);
+        if (!modisL1aFile.exists()) {
+            System.err.println("File does not exist: " + absolutePath);
+            return;
+        }
+        RandomAccessFile inMemoryRaf = getInMemoryRaf(modisL1aFile);
+        IOServiceProvider h4iosp = new H4iosp();
+        if (h4iosp.isValidFile(inMemoryRaf)) {
+            NetcdfFile netcdfFile = new DummyNetcdfFile(h4iosp, inMemoryRaf, modisL1aFile.getAbsolutePath());
+            try {
+                analyzeFile(absolutePath, netcdfFile);
+            } finally {
+                netcdfFile.close();
+            }
+        } else {
+            h4iosp.close();
+        }
+    }
+
+    private static void processSingleFileWithCopying(String arg) throws IOException {
         File modisL1aFile = new File(arg);
         String absolutePath = modisL1aFile.getAbsolutePath();
         System.err.println("processing absolutePath = " + absolutePath);
@@ -93,23 +133,7 @@ public class ModisL1aScanner {
                 // normal case - not compressed
                 netcdfFile = NetcdfFile.open(absolutePath);
             }
-
-            Group rootGroup = netcdfFile.getRootGroup();
-            Element coreElem = getEosElement(CORE_METADATA, rootGroup);
-            Element inventoryMetadata = coreElem.getChild("INVENTORYMETADATA");
-            Element masterGroup = inventoryMetadata.getChild("MASTERGROUP");
-            Element rangeDateTime = masterGroup.getChild("RANGEDATETIME");
-
-            String startTime = getIsoDateTime(rangeDateTime, "RANGEBEGINNINGDATE", "RANGEBEGINNINGTIME");
-            String endTime = getIsoDateTime(rangeDateTime, "RANGEENDINGDATE", "RANGEENDINGTIME");
-
-            Element spatialDomainContainer = masterGroup.getChild("SPATIALDOMAINCONTAINER");
-            Element horizontalSpatialComainContainer = spatialDomainContainer.getChild("HORIZONTALSPATIALDOMAINCONTAINER");
-            Element gPolygon = horizontalSpatialComainContainer.getChild("GPOLYGON");
-            Element gPolygonContainer = gPolygon.getChild("GPOLYGONCONTAINER");
-            String polygon = getBoundingPolygon(gPolygonContainer);
-
-            System.out.println(absolutePath + "\t" + startTime + "\t" + endTime + "\t" + polygon);
+            analyzeFile(absolutePath, netcdfFile);
         } finally {
             if (uncompressedPath != null) {
                 File uncompressedFile = new File(uncompressedPath);
@@ -118,6 +142,36 @@ public class ModisL1aScanner {
                     System.err.println("Failed to delete uncompressed file: " + uncompressedPath);
                 }
             }
+        }
+    }
+
+    private static void analyzeFile(String absolutePath, NetcdfFile netcdfFile) throws IOException {
+        Group rootGroup = netcdfFile.getRootGroup();
+        Element coreElem = getEosElement(CORE_METADATA, rootGroup);
+        // printElement(coreElem);
+
+        Element inventoryMetadata = coreElem.getChild("INVENTORYMETADATA");
+        Element masterGroup = inventoryMetadata.getChild("MASTERGROUP");
+        Element rangeDateTime = masterGroup.getChild("RANGEDATETIME");
+
+        String startTime = getIsoDateTime(rangeDateTime, "RANGEBEGINNINGDATE", "RANGEBEGINNINGTIME");
+        String endTime = getIsoDateTime(rangeDateTime, "RANGEENDINGDATE", "RANGEENDINGTIME");
+
+        Element spatialDomainContainer = masterGroup.getChild("SPATIALDOMAINCONTAINER");
+        Element horizontalSpatialComainContainer = spatialDomainContainer.getChild("HORIZONTALSPATIALDOMAINCONTAINER");
+        Element gPolygon = horizontalSpatialComainContainer.getChild("GPOLYGON");
+        Element gPolygonContainer = gPolygon.getChild("GPOLYGONCONTAINER");
+        String polygon = getBoundingPolygon(gPolygonContainer);
+
+        System.out.println(absolutePath + "\t" + startTime + "\t" + endTime + "\t" + polygon);
+    }
+
+    private static void printElement(Element element) {
+        XMLOutputter fmt = new XMLOutputter(Format.getPrettyFormat());
+        try {
+            fmt.output(element, System.out);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -271,6 +325,80 @@ public class ModisL1aScanner {
             out.write(buffer, 0, bytesRead);
         }
         long t2 = System.currentTimeMillis();
-        System.err.println("uncompress-time = " + (t2-t1));
+        System.err.println("uncompress-time = " + (t2 - t1));
+    }
+
+    private static RandomAccessFile getInMemoryRaf(File file) throws IOException {
+        MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(openInputStream(file));
+        return new ImageInputStreamRandomAccessFile(imageInputStream, file.length());
+    }
+
+    private static InputStream openInputStream(File file) throws IOException {
+        String fileName = file.getName().toLowerCase();
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        if (fileName.endsWith(".z")) {
+            is = new UncompressInputStream(is);
+        } else if (fileName.endsWith(".zip")) {
+            ZipInputStream zin = new ZipInputStream(is);
+            ZipEntry ze = zin.getNextEntry();
+            if (ze != null) {
+                is = zin;
+            }
+        } else if (fileName.endsWith(".bz2")) {
+            is = new CBZip2InputStream(is, true);
+        } else if (fileName.endsWith(".gzip") || fileName.endsWith(".gz")) {
+            is = new GZIPInputStream(is);
+        }
+        return is;
+    }
+
+    // use internal class to defer execution of static initializer
+    private static class DummyNetcdfFile extends NetcdfFile {
+
+        private DummyNetcdfFile(IOServiceProvider spi, RandomAccessFile raf, String location) throws IOException {
+            super(spi, raf, location, null);
+        }
+    }
+
+    private static class ImageInputStreamRandomAccessFile extends RandomAccessFile {
+
+        private final ImageInputStream imageInputStream;
+        private final long length;
+
+        public ImageInputStreamRandomAccessFile(ImageInputStream imageInputStream, long length) {
+            super(16000);
+            this.imageInputStream = imageInputStream;
+            this.length = length;
+        }
+
+        @Override
+        public String getLocation() {
+            return "ImageInputStream";
+        }
+
+        @Override
+        public long length() throws IOException {
+            return length;
+        }
+
+        @Override
+        protected int read_(long pos, byte[] b, int offset, int len) throws IOException {
+            imageInputStream.seek(pos);
+            return imageInputStream.read(b, offset, len);
+        }
+
+        @Override
+        public long readToByteChannel(WritableByteChannel dest, long offset, long nbytes) throws IOException {
+            int n = (int) nbytes;
+            byte[] buff = new byte[n];
+            int done = read_(offset, buff, 0, n);
+            dest.write(ByteBuffer.wrap(buff));
+            return done;
+        }
+
+        @Override
+        public void close() throws IOException {
+            imageInputStream.close();
+        }
     }
 }
