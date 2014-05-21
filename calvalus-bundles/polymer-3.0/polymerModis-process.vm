@@ -3,6 +3,7 @@
 inFile="$inputFile"
 inFileName="$inputFile.name"
 inPath="$inputPath"
+inputPathParent="$inputPath.parent"
 
 #[[
 set -e
@@ -49,9 +50,32 @@ export LD_LIBRARY_PATH="${POLY_PYTHON}/pylib"
 export PYTHONPATH="${POLY_PYTHON}/pyshared"
 ./get_meteo_calvalus.py ${inFileName} >> parameters.txt
 
-#get GEO file for MODIS processing
-geoPath=${inPath/L1B_LAC/GEO}
-hadoop fs -get ${geoPath} .
+geoFileArchive=${inFileName:0:14}.GEO
+geoFileLocal=${inFileName%L1B_LAC}GEO
+echo "GEO file $geoFile"
+
+# MODIS needs geofile
+echo "testting in same directory ${inputPathParent}/${geoFileArchive}*"
+geoPath=`hadoop fs -ls ${inputPathParent}/${geoFileArchive}*|awk '{ print $8 }'`
+if [ "$geoPath" != "" ]; then
+  echo "copy to cwd: $geoPath -> $geoFileLocal"
+  hadoop fs -copyToLocal $geoPath $geoFileLocal
+else
+  pdate="${inFileName:1:7}"
+  pyear=${pdate%???}
+  pday=${pdate#$pyear}
+  productDate=$(date -d "${pyear}-01-01 +${pday} days -1 day" "+%Y/%m/%d")
+
+  echo "testting in MODISA_GEO directory /calvalus/eodata/MODISA_GEO/v1/${productDate}/${geoFileArchive}*"
+  geoPath=`hadoop fs -ls /calvalus/eodata/MODISA_GEO/v1/${productDate}/${geoFileArchive}*|awk '{ print $8 }'`
+  if [ "$geoPath" != "" ]; then
+    echo "copy to cwd: $geoPath -> $geoFileLocal"
+    hadoop fs -copyToLocal $geoPath $geoFileLocal
+  else
+    echo failed to find GEO file
+    exit 1
+  fi
+fi
 
 # append input,output to parameters.txt
 outFile=$(basename ${inFileName} .N1).polymer.${suffix}
