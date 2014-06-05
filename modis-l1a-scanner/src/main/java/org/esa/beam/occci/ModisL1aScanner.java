@@ -146,9 +146,10 @@ public class ModisL1aScanner {
     }
 
     private static void analyzeFile(String absolutePath, NetcdfFile netcdfFile) throws IOException {
+        //System.out.println("netcdfFile = " + netcdfFile);
         Group rootGroup = netcdfFile.getRootGroup();
         Element coreElem = getEosElement(CORE_METADATA, rootGroup);
-        // printElement(coreElem);
+        //printElement(coreElem);
 
         Element inventoryMetadata = coreElem.getChild("INVENTORYMETADATA");
         Element masterGroup = inventoryMetadata.getChild("MASTERGROUP");
