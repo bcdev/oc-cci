@@ -49,7 +49,7 @@ export PYTHONPATH="${POLY_PYTHON}/pyshared"
 ./get_meteo_calvalus.py ${inFileName} >> parameters.txt
 
 # append input,output to parameters.txt
-outFile=$(basename ${inFileName} .N1).polymer.${suffix}
+outFile=${inFileName%.N1}.polymer.${suffix}
 echo INPUT_FILE $inFile >> parameters.txt
 echo OUTPUT_FILE $outFile >> parameters.txt
 
@@ -59,10 +59,14 @@ echo OUTPUT_FILE $outFile >> parameters.txt
 function handle_progress() {
   line=$1
   echo $line
-  if [[ ${line} =~ Processing\ block\ 1x([0-9]+)\ /\ 1x([0-9]+) ]]; then
-    a1=${BASH_REMATCH[1]}
-    a2=${BASH_REMATCH[2]}
-    progress=$(echo "scale=3; ${a1} / ${a2}" | bc)
+  if [[ ${line} =~ Processing\ block\ ([0-9]+)x([0-9]+)\ /\ ([0-9]+)x([0-9]+) ]]; then
+    px=${BASH_REMATCH[1]}
+    py=${BASH_REMATCH[2]}
+    nx=${BASH_REMATCH[3]}
+    ny=${BASH_REMATCH[4]}
+
+    # y is inner loop, x is outer loop
+    progress=$(echo "scale=3; (${py} - 1 + (${px} - 1) * ${ny}) / (${ny} * ${nx})" | bc)
     printf "CALVALUS_PROGRESS %.3f\n" $progress
   fi
 }
