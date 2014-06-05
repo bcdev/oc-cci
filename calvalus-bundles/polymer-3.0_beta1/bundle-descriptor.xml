@@ -1,12 +1,12 @@
 <bundleDescriptor>
     <bundleName>polymer</bundleName>
-    <bundleVersion>3.0</bundleVersion>
+    <bundleVersion>3.0_beta1</bundleVersion>
 
     <processorDescriptors>
         <processorDescriptor>
             <executableName>polymerMeris</executableName>
             <processorName>Polymer L2 Processing (Meris)</processorName>
-            <processorVersion>3.0beta1</processorVersion>
+            <processorVersion>3.0_beta1</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
@@ -225,7 +225,7 @@ PARTIAL_PROCESSING 0
         <processorDescriptor>
             <executableName>polymerModis</executableName>
             <processorName>Polymer L2 Processing (MODIS)</processorName>
-            <processorVersion>3.0beta1</processorVersion>
+            <processorVersion>3.0_beta1</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
