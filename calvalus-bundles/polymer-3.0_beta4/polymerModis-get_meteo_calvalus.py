@@ -295,12 +295,12 @@ def getDate(filename):
 
     # MODIS Aqua
     # A2006131132000.L1B_LAC
-    if re.compile("^A\d{13}\.").match(filename):
+    if re.compile("^A\d{13}").match(filename):
         date = datetime.strptime(filename[1:14], '%Y%j%H%M%S')
 
     # SeaWiFS
     # S2006131132000.L1B_LAC
-    if re.compile("^S\d{13}\.").match(filename):
+    if re.compile("^S\d{13}").match(filename):
         date = datetime.strptime(filename[1:14], '%Y%j%H%M%S')
 
     print >> stderr, date
