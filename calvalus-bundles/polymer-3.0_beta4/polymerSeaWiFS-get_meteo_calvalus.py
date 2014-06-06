@@ -94,8 +94,8 @@ def interp_era_interim(date):
             6*int(date.hour/6.))
     d1 = d0 + timedelta(hours=6)
 
-    grib0 = join(DIR_AUX_ERA, str(date.year), d0.strftime('era_interim_%Y%m%d.grib'))
-    grib1 = join(DIR_AUX_ERA, str(date.year), d1.strftime('era_interim_%Y%m%d.grib'))
+    grib0 = join(DIR_AUX_ERA, str(d0.year), d0.strftime('era_interim_%Y%m%d.grib'))
+    grib1 = join(DIR_AUX_ERA, str(d1.year), d1.strftime('era_interim_%Y%m%d.grib'))
 
     # create TMP files
     #
