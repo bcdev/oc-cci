@@ -44,6 +44,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -73,42 +80,71 @@ public class ModisL1aScanner {
                 throw new IOException("Failed to crate Temp directory " + tmpDir.getAbsolutePath());
             }
         }
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (String filename : args) {
             long t0 = System.currentTimeMillis();
             try {
 //                processSingleFileWithCopying(filename);
-                processSingleFileInMemory(filename);
-            } catch (IOException ignore) {
-                System.err.println("Error while processing:" + filename);
-                ignore.printStackTrace();
+//                processSingleFileInMemory(filename);
+                processWithTimeout(executorService, filename);
             } finally {
                 long t1 = System.currentTimeMillis();
                 long delta = t1 - t0;
                 System.err.println("delta = " + delta);
             }
         }
+        executorService.shutdown();
         boolean sucess = tmpDir.delete();
         if (!sucess) {
             System.err.println("Failed to delete temp directory: " + tmpDir.getPath());
         }
     }
 
-    private static void processSingleFileInMemory(String arg) throws IOException {
-        File modisL1aFile = new File(arg);
+    private static void processWithTimeout(ExecutorService executorService, final String filename) {
+        Callable<Void> analyzer = new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                processSingleFileInMemory(filename);
+                return null;
+            }
+        };
+        Future<Void> future = executorService.submit(analyzer);
+        try {
+            future.get(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            System.err.println("Error while processing:" + filename);
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            System.err.println("Error while processing:" + filename);
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            System.err.println("Error while processing:" + filename);
+            e.printStackTrace();
+        }
+    }
+
+    private static void processSingleFileInMemory(String filename) throws IOException {
+        File modisL1aFile = new File(filename);
         String absolutePath = modisL1aFile.getAbsolutePath();
         System.err.println("processing absolutePath = " + absolutePath);
         if (!modisL1aFile.exists()) {
             System.err.println("File does not exist: " + absolutePath);
             return;
         }
-        RandomAccessFile inMemoryRaf = getInMemoryRaf(modisL1aFile);
+        RandomAccessFile inMemoryRaf = openRandomAccessFile(modisL1aFile);
         IOServiceProvider h4iosp = new H4iosp();
         if (h4iosp.isValidFile(inMemoryRaf)) {
-            NetcdfFile netcdfFile = new DummyNetcdfFile(h4iosp, inMemoryRaf, modisL1aFile.getAbsolutePath());
+            NetcdfFile netcdfFile = null;
             try {
+                netcdfFile = new DummyNetcdfFile(h4iosp, inMemoryRaf, modisL1aFile.getAbsolutePath());
                 analyzeFile(absolutePath, netcdfFile);
+            }catch (IOException ioe) {
+                System.err.println("Error while processing:" + filename);
+                ioe.printStackTrace();
             } finally {
-                netcdfFile.close();
+                if (netcdfFile != null) {
+                    netcdfFile.close();
+                }
             }
         } else {
             h4iosp.close();
@@ -329,9 +365,9 @@ public class ModisL1aScanner {
         System.err.println("uncompress-time = " + (t2 - t1));
     }
 
-    private static RandomAccessFile getInMemoryRaf(File file) throws IOException {
+    private static RandomAccessFile openRandomAccessFile(File file) throws IOException {
         if (isCompressed(file)) {
-            MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(openInputStream(file));
+            MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(openCompressedInputStream(file));
             return new ImageInputStreamRandomAccessFile(imageInputStream, file.length());
         } else {
             return new RandomAccessFile(file.getAbsolutePath(), "r");
@@ -343,7 +379,7 @@ public class ModisL1aScanner {
         return fileName.endsWith(".z") || fileName.endsWith(".zip") || fileName.endsWith(".bz2") || fileName.endsWith(".gzip") || fileName.endsWith(".gz");
     }
 
-    private static InputStream openInputStream(File file) throws IOException {
+    private static InputStream openCompressedInputStream(File file) throws IOException {
         String fileName = file.getName().toLowerCase();
         InputStream is = new BufferedInputStream(new FileInputStream(file));
         if (fileName.endsWith(".z")) {
