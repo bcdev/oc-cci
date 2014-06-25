@@ -84,7 +84,7 @@ public class ModisL1aScanner {
             } finally {
                 long t1 = System.currentTimeMillis();
                 long delta = t1 - t0;
-                //System.err.println("delta = " + delta);
+                System.err.println("delta = " + delta);
             }
         }
         boolean sucess = tmpDir.delete();
@@ -330,8 +330,17 @@ public class ModisL1aScanner {
     }
 
     private static RandomAccessFile getInMemoryRaf(File file) throws IOException {
-        MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(openInputStream(file));
-        return new ImageInputStreamRandomAccessFile(imageInputStream, file.length());
+        if (isCompressed(file)) {
+            MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(openInputStream(file));
+            return new ImageInputStreamRandomAccessFile(imageInputStream, file.length());
+        } else {
+            return new RandomAccessFile(file.getAbsolutePath(), "r");
+        }
+    }
+
+    private static boolean isCompressed(File file) {
+        String fileName = file.getName().toLowerCase();
+        return fileName.endsWith(".z") || fileName.endsWith(".zip") || fileName.endsWith(".bz2") || fileName.endsWith(".gzip") || fileName.endsWith(".gz");
     }
 
     private static InputStream openInputStream(File file) throws IOException {
