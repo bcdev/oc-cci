@@ -36,7 +36,7 @@ public class ModisProductWithInsituComparer {
         String modisProductList = args[0];
         String insituCSV = args[1];
 
-        List<Record> insituRecords = getInsituRecords(insituCSV);
+        List<SimpleRecord> insituRecords = getInsituRecords(insituCSV);
         System.out.println("insituRecords.size() = " + insituRecords.size());
 //        System.out.println("insituRecords.get(0) = " + insituRecords.get(0));
         List<Product> products = getModisProducts(modisProductList);
@@ -55,24 +55,24 @@ public class ModisProductWithInsituComparer {
         String line = bufferedReader.readLine();
         List<Product> modisNameProducts = new ArrayList<Product>();
         while (line != null) {
-            modisNameProducts.add(new ModisNameProduct(line));
+            modisNameProducts.add(new ModisGeoProduct(line));
             line = bufferedReader.readLine();
         }
         return modisNameProducts;
     }
 
-    private static List<Record> getInsituRecords(String filename) throws Exception {
+    private static List<SimpleRecord> getInsituRecords(String filename) throws Exception {
         FileReader fileReader = new FileReader(filename);
         CsvRecordSource recordSource = new CsvRecordSource(fileReader, DEFAULT_INSITU_DATE_FORMAT);
-        List<Record> records = new ArrayList<Record>();
+        List<SimpleRecord> records = new ArrayList<SimpleRecord>();
         for (Record record : recordSource.getRecords()) {
-            records.add(record);
+            records.add(new SimpleRecord(record.getTime().getTime(), record.getLocation()));
         }
         fileReader.close();
         return records;
     }
 
-    private static class ModisNameProduct implements Product {
+    private static class ModisGeoProduct implements Product {
         private static final WKTReader wktReader = new WKTReader();
 
         private final String name;
@@ -81,7 +81,7 @@ public class ModisProductWithInsituComparer {
         private final String wkt;
         private Geometry geomtry;
 
-        public ModisNameProduct(String line) throws Exception {
+        public ModisGeoProduct(String line) throws Exception {
             String[] splits = line.split("\t");
             this.name = splits[0];
             startTime = PRODUCT_DATE_FORMAT.parse(DateUtils.getNoFractionString(splits[1])).getTime();

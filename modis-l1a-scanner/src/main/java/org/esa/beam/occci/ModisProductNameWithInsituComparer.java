@@ -35,7 +35,7 @@ public class ModisProductNameWithInsituComparer {
         String modisProductList = args[0];
         String insituCSV = args[1];
 
-        List<Record> insituRecords = getInsituRecords(insituCSV);
+        List<SimpleRecord> insituRecords = getInsituRecords(insituCSV);
         System.out.println("insituRecords.size() = " + insituRecords.size());
 //        System.out.println("insituRecords.get(0) = " + insituRecords.get(0));
         List<Product> products = getModisProducts(modisProductList);
@@ -60,12 +60,12 @@ public class ModisProductNameWithInsituComparer {
         return modisNameProducts;
     }
 
-    private static List<Record> getInsituRecords(String filename) throws Exception {
+    private static List<SimpleRecord> getInsituRecords(String filename) throws Exception {
         FileReader fileReader = new FileReader(filename);
         CsvRecordSource recordSource = new CsvRecordSource(fileReader, DEFAULT_DATE_FORMAT);
-        List<Record> records = new ArrayList<Record>();
+        List<SimpleRecord> records = new ArrayList<SimpleRecord>();
         for (Record record : recordSource.getRecords()) {
-            records.add(record);
+            records.add(new SimpleRecord(record.getTime().getTime(), record.getLocation()));
         }
         fileReader.close();
         return records;

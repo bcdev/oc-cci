@@ -16,73 +16,46 @@
 
 package org.esa.beam.occci;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
-import java.awt.geom.Point2D;
-import java.util.Date;
 import java.util.List;
 
 public class ProductInsituMatcher {
     private final long maxTimeDifference;
     private final List<Product> products;
-    private final List<Record> insituRecords;
+    private final List<SimpleRecord> insituRecords;
     private final boolean geoTest;
-    private final GeometryFactory geometryFactory;
 
-    public ProductInsituMatcher(List<Product> products, List<Record> insituRecords, long maxTimeDifference, boolean geoTest) {
+
+    public ProductInsituMatcher(List<Product> products, List<SimpleRecord> insituRecords, long maxTimeDifference, boolean geoTest) {
         this.products = products;
         this.insituRecords = insituRecords;
         this.maxTimeDifference = maxTimeDifference;
         this.geoTest = geoTest;
-        if (geoTest) {
-            geometryFactory = new GeometryFactory();
-        } else {
-            geometryFactory = null;
-        }
-    }
-
-    private long getMinReferenceTime(Record referenceRecord) {
-        Date time = referenceRecord.getTime();
-        if (time == null) {
-            throw new IllegalArgumentException("Point record has no time information.");
-        }
-        return time.getTime() - maxTimeDifference;
-    }
-
-    private long getMaxReferenceTime(Record referenceRecord) {
-        Date time = referenceRecord.getTime();
-        if (time == null) {
-            throw new IllegalArgumentException("Point record has no time information.");
-        }
-        return time.getTime() + maxTimeDifference;
     }
 
     public void match() {
         int counter = 0;
         for (Product product : products) {
-            for (Record referenceRecord : insituRecords) {
-                long minReferenceTime = getMinReferenceTime(referenceRecord);
-                if (minReferenceTime > product.getEndTime()) {
+            for (SimpleRecord reference : insituRecords) {
+                if (reference.getTime() - maxTimeDifference > product.getEndTime()) {
                     continue;
                 }
 
-                long maxReferenceTime = getMaxReferenceTime(referenceRecord);
-                if (maxReferenceTime < product.getStartTime()) {
+                if (reference.getTime() + maxTimeDifference < product.getStartTime()) {
                     continue;
                 }
                 if (geoTest) {
-                    Point2D.Float location = referenceRecord.getLocation();
-                    if (location == null) {
-                        throw new IllegalArgumentException("record has no geo-location: " + referenceRecord);
+                    Point point = reference.getPoint();
+                    if (point == null) {
+                        throw new IllegalArgumentException("record has no geo-location: " + reference);
                     }
                     Geometry productGeometry = product.getGeometry();
                     if (productGeometry == null) {
                         throw new IllegalArgumentException("product is missing geometry: " + product);
                     }
-                    Coordinate coordinate = new Coordinate(location.getX(), location.getY());
-                    if (!productGeometry.contains(geometryFactory.createPoint(coordinate))) {
+                    if (!productGeometry.contains(point)) {
                         continue;
                     }
                 }
