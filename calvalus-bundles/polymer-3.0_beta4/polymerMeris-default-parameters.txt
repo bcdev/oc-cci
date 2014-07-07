@@ -132,7 +132,6 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
-WRITE_BBP      1
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -140,7 +139,9 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-
+WRITE_SZA      0
+WRITE_VZA      0
+WRITE_RAA      0
 
 # DEBUGGING ###########
 

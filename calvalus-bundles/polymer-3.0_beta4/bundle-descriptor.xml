@@ -142,7 +142,6 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
-WRITE_BBP      1
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -150,7 +149,9 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-
+WRITE_SZA      0
+WRITE_VZA      0
+WRITE_RAA      0
 
 # DEBUGGING ###########
 
@@ -170,51 +171,59 @@ PARTIAL_PROCESSING 0
 
             <outputVariables>
                 <outputVariable>
-                    <name>chlor_a</name>
+                    <name>R'865</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>pic</name>
+                    <name>bitmask</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>poc</name>
+                    <name>Rgli</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>angstrom</name>
+                    <name>logchl</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Kd_490</name>
+                    <name>bbs</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_413</name>
+                    <name>C0</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_443</name>
+                    <name>C1</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_490</name>
+                    <name>C2</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_510</name>
+                    <name>Rw412</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_560</name>
+                    <name>Rw443</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_620</name>
+                    <name>Rw490</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_665</name>
+                    <name>Rw510</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_681</name>
+                    <name>Rw560</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>cdom_index</name>
+                    <name>Rw620</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>l2_flags</name>
+                    <name>Rw665</name>
                 </outputVariable>
-                
+                <outputVariable>
+                    <name>Rw754</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw779</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw865</name>
+                </outputVariable>
             </outputVariables>
 
         </processorDescriptor>
@@ -387,7 +396,6 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
-WRITE_BBP      0
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -395,7 +403,9 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-
+WRITE_SZA      0
+WRITE_VZA      0
+WRITE_RAA      0
 
 # DEBUGGING ###########
 
@@ -415,51 +425,56 @@ PARTIAL_PROCESSING 0
 
             <outputVariables>
                 <outputVariable>
-                    <name>chlor_a</name>
+                    <name>R'865</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>pic</name>
+                    <name>bitmask</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>poc</name>
+                    <name>Rgli</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>angstrom</name>
+                    <name>logchl</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Kd_490</name>
+                    <name>bbs</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_413</name>
+                    <name>C0</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_443</name>
+                    <name>C1</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_490</name>
+                    <name>C2</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_510</name>
+                    <name>Rw412</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_560</name>
+                    <name>Rw443</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_620</name>
+                    <name>Rw488</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_665</name>
+                    <name>Rw531</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_681</name>
+                    <name>Rw551</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>cdom_index</name>
+                    <name>Rw667</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>l2_flags</name>
+                    <name>Rw678</name>
                 </outputVariable>
-
+                <outputVariable>
+                    <name>Rw748</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw869</name>
+                </outputVariable>
             </outputVariables>
 
         </processorDescriptor>
@@ -595,7 +610,6 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
-WRITE_BBP      0
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -603,7 +617,9 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-
+WRITE_SZA      0
+WRITE_VZA      0
+WRITE_RAA      0
 
 # DEBUGGING ###########
 
@@ -623,51 +639,53 @@ PARTIAL_PROCESSING 0
 
             <outputVariables>
                 <outputVariable>
-                    <name>chlor_a</name>
+                    <name>R'865</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>pic</name>
+                    <name>bitmask</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>poc</name>
+                    <name>Rgli</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>angstrom</name>
+                    <name>logchl</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Kd_490</name>
+                    <name>bbs</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_413</name>
+                    <name>C0</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_443</name>
+                    <name>C1</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_490</name>
+                    <name>C2</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_510</name>
+                    <name>Rw412</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_560</name>
+                    <name>Rw443</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_620</name>
+                    <name>Rw490</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_665</name>
+                    <name>Rw510</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rrs_681</name>
+                    <name>Rw555</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>cdom_index</name>
+                    <name>Rw670</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>l2_flags</name>
+                    <name>Rw765</name>
                 </outputVariable>
-
+                <outputVariable>
+                    <name>Rw865</name>
+                </outputVariable>
             </outputVariables>
 
         </processorDescriptor>
