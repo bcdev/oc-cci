@@ -21,36 +21,61 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModisProductWithInsituComparer {
+public class ProductWithInsituComparer {
 
-    private static final long MAX_TIME_DIFFERENCE = 1000 * 60 * 60 * 3L; // Note: time in ms (NOT h)
+    private static final long HOURS_IN_MILLIS = 1000 * 60 * 60; // Note: time in ms (NOT h)
+    //    private static final long MAX_TIME_DIFFERENCE = 1000 * 60 * 60 * 3L; // Note: time in ms (NOT h)
     public static final DateFormat DEFAULT_INSITU_DATE_FORMAT = DateUtils.createDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final DateFormat PRODUCT_DATE_FORMAT = DateUtils.createDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public static void main(String[] args) throws Exception {
-        String modisProductList = args[0];
-        String insituCSV = args[1];
+        if (args.length != 3) {
+            printUsage();
+        }
+        File productListFile = new File(args[0]);
+        if (!productListFile.exists()) {
+            System.err.printf("productList file '%s' does not exits%n", args[0]);
+            printUsage();
+        }
+        File insituCSVtFile = new File(args[1]);
+        if (!insituCSVtFile.exists()) {
+            System.err.printf("insituList file '%s' does not exits%n", args[1]);
+            printUsage();
+        }
+        int hours = 0;
+        try {
+            hours = Integer.parseInt(args[2]);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            System.err.printf("cannot parse hours '%s' %n", args[2]);
+            printUsage();
+        }
 
-        List<SimpleRecord> insituRecords = getInsituRecords(insituCSV);
-        System.out.println("insituRecords.size() = " + insituRecords.size());
-//        System.out.println("insituRecords.get(0) = " + insituRecords.get(0));
-        List<Product> products = getModisProducts(modisProductList);
-        System.out.println("modisProducts.size() = " + products.size());
-//        System.out.println("modisProducts.get(0) = " + products.get(0));
-        System.out.println();
+        List<SimpleRecord> insituRecords = getInsituRecords(insituCSVtFile);
+        System.err.println("num insituRecords = " + insituRecords.size());
+        List<Product> products = getModisProducts(productListFile);
+        System.err.println("num products =  " + products.size());
+        System.err.println();
 
-        ProductInsituMatcher matcher = new ProductInsituMatcher(products, insituRecords, MAX_TIME_DIFFERENCE, true);
+        ProductInsituMatcher matcher = new ProductInsituMatcher(products, insituRecords, hours * HOURS_IN_MILLIS, true);
         matcher.match();
     }
 
+    private static void printUsage() {
+        System.err.println("Usage: ProductWithInsituComparer <productList> <insituList> <hours>");
+        System.exit(1);
+    }
 
-    private static List<Product> getModisProducts(String filename) throws Exception {
-        FileReader fileReader = new FileReader(filename);
+
+    private static List<Product> getModisProducts(File file) throws IOException, java.text.ParseException {
+        FileReader fileReader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line = bufferedReader.readLine();
         List<Product> modisNameProducts = new ArrayList<Product>();
@@ -61,8 +86,8 @@ public class ModisProductWithInsituComparer {
         return modisNameProducts;
     }
 
-    private static List<SimpleRecord> getInsituRecords(String filename) throws Exception {
-        FileReader fileReader = new FileReader(filename);
+    private static List<SimpleRecord> getInsituRecords(File file) throws Exception {
+        FileReader fileReader = new FileReader(file);
         CsvRecordSource recordSource = new CsvRecordSource(fileReader, DEFAULT_INSITU_DATE_FORMAT);
         List<SimpleRecord> records = new ArrayList<SimpleRecord>();
         for (Record record : recordSource.getRecords()) {
@@ -81,7 +106,7 @@ public class ModisProductWithInsituComparer {
         private final String wkt;
         private Geometry geomtry;
 
-        public ModisGeoProduct(String line) throws Exception {
+        public ModisGeoProduct(String line) throws java.text.ParseException {
             String[] splits = line.split("\t");
             this.name = splits[0];
             startTime = PRODUCT_DATE_FORMAT.parse(DateUtils.getNoFractionString(splits[1])).getTime();

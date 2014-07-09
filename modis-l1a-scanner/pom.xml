@@ -82,6 +82,52 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!--<mainClass>org.esa.beam.occci.ModisL1aScanner</mainClass>-->
+                                    <mainClass>org.esa.beam.occci.ProductWithInsituComparer</mainClass>
+                                </transformer>
+                            </transformers>
+                            <finalName>ProductWithInsituComparer</finalName>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <minimizeJar>true</minimizeJar>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>edu.ucar:netcdf</exclude>
+                                    <exclude>edu.ucar:udunits</exclude>
+                                    <exclude>commons-httpclient:commons-httpclient</exclude>
+                                    <exclude>commons-codec:commons-codec</exclude>
+                                    <exclude>org.slf4j:jcl-over-slf4j</exclude>
+                                    <exclude>joda-time:joda-time</exclude>
+                                    <exclude>org.slf4j:slf4j-api</exclude>
+                                    <exclude>org.jdom:jdom2</exclude>
+                                    <exclude>net.jcip:jcip-annotations</exclude>
+                                    <exclude>com.sun.jna:jna</exclude>
+                                    <exclude>org.quartz-scheduler</exclude>
+                                    <exclude>c3p0:c3p0</exclude>
+                                    <exclude>com.google.protobuf:protobuf-java</exclude>
+                                    <exclude>net.sf.ehcache:ehcache-core</exclude>
+                                    <exclude>com.sleepycat:je</exclude>
+                                </excludes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
