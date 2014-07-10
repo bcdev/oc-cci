@@ -13,11 +13,16 @@ from pyhdf.SD import SD, SDC
 import pygrib
 from numpy import roll, around
 import re
+import traceback
 
 
-
+#BC
 DIR_AUX_ERA='hdfs://master00:9000/calvalus/auxiliary/era_interim'
 DIR_AUX_NCEP='hdfs://master00:9000/calvalus/auxiliary/seadas/anc'
+#PML
+#DIR_AUX_ERA='/data/datasets/ERA_Interim/level3/era_interim-downloaded_20140430/swath/0d'
+#DIR_AUX_NCEP='/data/datasets/Sensor/modis/ancillary/metoz'
+
 DIR_TMP='.'
 
 def read_grib(filename, dataset, dt):
@@ -271,19 +276,25 @@ def interp_meteo_toms(date):
 
 def existPath(path):
     print >> stderr, 'testing path: %s' % (path)
-    pathExist = not os.system('hadoop fs -ls %s 1>/dev/null 2>/dev/null' % (path))
+    if path.startswith('hdfs'):
+        pathExist = not os.system('hadoop fs -ls %s 1>/dev/null 2>/dev/null' % (path))
+    else:
+        pathExist = exists(path)
     print >> stderr, 'Path exist[%s]: %s' % (pathExist, path)
     return pathExist
 
 def copyToLocal(path):
-    if not exists(basename(path)):
-        print >> stderr, 'Copy-to-Local ', path
-        if os.system('hadoop fs -get %s . 1>/dev/null 2>/dev/null' % (path)):
-            print >> stderr, 'Copy-to-Local error, stopping.'
-            exit(1)
+    if path.startswith('hdfs'):
+        if not exists(basename(path)):
+            print >> stderr, 'Copy-to-Local ', path
+            if os.system('hadoop fs -get %s . 1>/dev/null 2>/dev/null' % (path)):
+                print >> stderr, 'Copy-to-Local error, stopping.'
+                exit(1)
+        else:
+            print >> stderr, 'Local-file-exist ', path
+        return basename(path)
     else:
-        print >> stderr, 'Local-file-exist ', path
-    return basename(path)
+        return path
 
 
 def getDate(filename):
@@ -316,9 +327,15 @@ def main(argv):
             print 'FILE_METEO ', file_met_full
             print 'FILE_OZONE ', file_oz_full
         else:
-            print "no files"
-    except Exception:
-        pass
+            print >> stderr, "Failed to get meteo files"
+            print >> stderr, 'FILE_METEO ', file_met_full
+            print >> stderr, 'FILE_OZONE ', file_oz_full
+            exit(1)
+    except Exception,e:
+        print >> stderr, "Exception"
+        print >> stderr, e
+        print >> stderr, traceback.format_exc()
+        exit(1)
 
 
 if __name__ == '__main__':
