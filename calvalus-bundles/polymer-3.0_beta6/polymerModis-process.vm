@@ -1,0 +1,106 @@
+#!/bin/bash
+
+inFile="$inputFile"
+inFileName="$inputFile.name"
+inPath="$inputPath"
+inputPathParent="$inputPath.parent"
+
+#[[
+set -e
+set -m
+
+minimumsize=100
+actualsize=$(du -b parameters.txt | cut -f 1)
+if [ $actualsize -lt $minimumsize ]; then
+    echo parameters.txt is too small, replacing with defaults
+    cp default-parameters.txt parameters.txt
+fi
+# append newline
+echo >> parameters.txt
+
+]]#
+
+#if ($inputRectangle)
+
+#set( $Double = 0.0 )
+
+#set( $Dsline = $productRectangle.height - ( $inputRectangle.y + $inputRectangle.height) )
+#set( $sline = $Double.valueOf($Dsline).intValue() )
+
+#set( $Deline = $productRectangle.height - $inputRectangle.y )
+#set( $eline = $Double.valueOf($Deline).intValue() )
+
+echo PROCESS_ROWS $sline $eline  >> parameters.txt
+#end
+
+#[[
+POLYMER=./polymer-3.0_beta6
+POLY_PYTHON=./pyhdf
+
+# create links to auxdata
+ln -sf ${POLYMER}/auxdata .
+ln -sf ${POLYMER}/LUTS .
+
+suffix="hdf"
+if grep -E "OUTPUT_FORMAT\ +NETCDF" parameters.txt; then
+  suffix="nc"
+fi
+
+export LD_LIBRARY_PATH="${POLY_PYTHON}/pylib"
+export PYTHONPATH="${POLY_PYTHON}/pyshared"
+./get_meteo_calvalus.py ${inFileName} >> parameters.txt
+
+geoFileArchive=${inFileName:0:14}.GEO
+geoFileLocal=${inFileName%L1B_LAC}GEO
+echo "GEO file $geoFile"
+
+# MODIS needs geofile
+echo "testting in same directory ${inputPathParent}/${geoFileArchive}*"
+geoPath=`hadoop fs -ls ${inputPathParent}/${geoFileArchive}*|awk '{ print $8 }'`
+if [ "$geoPath" != "" ]; then
+  echo "copy to cwd: $geoPath -> $geoFileLocal"
+  hadoop fs -copyToLocal $geoPath $geoFileLocal
+else
+  pdate="${inFileName:1:7}"
+  pyear=${pdate%???}
+  pday=${pdate#$pyear}
+  productDate=$(date -d "${pyear}-01-01 +${pday} days -1 day" "+%Y/%m/%d")
+
+  echo "testting in MODISA_GEO directory /calvalus/eodata/MODISA_GEO/v1/${productDate}/${geoFileArchive}*"
+  geoPath=`hadoop fs -ls /calvalus/eodata/MODISA_GEO/v1/${productDate}/${geoFileArchive}*|awk '{ print $8 }'`
+  if [ "$geoPath" != "" ]; then
+    echo "copy to cwd: $geoPath -> $geoFileLocal"
+    hadoop fs -copyToLocal $geoPath $geoFileLocal
+  else
+    echo failed to find GEO file
+    exit 1
+  fi
+fi
+
+# append input,output to parameters.txt
+outFile=${inFileName}.polymer.${suffix}
+echo INPUT_FILE $inFile >> parameters.txt
+echo OUTPUT_FILE $outFile >> parameters.txt
+
+# for debugging purpose
+# cat parameters.txt
+
+function handle_progress() {
+  line=$1
+  echo $line
+  if [[ ${line} =~ Processing\ block\ ([0-9]+)x([0-9]+)\ /\ ([0-9]+)x([0-9]+) ]]; then
+    px=${BASH_REMATCH[1]}
+    py=${BASH_REMATCH[2]}
+    nx=${BASH_REMATCH[3]}
+    ny=${BASH_REMATCH[4]}
+
+    # y is inner loop, x is outer loop
+    progress=$(echo "scale=3; (${py} - 1 + (${px} - 1) * ${ny}) / (${ny} * ${nx})" | bc)
+    printf "CALVALUS_PROGRESS %.3f\n" $progress
+  fi
+}
+
+set -o pipefail
+${POLYMER}/polymer parameters.txt | while read x ; do handle_progress "$x" ; done
+echo CALVALUS_OUTPUT_PRODUCT ${outFile}
+]]#
