@@ -13,10 +13,12 @@ public class InSituCheckerMain {
     public static void main(String[] args) throws IOException {
         final File inSituCsv = new File(args[0]);
         final FileReader fileReader = new FileReader(inSituCsv);
-        final PrintWriter printWriter = createOutputWriter();
 
         final CsvReader csvReader = new CsvReader(fileReader, new char[]{','});
-        csvReader.readRecord(); // skip heading line
+        String[] header = csvReader.readRecord();// skip heading line
+
+        final PrintWriter printWriter = createOutputWriter();
+        printWriter.println(StringUtils.arrayToCsv(header));
 
         String[] record;
         int count = 0;
@@ -43,7 +45,7 @@ public class InSituCheckerMain {
     }
 
     private static PrintWriter createOutputWriter() throws IOException {
-        final File consolidatedCsv = new File("insitu_rrs_ex_cci_noduplicates_SATBANDS_qaa_possible.txt");
+        final File consolidatedCsv = new File("insitu_rrs_ex_cci_noduplicates_SATBANDS_qaa_possible.csv");
         if (!consolidatedCsv.createNewFile()) {
             throw new IOException("unable to create file: " + consolidatedCsv.getAbsolutePath());
         }

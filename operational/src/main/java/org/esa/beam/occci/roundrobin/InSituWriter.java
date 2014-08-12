@@ -40,6 +40,28 @@ class InSituWriter {
         printWriter.println(headerLine);
     }
 
+    void write(double[] rss, InSituSpectrum originalSpectrum) {
+        if (rss == null) {
+            return;
+        }
+        final StringBuilder builder = new StringBuilder(512);
+        builder.append(originalSpectrum.getDateTime());
+        builder.append("\t");
+        builder.append(originalSpectrum.getLat());
+        builder.append("\t");
+        builder.append(originalSpectrum.getLon());
+        builder.append("\t");
+
+        for (double rs : rss) {
+            builder.append(rs);
+            builder.append("\t");
+        }
+
+        builder.append(originalSpectrum.getSubdatasetRrs_1());
+
+        printWriter.println(builder.toString());
+    }
+
     void write(double[] rss, SpectralMeasurement[] originalMeasurements, InSituSpectrum originalSpectrum) {
         if (rss == null) {
             return;

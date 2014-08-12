@@ -30,21 +30,27 @@ public class InSituGroupWriter {
         seawifsWriter.writeHeader();
     }
 
-    void write(double[] meris, double[] modis, double[] seaWifs, InSituSpectrum original) {
-        SpectralMeasurement[] measurementsArray;
-        if (original.isCompleteMeris()) {
-            measurementsArray = original.getMerisMeasurementsArray();
-        } else if (original.isCompleteModis()) {
-            measurementsArray = original.getModisMeasurementsArray();
-        } else if (original.isCompleteSeaWiFS()) {
-            measurementsArray = original.getSeaWiFSsMeasurementsArray();
+    void write(double[] meris, double[] modis, double[] seaWifs, InSituSpectrum originalSpectrum) {
+        merisWriter.write(meris, originalSpectrum);
+        modisWriter.write(modis, originalSpectrum);
+        seawifsWriter.write(seaWifs, originalSpectrum);
+    }
+
+    void writeWithOriginal(double[] meris, double[] modis, double[] seaWifs, InSituSpectrum originalSpectrum) {
+        SpectralMeasurement[] originalMeasurements;
+        if (originalSpectrum.isCompleteMeris()) {
+            originalMeasurements = originalSpectrum.getMerisMeasurementsArray();
+        } else if (originalSpectrum.isCompleteModis()) {
+            originalMeasurements = originalSpectrum.getModisMeasurementsArray();
+        } else if (originalSpectrum.isCompleteSeaWiFS()) {
+            originalMeasurements = originalSpectrum.getSeaWiFSsMeasurementsArray();
         } else {
-            measurementsArray = original.getQaaMeasurementsArray();
+            originalMeasurements = originalSpectrum.getQaaMeasurementsArray();
         }
 
-        merisWriter.write(meris, measurementsArray, original);
-        modisWriter.write(modis, measurementsArray, original);
-        seawifsWriter.write(seaWifs, measurementsArray, original);
+        merisWriter.write(meris, originalMeasurements, originalSpectrum);
+        modisWriter.write(modis, originalMeasurements, originalSpectrum);
+        seawifsWriter.write(seaWifs, originalMeasurements, originalSpectrum);
     }
 
     void close() {

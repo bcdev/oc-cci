@@ -18,7 +18,10 @@ public class BandShiftMain {
 
         try {
             String[] record;
+            int countReadRecords = 0;
+            int countShiftedRecords = 0;
             while ((record = csvReader.readRecord()) != null) {
+                countReadRecords++;
                 final InSituSpectrum spectrum = SpectrumBuilder.create(record);
                 if (!spectrum.isCompleteQaa()) {
                     continue;
@@ -38,6 +41,9 @@ public class BandShiftMain {
                 final double[] seaWifsRss = BandShifter.toSeaWifs(spectrum, qaaAt443);
 
                 inSituGroupWriter.write(merisRss, modisRss, seaWifsRss, spectrum);
+                countShiftedRecords++;
+
+                System.out.println("read = " + countReadRecords + " shifted = " + countShiftedRecords);
             }
         } finally {
             csvReader.close();

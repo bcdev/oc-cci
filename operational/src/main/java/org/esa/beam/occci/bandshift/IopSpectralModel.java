@@ -42,23 +42,33 @@ public class IopSpectralModel {
         BRICAUD_A.put("441", 0.04005);
         BRICAUD_A.put("442", 0.0398);
         BRICAUD_A.put("443", 0.0394);
-        BRICAUD_A.put("488", 0.0279);
+        BRICAUD_A.put("488", 0.028); // was 0.0279
         BRICAUD_A.put("489", 0.02765);
-        BRICAUD_A.put("490", 0.0274);
+        BRICAUD_A.put("490", 0.027); // was 0.0274
         BRICAUD_A.put("491", 0.02705);
+        BRICAUD_A.put("492", 0.0267);
+
         BRICAUD_A.put("510", 0.0180);
         BRICAUD_A.put("530", 0.0117);
-        BRICAUD_A.put("531", 0.0115);
+        BRICAUD_A.put("531", 0.012); // was 0.0115
         BRICAUD_A.put("547", 0.00845);
+        BRICAUD_A.put("551", 0.0078);
+        BRICAUD_A.put("552", 0.0076);
+        BRICAUD_A.put("555", 0.007);
+        BRICAUD_A.put("557", 0.00665); // was 0.0066
+        BRICAUD_A.put("558", 0.0065);
+        BRICAUD_A.put("560", 0.006); // was 0.0062
+
+        BRICAUD_A.put("617", 0.00625);
+        BRICAUD_A.put("618", 0.0063);
         BRICAUD_A.put("620", 0.0065);
-        BRICAUD_A.put("665", 0.0152);
+        BRICAUD_A.put("662", 0.0129);
+        BRICAUD_A.put("665", 0.015); // was 0.0152
         BRICAUD_A.put("667", 0.01685);
         BRICAUD_A.put("668", 0.0176);
-        BRICAUD_A.put("560", 0.0062);
-        BRICAUD_A.put("551", 0.0078);
-        BRICAUD_A.put("555", 0.007);
-        BRICAUD_A.put("557", 0.0066);
-        BRICAUD_A.put("670", 0.0189);
+        BRICAUD_A.put("669", 0.01825);
+        BRICAUD_A.put("670", 0.019); // was 0.0189
+        BRICAUD_A.put("675", 0.0201);
         BRICAUD_A.put("678", 0.0193);
 
         BRICAUD_B = new HashMap<String, Double>();
@@ -72,19 +82,29 @@ public class IopSpectralModel {
         BRICAUD_B.put("489", 0.365);
         BRICAUD_B.put("490", 0.361);
         BRICAUD_B.put("491", 0.3585);
+        BRICAUD_B.put("492", 0.356);
+
         BRICAUD_B.put("510", 0.260);
         BRICAUD_B.put("530", 0.139);
         BRICAUD_B.put("531", 0.134);
         BRICAUD_B.put("547", 0.0625);
+        BRICAUD_B.put("551", 0.048);
+        BRICAUD_B.put("552", 0.044);
+        BRICAUD_B.put("555", 0.032); // was 0.0.315
+        BRICAUD_B.put("557", 0.0215); // was  0.0182
+        BRICAUD_B.put("558", 0.016);
+        BRICAUD_B.put("560", 0.016);
+
+        BRICAUD_B.put("617", 0.0635);
+        BRICAUD_B.put("618", 0.064);
         BRICAUD_B.put("620", 0.064);
+        BRICAUD_B.put("662", 0.125);
         BRICAUD_B.put("665", 0.134);
         BRICAUD_B.put("667", 0.140);
         BRICAUD_B.put("668", 0.143);
-        BRICAUD_B.put("560", 0.016);
-        BRICAUD_B.put("551", 0.048);
-        BRICAUD_B.put("555", 0.0315);
-        BRICAUD_B.put("557", 0.0182);
+        BRICAUD_B.put("669", 0.146);
         BRICAUD_B.put("670", 0.149);
+        BRICAUD_B.put("675", 0.158);
         BRICAUD_B.put("678", 0.158);
     }
 
