@@ -59,7 +59,7 @@ make
 
 -----------------------------------------------------------------------
 3) create archive
-tar czf ../polymer-3.0beta8.tar.gz auxdata LUTS polymer
+tar cvzf ../polymer-3.0_beta8.tar.gz auxdata LUTS polymer
 
 -----------------------------------------------------------------------
 4) add calvalus integration with python modules into bundle
