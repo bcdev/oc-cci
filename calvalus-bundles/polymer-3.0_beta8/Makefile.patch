@@ -1,0 +1,42 @@
+--- Makefile.orig	2014-08-01 17:09:59.000000000 +0200
++++ Makefile	2014-08-18 13:53:57.000000000 +0200
+@@ -9,7 +9,7 @@
+ LEVEL1_MERIS=yes
+ DEBUG=no
+ 
+-FLAGS = -Wall -I/usr/include/hdf/
++FLAGS = -Wall -I/home/marcoz/Workspace/OC/build/include -L/home/marcoz/Workspace/OC/build/lib
+ 
+ ifeq ($(DEBUG),yes)
+ 	FLAGS += -DVERBOSE # verbose mode
+@@ -17,6 +17,7 @@
+ 	FLAGS += -DDEBUG_MODE
+ 	FLAGS += -g
+ else
++	FLAGS += -DVERBOSE # verbose mode
+ 	FLAGS += -O2 # optimization (for production)
+ 	# FLAGS += -mtune=athlon64 -march=athlon64 # optimization for athlon64 processors
+ 	# FLAGS += -mtune=pentium4 -march=pentium4 # optimization for intel processors
+@@ -40,10 +41,11 @@
+ 	FLAGS += -DNETCDF
+ endif
+ 
+-LIBS = -L /usr/lib64/hdf/ -lmfhdf -ldf -lgsl -lgslcblas -ljpeg -lz
++LIBS = -lgsl -lgslcblas -ljpeg -lz -ldf -lmfhdf
+ ifeq ($(NETCDF),yes)
+-	LIBS += -lnetcdf
++	LIBS += -lhdf5_hl -lhdf5 -lnetcdf
+ endif
++STATIC_LIBS = -Wl,--start-group $(LIBS) -Wl,--end-group
+ 
+ EXEC = polymer
+ LIBNAME = libpolymer.a
+@@ -131,7 +133,7 @@
+ 
+ exe: init $(EPR_OBJ) $(OBJ_EXE) $(OBJ)
+ 	@echo Building executable...
+-	$(CPPCOMP) -o $(EXEC) $(CPPFLAGS) $(OBJ) $(OBJ_EXE) $(EPR_OBJ) $(LIBS)
++	$(CPPCOMP) -o $(EXEC) $(CPPFLAGS) $(OBJ) $(OBJ_EXE) $(EPR_OBJ) $(STATIC_LIBS)
+ 
+ $(DIROBJ)/%.o: $(DIRSRC)/%.cpp $(DIRSRC)/%.h $(HDR:%=$(DIRSRC)/%)
+ 	@mkdir -p $(dir $@)
