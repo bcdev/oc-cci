@@ -65,7 +65,8 @@ public class ProductWithInsituComparer {
         System.err.println();
 
         ProductInsituMatcher matcher = new ProductInsituMatcher(products, insituRecords, hours * HOURS_IN_MILLIS, true);
-        matcher.match();
+        int numMatches = matcher.match();
+        System.err.println("num matches =  " + numMatches);
     }
 
     private static void printUsage() {

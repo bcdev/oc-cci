@@ -35,7 +35,7 @@ public class ProductInsituMatcher {
         this.geoTest = geoTest;
     }
 
-    public void match() {
+    public int match() {
         int counter = 0;
         for (Product product : products) {
             for (SimpleRecord reference : insituRecords) {
@@ -64,7 +64,6 @@ public class ProductInsituMatcher {
                 break;
             }
         }
-        System.out.println();
-        System.out.println("counter = " + counter);
+        return counter;
     }
 }
