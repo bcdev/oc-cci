@@ -14,14 +14,15 @@ import pygrib
 from numpy import roll, around
 import re
 import traceback
-
+import socket
 
 #BC
 DIR_AUX_ERA='hdfs://master00:9000/calvalus/auxiliary/era_interim'
 DIR_AUX_NCEP='hdfs://master00:9000/calvalus/auxiliary/seadas/anc'
 #PML
-#DIR_AUX_ERA='/data/datasets/ERA_Interim/level3/era_interim-downloaded_20140430/swath/0d'
-#DIR_AUX_NCEP='/data/datasets/Sensor/modis/ancillary/metoz'
+if socket.gethostname().startswith("calvalus"):
+    DIR_AUX_ERA='/data/datasets/ERA_Interim/level3/era_interim-downloaded_20140430/swath/0d'
+    DIR_AUX_NCEP='/data/datasets/Sensor/modis/ancillary/metoz'
 
 DIR_TMP='.'
 
