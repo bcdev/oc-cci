@@ -51,9 +51,7 @@ if [ -d ${POLY_PYTHON} ]; then
 fi
 ./get_meteo_calvalus.py ${inFileName} >> parameters.txt
 
-geoFileArchive=${inFileName:0:14}.GEO
-geoFileLocal=${inFileName%L1B_LAC}GEO
-echo "GEO file $geoFile"
+echo "getting GEO file"
 
 # MODIS needs geofile
 ./getGEO.sh ${inPath}
