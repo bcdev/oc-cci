@@ -56,6 +56,16 @@ echo "getting GEO file"
 # MODIS needs geofile
 ./getGEO.sh ${inPath}
 
+# polymer expects a concrete name for the GEO file
+geoFileArchive=${inFileName:0:14}.GEO
+geoFileLocal=${inFileName%L1B_LAC}GEO
+if [ -e ${geoFileArchive} ];then
+  if [ ! -e ${geoFileLocal} ];then
+    ln -vs ${geoFileArchive} ${geoFileLocal}
+  fi
+fi
+
+
 # append input,output to parameters.txt
 outFile=${inFileName}.polymer.${suffix}
 echo INPUT_FILE $inFile >> parameters.txt
