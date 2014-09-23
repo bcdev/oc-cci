@@ -56,7 +56,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Extracts start-time,ned-time and bounding polygon from a MODIS L1A file
+ * Extracts start-time,end-time and bounding polygon from a MODIS L1A file
  */
 public class ModisL1aScanner {
 
