@@ -49,6 +49,9 @@ if [ -d ${POLY_PYTHON} ]; then
   export LD_LIBRARY_PATH="${POLY_PYTHON}/pylib"
   export PYTHONPATH="${POLY_PYTHON}/pyshared"
 fi
+if [ ! -d ${HOME} ]; then
+  export HOME=/tmp/
+fi
 ./get_meteo_calvalus.py ${inFileName} >> parameters.txt
 
 echo "getting GEO file"
