@@ -43,6 +43,10 @@ suffix="hdf"
 if grep -E "OUTPUT_FORMAT\ +NETCDF" parameters.txt; then
   suffix="nc"
 fi
+meteo_type="ERA_INTERIM"
+if grep -E "AUXDATA\ +NCEP" parameters.txt; then
+  meteo_type="NCEP"
+fi
 
 POLY_PYTHON=./pyhdf
 if [ -d ${POLY_PYTHON} ]; then
@@ -52,7 +56,7 @@ fi
 if [ ! -d ${HOME} ]; then
   export HOME=/tmp/
 fi
-./get_meteo_calvalus.py ${inFileName} >> parameters.txt
+./get_meteo_calvalus.py ${inFileName} ${meteo_type} >> parameters.txt
 
 # append input,output to parameters.txt
 outFile=${inFileName}.polymer.${suffix}

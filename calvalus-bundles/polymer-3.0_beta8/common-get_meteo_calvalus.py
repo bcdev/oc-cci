@@ -295,6 +295,7 @@ def copyToLocal(path):
             print >> stderr, 'Local-file-exist ', path
         return basename(path)
     else:
+        print >> stderr, 'directly using local file', path
         return path
 
 
@@ -321,9 +322,21 @@ def getDate(filename):
 def main(argv):
     fname = basename(argv[1])
     date = getDate(fname)
+
+    meteo_type="ERA_INTERIM"
+    if len(argv) > 2:
+        meteo_type=argv[2]
     try:
-        #(file_met_full, file_oz_full) = interp_meteo_toms(date)
-        (file_met_full, file_oz_full) = interp_era_interim(date)
+        if meteo_type == "ERA_INTERIM":
+            print >> stderr, "Using meteo type: " + meteo_type
+            (file_met_full, file_oz_full) = interp_era_interim(date)
+        elif meteo_type == "NCEP":
+            print >> stderr, "Using meteo type: " + meteo_type
+            (file_met_full, file_oz_full) = interp_meteo_toms(date)
+        else:
+            print >> stderr, "Wrong meteo type: " + meteo_type
+            exit(1)
+
         if file_met_full is not None and file_oz_full is not None:
             print 'FILE_METEO ', file_met_full
             print 'FILE_OZONE ', file_oz_full

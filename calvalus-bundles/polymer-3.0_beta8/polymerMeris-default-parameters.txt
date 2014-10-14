@@ -20,6 +20,8 @@ OUTPUT_FORMAT NETCDF
 # ${ncep_toms}FILE_METEO $file_meteo
 # ${ncep_toms}FILE_OZONE $file_oz
 
+# possible values ERA_INTERIM or NCEP
+AUXDATA ERA_INTERIM
 
 # BANDS DEFINITION #######
 
