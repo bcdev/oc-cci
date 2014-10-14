@@ -40,8 +40,8 @@ pointData = {
 calvalusPointDataRoot = '/calvalus/projects/vc-analysis/point-data'
 localPointDataRoot = 'vc-ana-point-data'
 
-hosts = [('localhost', 1)]
-types = []
+hosts = [('localhost', 2)]
+types = [('ingest-point-data.sh', 1), ('template-step.py', 2)]
 ################################################################################
 class MyDeamon(Daemon):
     def run(self):
@@ -64,7 +64,7 @@ class MyDeamon(Daemon):
                               'station', station,
                               'sensor', sensor,
                               'vc', vc,
-                              'calib', '"'+gainsWithVC[sensor]+'"',
+                              'calib', '"'+gainsWithVC[sensor][vc]+'"',
                               'calvalusPointData', calvalusPointData,
                               'output', '/calvalus/projects/vc-analysis/' + sensor + "-" + station + "-" + vc
                     ]
