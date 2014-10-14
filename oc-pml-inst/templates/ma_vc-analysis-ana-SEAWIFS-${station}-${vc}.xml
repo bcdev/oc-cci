@@ -10,6 +10,14 @@
 
     <wps:DataInputs>
         <wps:Input>
+            <ows:Identifier>productionName</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>vc-analysis-ana-${sensor}-${station}-${vc}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+
+        <wps:Input>
             <ows:Identifier>inputPath</ows:Identifier>
             <wps:Data>
                 <wps:LiteralData>/calvalus/eodata/SEAWIFS_L1B/LAC_noVC/${yyyy}/${MM}/${dd}/.*L1B_MLAC$</wps:LiteralData>
@@ -72,6 +80,9 @@ BANDS_L1     412 443 490 510 555 670 765 865
 
 # calibration coefficients (corresponding to BANDS_L1)
 ${calib}
+
+AUXDATA ERA_INTERIM
+
 
 BAND_WAVELEN_L1   412 443 490 510 555 670 765 865
 

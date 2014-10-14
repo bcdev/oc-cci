@@ -10,6 +10,13 @@
 
     <wps:DataInputs>
         <wps:Input>
+            <ows:Identifier>productionName</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>vc-analysis-ana-${sensor}-${station}-${vc}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
             <ows:Identifier>inputPath</ows:Identifier>
             <wps:Data>
                 <wps:LiteralData>/calvalus/eodata/MODISA_L1B/v1/${yyyy}/${MM}/${dd}/.*L1B_LAC$</wps:LiteralData>
@@ -107,6 +114,8 @@ BANDS_L1     412 443 469 488 531 551 555 645 667 678 748 858 869 1240
 
 
 ${calib}
+
+AUXDATA ERA_INTERIM
 
 BAND_WAVELEN_L1 412 443 469 488 531 551 555 645 667 678 748 858 869 1240
 
@@ -251,6 +260,12 @@ PARTIAL_PROCESSING 0
             </wps:Data>
         </wps:Input>
 
+        <wps:Input>
+            <ows:Identifier>calvalus.auxdata.modis_geo</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>'/calvalus/eodata/MODISA_GEO/v1/'yyyy'/'MM'/'dd'/'</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
 
         <wps:Input>
             <ows:Identifier>calvalus.hadoop.mapred.max.map.failures.percent</ows:Identifier>
