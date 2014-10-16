@@ -227,6 +227,12 @@ PARTIAL_PROCESSING 0
                 </outputVariable>
             </outputVariables>
 
+            <jobConfig>
+                <jobParameter>
+                    <name>calvalus.hadoop.mapreduce.map.failures.maxpercent</name>
+                    <value>5</value>
+                </jobParameter>
+            </jobConfig>
         </processorDescriptor>
 
         <processorDescriptor>
@@ -485,6 +491,10 @@ PARTIAL_PROCESSING 0
                     <name>calvalus.auxdata.modis_geo</name>
                     <value>'/calvalus/eodata/MODISA_GEO/v1/'yyyy'/'MM'/'dd'/'</value>
                 </jobParameter>
+                <jobParameter>
+                    <name>calvalus.hadoop.mapreduce.map.failures.maxpercent</name>
+                    <value>5</value>
+                </jobParameter>
             </jobConfig>
         </processorDescriptor>
 
@@ -698,6 +708,12 @@ PARTIAL_PROCESSING 0
                 </outputVariable>
             </outputVariables>
 
+            <jobConfig>
+                <jobParameter>
+                    <name>calvalus.hadoop.mapreduce.map.failures.maxpercent</name>
+                    <value>5</value>
+                </jobParameter>
+            </jobConfig>
         </processorDescriptor>
     </processorDescriptors>
 </bundleDescriptor>
