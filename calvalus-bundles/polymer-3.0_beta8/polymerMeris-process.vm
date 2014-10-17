@@ -29,7 +29,7 @@ echo >> parameters.txt
 #set( $eline = $Double.valueOf($Deline).intValue() )
 
 echo PROCESS_ROWS $sline $eline  >> parameters.txt
-echo "CALVALUS_PRODUCT_TRANSFORMATION  subset 0, $inputRectangle.y, $productRectangle.width, $inputRectangle.height flipY"
+echo "CALVALUS_PRODUCT_TRANSFORMATION  subset 0, $inputRectangle.y, $productRectangle.width, $inputRectangle.height"
 
 #end
 
