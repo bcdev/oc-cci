@@ -6,13 +6,13 @@
              xmlns:ows="http://www.opengis.net/ows/1.1"
              xmlns:xlink="http://www.w3.org/1999/xlink">
 
-  <ows:Identifier>L2</ows:Identifier>
+  <ows:Identifier>L2F</ows:Identifier>
 
   <wps:DataInputs>
     <wps:Input>
       <ows:Identifier>productionName</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>OC-idepix-${year}-${month}</wps:LiteralData>
+        <wps:LiteralData>OC-idepix-MERIS-${year}-${month}</wps:LiteralData>
       </wps:Data>
     </wps:Input>
     <wps:Input>
@@ -25,14 +25,14 @@
     <wps:Input>
       <ows:Identifier>processorBundleVersion</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>2.0-SNAPSHOT</wps:LiteralData>
+        <wps:LiteralData>2.1.4-SNAPSHOT</wps:LiteralData>
       </wps:Data>
     </wps:Input>
 
     <wps:Input>
       <ows:Identifier>processorName</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>idepix.coastcolour</wps:LiteralData>
+        <wps:LiteralData>Idepix.Water</wps:LiteralData>
       </wps:Data>
     </wps:Input>
 
@@ -62,20 +62,24 @@
       </wps:Data>
     </wps:Input>
 
-    <wps:Input>
-      <ows:Identifier>processorParameters</ows:Identifier>
-      <wps:Data>
-         <wps:ComplexData>
-                    <parameters>
-                        <ccOutputRad2Refl>false</ccOutputRad2Refl>
-                        <ccOutputL2Pressures>false</ccOutputL2Pressures>
-                        <ccOutputSchillerCloudValue>false</ccOutputSchillerCloudValue>
-                    </parameters>
-          </wps:ComplexData>
-      </wps:Data>
-    </wps:Input>
+      <wps:Input>
+          <ows:Identifier>processorParameters</ows:Identifier>
+          <wps:Data>
+              <wps:ComplexData>
+                  <parameters>
+                      <ccOutputRadiance>false</ccOutputRadiance>
+                  </parameters>
+              </wps:ComplexData>
+          </wps:Data>
+      </wps:Input>
+      <wps:Input>
+          <ows:Identifier>outputFormat</ows:Identifier>
+          <wps:Data>
+              <wps:LiteralData>BEAM-DIMAP</wps:LiteralData>
+          </wps:Data>
+      </wps:Input>
 
-    <wps:Input>
+      <wps:Input>
       <ows:Identifier>calvalus.hadoop.mapred.child.java.opts</ows:Identifier>
       <wps:Data>
         <wps:LiteralData>-Xmx1500M</wps:LiteralData>
