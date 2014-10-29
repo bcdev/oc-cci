@@ -6,7 +6,7 @@
              xmlns:ows="http://www.opengis.net/ows/1.1"
              xmlns:xlink="http://www.w3.org/1999/xlink">
 
-  <ows:Identifier>L2F</ows:Identifier>
+  <ows:Identifier>L2Plus</ows:Identifier>
 
   <wps:DataInputs>
     <wps:Input>
@@ -75,7 +75,7 @@
       <wps:Input>
           <ows:Identifier>outputFormat</ows:Identifier>
           <wps:Data>
-              <wps:LiteralData>BEAM-DIMAP</wps:LiteralData>
+              <wps:LiteralData>NetCDF4</wps:LiteralData>
           </wps:Data>
       </wps:Input>
 
