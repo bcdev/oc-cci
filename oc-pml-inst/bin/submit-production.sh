@@ -10,7 +10,12 @@ fi
 if [[ -v OC_CALVALUS_VERSION ]]; then
   calvalus_version="--calvalus ${OC_CALVALUS_VERSION}"
 fi
-command="${OC_JAVA} -jar ${OC_PRODUCTION_JAR} -e ${beam_version} ${calvalus_version} $request"
+if [[ -v OC_JAVA ]]; then
+  java_executable="${OC_JAVA}"
+else
+  java_executable="java"
+fi
+command="${java_executable} -jar ${OC_PRODUCTION_JAR} -e ${beam_version} ${calvalus_version} $request"
 
 echo ${command}
 echo "start $(date --rfc-3339=seconds)"
