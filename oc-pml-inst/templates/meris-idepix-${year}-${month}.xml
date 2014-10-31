@@ -76,7 +76,7 @@
       <wps:Input>
           <ows:Identifier>outputFormat</ows:Identifier>
           <wps:Data>
-              <wps:LiteralData>NetCDF4</wps:LiteralData>
+              <wps:LiteralData>BEAM-DIMAP</wps:LiteralData>
           </wps:Data>
       </wps:Input>
 
