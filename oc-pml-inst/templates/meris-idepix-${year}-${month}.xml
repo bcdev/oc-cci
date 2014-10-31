@@ -68,6 +68,7 @@
               <wps:ComplexData>
                   <parameters>
                       <ccOutputRadiance>false</ccOutputRadiance>
+                      <ccUseMERISAlternativeSchillerAllNN>false</ccUseMERISAlternativeSchillerAllNN>
                   </parameters>
               </wps:ComplexData>
           </wps:Data>
