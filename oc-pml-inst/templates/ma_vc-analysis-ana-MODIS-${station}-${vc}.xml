@@ -217,13 +217,14 @@ WRITE_BBS      1
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
-WRITE_ANCILLARY 0
+WRITE_ANCILLARY 1
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-WRITE_SZA      0
-WRITE_VZA      0
-WRITE_RAA      0
+WRITE_SZA      1
+WRITE_VZA      1
+WRITE_RAA      1
+WRITE_RTOA     1
 
 # DEBUGGING ###########
 
@@ -256,7 +257,25 @@ PARTIAL_PROCESSING 0
         <wps:Input>
             <ows:Identifier>filteredMeanCoeff</ows:Identifier>
             <wps:Data>
-                <wps:LiteralData>0.0</wps:LiteralData>
+                <wps:LiteralData>2.5</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+         <wps:Input>
+            <ows:Identifier>filterOverlapping</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>true</wps:LiteralData>
+            </wps:Data>
+         </wps:Input>
+        <wps:Input>
+            <ows:Identifier>onlyExtractComplete</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>true</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>goodPixelExpression</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>bitmask == 0</wps:LiteralData>
             </wps:Data>
         </wps:Input>
 
