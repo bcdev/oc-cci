@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<wps:Execute service="WPS"
+             version="1.0.0"
+             xmlns:wps="http://www.opengis.net/wps/1.0.0"
+             xmlns:ows="http://www.opengis.net/ows/1.1"
+             xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <ows:Identifier>MA</ows:Identifier>
+
+    <wps:DataInputs>
+        <wps:Input>
+            <ows:Identifier>productionName</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>vc-analysis-ana-idepix-MODIS</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>inputPath</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>/calvalus/eodata/MODISA_L1B/v1/${yyyy}/${MM}/${dd}/.*L1B_LAC$</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>calvalus.output.dir</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>${output}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+
+
+        <wps:Input>
+          <ows:Identifier>processorBundleName</ows:Identifier>
+          <wps:Data>
+            <wps:LiteralData>beam-idepix-oc</wps:LiteralData>
+          </wps:Data>
+        </wps:Input>
+        <wps:Input>
+          <ows:Identifier>processorBundleVersion</ows:Identifier>
+          <wps:Data>
+            <wps:LiteralData>3.0-SNAPSHOT</wps:LiteralData>
+          </wps:Data>
+        </wps:Input>
+        <wps:Input>
+          <ows:Identifier>processorName</ows:Identifier>
+          <wps:Data>
+            <wps:LiteralData>idepix.occci</wps:LiteralData>
+          </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>processorParameters</ows:Identifier>
+            <wps:Data>
+                <wps:ComplexData>
+                    <parameters>
+                         <ocOutputRad2Refl>false</ocOutputRad2Refl>
+                         <ocOutputEmissive>false</ocOutputEmissive>
+                         <ocOutputSeawifsRadiance>false</ocOutputSeawifsRadiance>
+                         <ocOutputSeawifsRefl>false</ocOutputSeawifsRefl>
+                         <ocOutputGeometry>false</ocOutputGeometry>
+                         <ocOutputDebug>false</ocOutputDebug>
+                         <ocWaterMaskResolution>50</ocWaterMaskResolution>
+                         <cloudBufferWidth>1</cloudBufferWidth>
+                    </parameters>
+                </wps:ComplexData>
+            </wps:Data>
+        </wps:Input>
+
+
+
+        <wps:Input>
+            <ows:Identifier>recordSourceUrl</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>hdfs://gridmaster4:8020${calvalusPointData}</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>macroPixelSize</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>3</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>maxTimeDifference</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>3</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+            <ows:Identifier>onlyExtractComplete</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>true</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.auxdata.modis_geo</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>'/calvalus/eodata/MODISA_GEO/v1/'yyyy'/'MM'/'dd'/'</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.hadoop.mapred.max.map.failures.percent</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>5</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+
+        <wps:Input>
+            <ows:Identifier>calvalus.hadoop.mapred.child.java.opts</ows:Identifier>
+            <wps:Data>
+                <wps:LiteralData>-Xmx1500M</wps:LiteralData>
+            </wps:Data>
+        </wps:Input>
+    </wps:DataInputs>
+</wps:Execute>

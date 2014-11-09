@@ -32,8 +32,8 @@ pointData = {
 calvalusPointDataRoot = '/calvalus/projects/vc-analysis/point-data'
 localPointDataRoot = 'vc-ana-point-data'
 
-hosts = [('localhost', 2)]
-types = [('ingest-point-data.sh', 1), ('template-step.py', 2)]
+hosts = [('localhost', 1)]
+types = [('ingest-point-data.sh', 1), ('template-step.py', 1)]
 ################################################################################
 class MyDeamon(Daemon):
     def run(self):
@@ -56,10 +56,17 @@ class MyDeamon(Daemon):
                           'vc', vc,
                           'calib', '"'+gains[sensor][vc]+'"',
                           'calvalusPointData', calvalusPointData,
-                          'output', '/calvalus/projects/vc-analysis2/' + sensor + "-" + vc
+                          'output', '/calvalus/projects/vc-analysis3/' + sensor + "-" + vc
                 ]
                 handle = 'vc-analysis-ana-' + sensor + "-" + vc
                 pm.execute('template-step.py', [calvalusPointData], [handle], parameters=params, logprefix=handle)
+            #======================================================
+            params = ['ma_vc-analysis-ana-idepix-' + sensor + '.xml',
+                          'calvalusPointData', calvalusPointData,
+                          'output', '/calvalus/projects/vc-analysis3/' + sensor + "-idepix"
+            ]
+            handle = 'vc-analysis-ana-idepix-' + sensor
+            pm.execute('template-step.py', [calvalusPointData], [handle], parameters=params, logprefix=handle)
         #======================================================
         pm.wait_for_completion()
         #======================================================
