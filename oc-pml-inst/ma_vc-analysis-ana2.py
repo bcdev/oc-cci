@@ -24,6 +24,23 @@ gains = {
           }
 }
 
+ftpDirs = {
+    'MODIS':
+        {
+            'NOVIC' : 'VC/Gain_validation_2014-11-05/MODIS/NOVIC',
+            'VIC1' : 'VC/Gain_validation_2014-11-05/MODIS/bandset_1',
+            'VIC2' : 'VC/Gain_validation_2014-11-05/MODIS/bandset_2',
+        },
+    'SEAWIFS':
+        {
+            'NOVIC' : 'VC/Gain_validation_2014-11-05/SeaWiFS/NOVIC',
+            'bandset_1' : 'VC/Gain_validation_2014-11-05/SeaWiFS/bandset_1',
+            'bandset_2' : 'VC/Gain_validation_2014-11-05/SeaWiFS/bandset_2',
+            'bandset_3' : 'VC/Gain_validation_2014-11-05/SeaWiFS/bandset_3',
+            'bandset_4' : 'VC/Gain_validation_2014-11-05/SeaWiFS/bandset_4',
+          }
+}
+
 pointData = {
     'MODIS': 'oc_cci_v2.2_bs_MODIS_allsites.csv',
     'SEAWIFS':  'oc_cci_v2.2_bs_SeaWiFS_allsites.csv',
@@ -58,15 +75,43 @@ class MyDeamon(Daemon):
                           'calvalusPointData', calvalusPointData,
                           'output', '/calvalus/projects/vc-analysis3/' + sensor + "-" + vc
                 ]
-                handle = 'vc-analysis-ana-' + sensor + "-" + vc
-                pm.execute('template-step.py', [calvalusPointData], [handle], parameters=params, logprefix=handle)
+                handleMA = 'vc-analysis-ana-' + sensor + "-" + vc
+                pm.execute('template-step.py', [calvalusPointData], [handleMA], parameters=params, logprefix=handleMA)
+
+                params = ['/calvalus/projects/vc-analysis3/' + sensor + "-" + vc,
+                          'vc-analysis-' + sensor + "-" + vc
+                ]
+                handleCP = 'vc-analysis-ana-' + sensor + "-" + vc + '-copy'
+                pm.execute('copyMaResultsToLocal.sh', [handleMA], [handleCP], parameters=params, logprefix=handleCP)
+
+                params = ['ftp.brockmann-consult.de',
+                          'oc-cci',
+                          'vc-analysis-' + sensor + "-" + vc + '.tar.gz',
+                          ftpDirs[sensor][vc]
+                ]
+                handleFTP = 'vc-analysis-ana-' + sensor + "-" + vc + '-ftp'
+                pm.execute('putOnFTP.sh', [handleCP], [handleFTP], parameters=params, logprefix=handleFTP)
             #======================================================
             params = ['ma_vc-analysis-ana-idepix-' + sensor + '.xml',
                           'calvalusPointData', calvalusPointData,
                           'output', '/calvalus/projects/vc-analysis3/' + sensor + "-idepix"
             ]
-            handle = 'vc-analysis-ana-idepix-' + sensor
-            pm.execute('template-step.py', [calvalusPointData], [handle], parameters=params, logprefix=handle)
+            handleMA = 'vc-analysis-ana-idepix-' + sensor
+            pm.execute('template-step.py', [calvalusPointData], [handleMA], parameters=params, logprefix=handleMA)
+
+            params = ['/calvalus/projects/vc-analysis3/' + sensor + "-idepix",
+                      'vc-analysis-' + sensor + "-idepix"
+                    ]
+            handleCP = 'vc-analysis-ana-idepix-' + sensor + '-copy'
+            pm.execute('copyMaResultsToLocal.sh', [handleMA], [handleCP], parameters=params, logprefix=handleCP)
+
+            params = ['ftp.brockmann-consult.de',
+                      'oc-cci',
+                      'vc-analysis-' + sensor + '-idepix.tar.gz',
+                      'VC/Gain_validation_2014-11-05'
+            ]
+            handleFTP = 'vc-analysis-ana-' + sensor + '-ftp'
+            pm.execute('putOnFTP.sh', [handleCP], [handleFTP], parameters=params, logprefix=handleFTP)
         #======================================================
         pm.wait_for_completion()
         #======================================================
