@@ -19,7 +19,9 @@ package org.esa.beam.occci;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ProductInsituMatcher {
     private final long maxTimeDifference;
@@ -37,6 +39,7 @@ public class ProductInsituMatcher {
 
     public int match() {
         int counter = 0;
+        Set<Product> matches = new HashSet<Product>();
         for (Product product : products) {
             for (SimpleRecord reference : insituRecords) {
                 if (reference.getTime() - maxTimeDifference > product.getEndTime()) {
@@ -59,11 +62,14 @@ public class ProductInsituMatcher {
                         continue;
                     }
                 }
-                System.out.println(product.getName());
+//                System.out.println(product.getName());
+                matches.add(product);
                 counter++;
                 break;
             }
         }
+        System.err.println("matches.size() = " + matches.size());
+        System.err.println("counter = " + counter);
         return counter;
     }
 }

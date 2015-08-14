@@ -36,6 +36,7 @@ public class ProductWithInsituComparer {
     public static final DateFormat PRODUCT_DATE_FORMAT = DateUtils.createDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public static void main(String[] args) throws Exception {
+        long t0 = System.currentTimeMillis();
         if (args.length != 3) {
             printUsage();
         }
@@ -62,11 +63,26 @@ public class ProductWithInsituComparer {
         System.err.println("num insituRecords = " + insituRecords.size());
         List<Product> products = getModisProducts(productListFile);
         System.err.println("num products =  " + products.size());
-        System.err.println();
 
+
+        long t1 = System.currentTimeMillis();
+        System.err.println("delta time prepare = " + ((t1 - t0) / 1000f));
+        System.err.println("================== old ======================================");
         ProductInsituMatcher matcher = new ProductInsituMatcher(products, insituRecords, hours * HOURS_IN_MILLIS, true);
         int numMatches = matcher.match();
+        long t2 = System.currentTimeMillis();
+
         System.err.println("num matches =  " + numMatches);
+        System.err.println("delta time match old   = " + ((t2 - t1) / 1000f));
+        System.err.println("==================== fast ====================================");
+
+        t1 = System.currentTimeMillis();
+        ProductInsituMatcherFast matcherfast = new ProductInsituMatcherFast(products, insituRecords, hours * HOURS_IN_MILLIS, true);
+        numMatches = matcherfast.match();
+        t2 = System.currentTimeMillis();
+
+        System.err.println("num matches =  " + numMatches);
+        System.err.println("delta time match fast  = " + ((t2 - t1) / 1000f));
     }
 
     private static void printUsage() {
@@ -109,7 +125,7 @@ public class ProductWithInsituComparer {
 
         public ModisGeoProduct(String line) throws java.text.ParseException {
             String[] splits = line.split("\t");
-            this.name = splits[0];
+            this.name = new File(splits[0]).getName();
             startTime = PRODUCT_DATE_FORMAT.parse(DateUtils.getNoFractionString(splits[1])).getTime();
             endTime = PRODUCT_DATE_FORMAT.parse(DateUtils.getNoFractionString(splits[2])).getTime();
             wkt = splits[3];
@@ -134,7 +150,14 @@ public class ProductWithInsituComparer {
         public Geometry getGeometry() {
             if (geomtry == null) {
                 try {
+
+                    // name = A2005121211000.GEO_LAC is south-pole-product
+
                     geomtry = wktReader.read(wkt);
+                    int unwrapDateline = DateLineOps.unwrapDateline(geomtry, -180, 180);
+                    if (unwrapDateline > 0) {
+                        geomtry = DateLineOps.pageGeom(geomtry, -180, 180);
+                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -150,7 +173,23 @@ public class ProductWithInsituComparer {
                    ", endTime=" + endTime +
                    '}';
         }
-    }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ModisGeoProduct that = (ModisGeoProduct) o;
+
+            if (!name.equals(that.name)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
+    }
 
 }
