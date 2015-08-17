@@ -14,7 +14,7 @@
  * with this program; if not, see http://www.gnu.org/licenses/
  */
 
-package org.esa.beam.occci;
+package org.esa.beam.occci.insitu;
 
 import java.awt.geom.Point2D;
 import java.util.Arrays;

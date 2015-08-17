@@ -16,18 +16,16 @@
 
 package org.esa.beam.occci;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-
 import java.awt.geom.Point2D;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class SimpleRecord {
-    private static final GeometryFactory geometryFactory = new GeometryFactory();
+
+    static final DateFormat INSITU_DATE_FORMAT = DateUtils.createDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private final long time;
     private final Point2D.Float location;
-    private Point point;
 
     public SimpleRecord(long time, Point2D.Float location) {
         this.time = time;
@@ -38,10 +36,15 @@ public class SimpleRecord {
         return time;
     }
 
-    Point getPoint() {
-        if (point == null) {
-            point = geometryFactory.createPoint(new Coordinate(location.getX(), location.getY()));
-        }
-        return point;
+    public Point2D.Float getLocation() {
+        return location;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleRecord{" +
+                "time=" + INSITU_DATE_FORMAT.format(new Date(time)) +
+                ", location=" + location +
+                '}';
     }
 }

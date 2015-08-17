@@ -14,7 +14,7 @@
  * with this program; if not, see http://www.gnu.org/licenses/
  */
 
-package org.esa.beam.occci;
+package org.esa.beam.occci.insitu;
 
 /**
  * A header is used to describe the {@link Record}s provided by a {@link RecordSource}.

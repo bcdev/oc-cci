@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Brockmann Consult GmbH (info@brockmann-consult.de)
+ * Copyright (C) 2015 Brockmann Consult GmbH (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -16,17 +16,16 @@
 
 package org.esa.beam.occci;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
+import java.util.Set;
 
 /**
- * Created by marcoz on 04.07.14.
+ * Created by marcoz on 17.08.15.
  */
-public interface Product {
-    long getEndTime();
+public interface EoProductMatcher {
 
-    long getStartTime();
+    Set<EoProduct> matchInsitu(List<SimpleRecord> insituRecords, long maxTimeDifference);
 
-    String getName();
+    Set<EoProduct> matchProduct();
 
-    Geometry getGeometry();
 }
