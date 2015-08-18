@@ -41,4 +41,5 @@ public interface EoProduct {
 
     void reset();
 
+    void createGeo();
 }

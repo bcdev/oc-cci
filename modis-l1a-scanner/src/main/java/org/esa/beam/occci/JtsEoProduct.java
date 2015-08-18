@@ -85,6 +85,11 @@ public class JtsEoProduct extends AbstractEoProduct {
         topExceptions = 0;
     }
 
+    @Override
+    public void createGeo() {
+        getGeometry();
+    }
+
     private Geometry getGeometry() {
         if (geometry == null) {
             try {

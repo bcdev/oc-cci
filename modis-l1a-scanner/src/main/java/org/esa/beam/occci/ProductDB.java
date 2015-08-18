@@ -47,14 +47,20 @@ public class ProductDB {
     }
 
     static List<EoProduct> readProducts(String format, File file) throws IOException, java.text.ParseException {
+        long t1 = System.currentTimeMillis();
         FileReader fileReader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line = bufferedReader.readLine();
         List<EoProduct> eoProducts = new ArrayList<EoProduct>();
         while (line != null) {
-            eoProducts.add(createEoProduct(format, line));
+            EoProduct eoProduct = createEoProduct(format, line);
+            if (eoProduct != null) {
+                eoProducts.add(eoProduct);
+            }
             line = bufferedReader.readLine();
         }
+        long t2 = System.currentTimeMillis();
+        System.out.println("read products time (" + format + ") = " + ((t2 - t1) / 1000f));
         return eoProducts;
     }
 
@@ -63,6 +69,10 @@ public class ProductDB {
             return JtsEoProduct.parse(line);
         } else if ("spatial3d".equals(format)) {
             return Spatial3dEoProduct.parse(line);
+        } else if ("s2".equals(format)) {
+            return S2EoProduct.parse(line);
+        } else if ("s2i".equals(format)) {
+            return S2IEoProduct.parse(line);
         }
         throw new IllegalArgumentException("Unknow format " + format);
     }

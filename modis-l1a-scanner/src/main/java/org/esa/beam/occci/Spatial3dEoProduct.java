@@ -84,6 +84,11 @@ public class Spatial3dEoProduct extends AbstractEoProduct {
         geoMembershipShape = null;
     }
 
+    @Override
+    public void createGeo() {
+        getGeometry();
+    }
+
     private GeoMembershipShape getGeometry() {
         if (geoMembershipShape == null) {
             try {

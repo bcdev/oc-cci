@@ -34,45 +34,81 @@ public class ProductDBCheckerMain {
 
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 3) {
+        if (args.length != 4) {
             printUsage();
         }
-        File productListFile = new File(args[0]);
-        if (!productListFile.exists()) {
+        File productIndexListFile1 = new File(args[0]);
+        if (!productIndexListFile1.exists()) {
             System.err.printf("productList file '%s' does not exits%n", args[0]);
             printUsage();
         }
-        File insituCSVtFile = new File(args[1]);
+        File productListFile2 = new File(args[1]);
+        if (!productListFile2.exists()) {
+            System.err.printf("productList file '%s' does not exits%n", args[1]);
+            printUsage();
+        }
+
+        File insituCSVtFile = new File(args[2]);
         if (!insituCSVtFile.exists()) {
-            System.err.printf("insituList file '%s' does not exits%n", args[1]);
+            System.err.printf("insituList file '%s' does not exits%n", args[2]);
             printUsage();
         }
         int hours = 0;
         try {
-            hours = Integer.parseInt(args[2]);
+            hours = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            System.err.printf("cannot parse hours '%s' %n", args[2]);
+            System.err.printf("cannot parse hours '%s' %n", args[3]);
             printUsage();
         }
 
         List<SimpleRecord> insituRecords = readInsituRecords(insituCSVtFile);
         System.out.println("num insituRecords = " + insituRecords.size());
-        ProductDB jtsProductDB = ProductDB.create(ProductDB.readProducts("jts", productListFile));
-        ProductDB spatial3dProductDB = ProductDB.create(ProductDB.readProducts("spatial3d", productListFile));
-        System.out.println("num jts products =  " + jtsProductDB.size());
-        System.out.println("num spatial3d products =  " + spatial3dProductDB.size());
+//        ProductDB jtsProductDB = ProductDB.create(ProductDB.readProducts("jts", productListFile));
+//        ProductDB spatial3dProductDB = ProductDB.create(ProductDB.readProducts("spatial3d", productListFile));
+//        System.out.println("num jts products =  " + jtsProductDB.size());
+//        System.out.println("num spatial3d products =  " + spatial3dProductDB.size());
+//        System.out.println("num s2 products =  " + s2ProductDB.size());
+//
+//        System.out.println();
+//        performInsitu("spatial3d", new FastMatcher(spatial3dProductDB), insituRecords, HOURS_IN_MILLIS * hours);
+//        resetProductDB(spatial3dProductDB);
+//        performOverlap("spatial3d", new FastMatcher(spatial3dProductDB));
+//
+//        System.out.println();
+//        performInsitu("jts", new FastMatcher(jtsProductDB), insituRecords, HOURS_IN_MILLIS * hours);
+//        resetProductDB(jtsProductDB);
+//        performOverlap("jts", new FastMatcher(jtsProductDB));
 
         System.out.println();
-        performInsitu("spatial3d", new FastMatcher(spatial3dProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-        resetProductDB(spatial3dProductDB);
-        performOverlap("spatial3d", new FastMatcher(spatial3dProductDB));
+        ProductDB s2iProductDB = ProductDB.create(ProductDB.readProducts("s2i", productIndexListFile1));
+        System.out.println("s2iProductDB.size() = " + s2iProductDB.size());
+        performInsitu("s2i", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
+        performOverlap("s2i", new FastMatcher(s2iProductDB));
+        s2iProductDB = null;
 
         System.out.println();
-        performInsitu("jts", new FastMatcher(jtsProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-        resetProductDB(jtsProductDB);
-        performOverlap("jts", new FastMatcher(jtsProductDB));
+        ProductDB s2ProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
+        System.out.println("s2ProductDB.size() = " + s2ProductDB.size());
+        performInsitu("s2", new FastMatcher(s2ProductDB), insituRecords, HOURS_IN_MILLIS * hours);
+        performOverlap("s2", new FastMatcher(s2ProductDB));
+        s2ProductDB = null;
 
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        s2iProductDB = ProductDB.create(ProductDB.readProducts("s2i", productIndexListFile1));
+        System.out.println("s2iProductDB.size() = " + s2iProductDB.size());
+        performInsitu("s2i", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
+        performOverlap("s2i", new FastMatcher(s2iProductDB));
+        s2iProductDB = null;
+
+        System.out.println();
+        s2ProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
+        System.out.println("s2ProductDB.size() = " + s2ProductDB.size());
+        performInsitu("s2", new FastMatcher(s2ProductDB), insituRecords, HOURS_IN_MILLIS * hours);
+        performOverlap("s2", new FastMatcher(s2ProductDB));
+        s2ProductDB = null;
 
     }
 
@@ -80,6 +116,16 @@ public class ProductDBCheckerMain {
         for (EoProduct eoProduct : productDB.list()) {
             eoProduct.reset();
         }
+    }
+
+    private static void createGeometries(ProductDB productDB) {
+        long t1 = System.currentTimeMillis();
+        for (EoProduct eoProduct : productDB.list()) {
+            eoProduct.createGeo();
+        }
+        long t2 = System.currentTimeMillis();
+        System.out.println("delta time createGeometries = " + ((t2 - t1) / 1000f));
+
     }
 
     private static void performInsitu(String format, EoProductMatcher matcher, List<SimpleRecord> insituRecords, long maxTimeDifference) {
@@ -90,6 +136,12 @@ public class ProductDBCheckerMain {
         long t2 = System.currentTimeMillis();
 
         System.out.println("num matches =  " + eoProducts.size());
+        if (format.equals("s2i")) {
+            System.out.println("cellCounter    =  " + S2IEoProduct.cellCounter);
+            System.out.println("poylgonCounter =  " + S2IEoProduct.poylgonCounter);
+            S2IEoProduct.cellCounter = 0;
+            S2IEoProduct.poylgonCounter = 0;
+        }
         System.out.println("delta time  = " + ((t2 - t1) / 1000f));
     }
 
@@ -103,13 +155,18 @@ public class ProductDBCheckerMain {
         System.out.println("num matches =  " + eoProducts.size());
         if (format.equals("jts")) {
             System.out.println("num TopologyExceptions =  " + JtsEoProduct.topExceptions);
+        } else if (format.equals("s2i")) {
+            System.out.println("cellCounter    =  " + S2IEoProduct.cellCounter);
+            System.out.println("poylgonCounter =  " + S2IEoProduct.poylgonCounter);
+            S2IEoProduct.cellCounter = 0;
+            S2IEoProduct.poylgonCounter = 0;
         }
         System.out.println("delta time  = " + ((t2 - t1) / 1000f));
     }
 
 
     private static void printUsage() {
-        System.err.println("Usage: ProductDBCheckerMain <productList> <insituList> <hours>");
+        System.err.println("Usage: ProductDBCheckerMain <productIndexList> <productList> <insituList> <hours>");
         System.exit(1);
     }
 
