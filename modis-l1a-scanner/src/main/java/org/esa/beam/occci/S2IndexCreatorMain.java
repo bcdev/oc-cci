@@ -39,12 +39,13 @@ public class S2IndexCreatorMain {
             printUsage();
         }
         List<EoProduct> eoProductList = ProductDB.readProducts("s2", productListFile);
-        FileWriter fileWriter = new FileWriter(indexfile);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        for (EoProduct eoProduct : eoProductList) {
-            eoProduct.createGeo();
-            S2EoProduct s2EoProduct = (S2EoProduct) eoProduct;
-            bufferedWriter.write(s2EoProduct.getIndexString());
+        try (FileWriter fileWriter = new FileWriter(indexfile);
+             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            for (EoProduct eoProduct : eoProductList) {
+                eoProduct.createGeo();
+                S2EoProduct s2EoProduct = (S2EoProduct) eoProduct;
+                bufferedWriter.write(s2EoProduct.getIndexString());
+            }
         }
     }
 
