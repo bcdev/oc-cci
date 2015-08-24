@@ -1,0 +1,30 @@
+#!/bin/bash
+
+inFile="$inputFile"
+
+#[[
+set -e
+set -m
+
+source functions.sh
+parameter_defaults
+]]#
+
+#if ($inputRectangle)
+
+#set( $Double = 0.0 )
+
+#set( $Dsline = $inputRectangle.y )
+#set( $sline = $Double.valueOf($Dsline).intValue() )
+
+#set( $Deline = $inputRectangle.y + $inputRectangle.height )
+#set( $eline = $Double.valueOf($Deline).intValue() )
+
+echo PROCESS_ROWS $sline $eline  >> parameters.txt
+echo "CALVALUS_PRODUCT_TRANSFORMATION  subset 0, $inputRectangle.y, $productRectangle.width, $inputRectangle.height"
+
+#end
+
+#[[
+process ${inFile}
+]]#

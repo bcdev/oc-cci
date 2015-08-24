@@ -8,7 +8,7 @@
 
 # INPUT/OUTPUT ######
 
-L1_FORMAT MODIS
+L1_FORMAT L2GEN_NETCDF
 
 # output format: HDF, NETCDF, NETCDF_CLASSIC
 OUTPUT_FORMAT NETCDF
@@ -17,14 +17,14 @@ OUTPUT_FORMAT NETCDF
 AUXDATA NCEP
 
 # BANDS DEFINITION #######
-BANDS_CORR   412 443     488 531 551         667 678 748     869
-BANDS_OC     412 443     488 531 551         667 678 748     869
-BANDS_RW     412 443     488 531 551         667 678 748     869
+BANDS_CORR   412 443     488 531 547         667 678 748     869
+BANDS_OC     412 443     488 531 547         667 678 748     869
+BANDS_RW     412 443     488 531 547         667 678 748     869
 
 # NIR BANDS
-# BANDS_CORR   412 443     488 531 551         667 678 748     869 1240      2130
-# BANDS_OC     412 443     488 531 551         667 678 748     869 1240      2130
-# BANDS_RW     412 443     488 531 551         667 678 748     869 1240      2130
+# BANDS_CORR   412 443     488 531 547         667 678 748     869 1240      2130
+# BANDS_OC     412 443     488 531 547         667 678 748     869 1240      2130
+# BANDS_RW     412 443     488 531 547         667 678 748     869 1240      2130
 
 # GLINT BANDS
 # BANDS_CORR   412 443 469 488 531     555 645             858
@@ -36,8 +36,8 @@ BANDS_RW     412 443     488 531 551         667 678 748     869
 # BANDS_OC     412 443 469 488 531     555 645             858     1240      2130
 # BANDS_RW     412 443 469 488 531     555 645             858     1240      2130
 
-BANDS_LUTS   412 443 469 488 531 551 555 645 667 678 748 858 869 1240
-BANDS_L1     412 443 469 488 531 551 555 645 667 678 748 858 869 1240
+BANDS_LUTS   412 443 469 488 531 547 555 645 667 678 748 858 869 1240
+BANDS_L1     412 443 469 488 531 547 555 645 667 678 748 858 869 1240
 
 # ~~~ from SeaDAS, src/build/src/l2gen/l1_hmodis_hdf.c ~~~~~~~~~~~~
 #     Pos   Band   Wavelength      Resolution  EV_Position
@@ -46,7 +46,7 @@ BANDS_L1     412 443 469 488 531 551 555 645 667 678 748 858 869 1240
 #       2      3       469             500          0
 #       3     10       488            1000          2
 #       4     11       531            1000          3
-#       5     12       551            1000          4
+#       5     12       547            1000          4   # previously 551
 #       6      4       555             500          1
 #       7      1       645             250          0
 #       8     13       667lo          1000          5
@@ -60,13 +60,16 @@ BANDS_L1     412 443 469 488 531 551 555 645 667 678 748 858 869 1240
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+# NO VICARIOUS CALIBRATION
 # CALIB        1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
-CALIB 0.9731 0.9910 1.0132 0.9935 1.0002 0.9994 1.0012 1.0280 0.9996 0.9998 0.9989 1.0254 1.0  1.0
+# NASA CALIBRATION
+# CALIB 0.9731 0.9910 1.0132 0.9935 1.0002 0.9994 1.0012 1.0280 0.9996 0.9998 0.9989 1.0254 1.0  1.0
+# OC_CCI VICARIOUS CALIBRATION (VIC1, ERA-INTERIM)
+# CALIB        0.997 1.000 1. 0.999 1.001 0.999 1. 1. 0.993 1. 1. 1. 1. 1.
+# OC_CCI VICARIOUS CALIBRATION (VIC2, ERA-INTERIM)
+CALIB 0.995 1.001 1.0 1.000 1.001 1.000 1.0 1.0 0.992 1.0 1.0 1.0 1.0 1.0
 
-BAND_WAVELEN_L1 412 443 469 488 531 551 555 645 667 678 748 858 869 1240
-
-# LAND MASK
-FILE_LANDMASK      auxdata/common/landmask.dat
+BAND_WAVELEN_L1 412 443 469 488 531 547 555 645 667 678 748 858 869 1240
 
 # GASEOUS CORRECTION ########
 
@@ -82,7 +85,7 @@ NO2_FRAC200M auxdata/common/trop_f_no2_200m.hdf
 
 # LOOK-UP TABLE FILES ############
 
-FILE_LUT               LUTS/MODIS/LUT.hdf
+FILE_LUT               LUTS/MODIS/LUTB.hdf
 
 
 N_DETECTORS 1
@@ -93,7 +96,7 @@ FILE_DETECTOR_WAVELENGTH auxdata/modis/central_wavelen.txt
 
 # ATMOSPHERIC MODEL #########
 
-POLY_EXPO         0. -1. -4.
+POLY_EXPO         0. -1. 0.
 
 
 # transmission factor applied to C0 term
@@ -111,8 +114,8 @@ RGLI_0 0.02
 
 # WATER REFLECTANCE MODEL #########
 
-# MODEL SELECTION: MOREL, MOREL_FOQ
-OC_MODEL MOREL_FOQ
+# MODEL SELECTION: MOREL, MOREL_FOQ, PARKRUDDICK
+OC_MODEL PARKRUDDICK
 
 # Morel's f/Q table
 FILE_MOREL_FOQ   auxdata/common/morel_fq.dat
@@ -123,26 +126,56 @@ BRDF_OPT 1
 ADJUST_MM_MODEL_CLEARWATERS 1
 
 # NIR extension: similarity spectrum (0) or 1/AW (1)
-WATER_SPECTRUM_NIR_AW    1
+WATER_SPECTRUM_NIR_AW    0
 
 # spectral dependency of suspended matter
 BBSS_SPEC -1.
+
+# Park and Ruddick
+FILE_OC_PARKRUDDICK      auxdata/common/AboveRrs_gCoef_w5.dat
+FILE_OC_POPEFRY          auxdata/common/pope97.dat
+FILE_OC_PALMERW          auxdata/common/palmer74.dat
+FILE_OC_BRICAUD          auxdata/common/aph_bricaud_1995.txt
+FILE_OC_MORELBUITEVELD   auxdata/common/morel_buiteveld_bsw.txt
+FILE_OC_RAMAN            auxdata/common/raman_westberry13.txt
 
 
 
 # OPTIMIZATION PARAMETERS #########
 
+# 1) Morel Maritorena
+
+#MAX_ITERATIONS        100
+#
+#FORCE_INITIALIZATION  0
+#SIZE_END_ITER         0.005
+#WEIGHT_SPEC           0
+#
+#INITIAL_POINT         -1 0
+#INITIAL_POINT_CASE2   1 1
+#INITIAL_STEP          0.05 0.0005
+#PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+#
+## Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
+#CONSTRAINT_BBS        1e-3 0.0001 0.005
+#
+#THRES_CHI2     0.005
+
+# 2) Park Ruddick
+
 MAX_ITERATIONS        100
 
 FORCE_INITIALIZATION  0
 SIZE_END_ITER         0.005
+WEIGHT_SPEC           0
 
 INITIAL_POINT         -1 0
-INITIAL_STEP          0.05 0.0005
-PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+INITIAL_POINT_CASE2   1 1
+INITIAL_STEP          0.2 0.2
+PARAMS_MIN_MAX        -2. 2. -3. 3.
 
 # Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
-CONSTRAINT_BBS        1e-3 0.0001 0.005
+CONSTRAINT_BBS        1e-3 0.2258 0.9233
 
 THRES_CHI2     0.005
 
@@ -160,6 +193,7 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
+WRITE_BBP      0
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -167,14 +201,15 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-WRITE_SZA      0
-WRITE_VZA      0
-WRITE_RAA      0
+WRITE_RTOA     0
+WRITE_RTOAGC     0
+WRITE_AYS      0
+WRITE_SZA     0
+WRITE_VZA     0
+WRITE_RAA     0
 
 # DEBUGGING ###########
 
 # 0: standard processing
 # 1: stop before minimization
 PARTIAL_PROCESSING 0
-
-

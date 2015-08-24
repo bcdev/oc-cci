@@ -13,18 +13,10 @@ L1_FORMAT MERIS
 # output format: HDF, NETCDF, NETCDF_CLASSIC
 OUTPUT_FORMAT NETCDF
 
-# uncomments this to process only a subset of the rows in the L1 file
-# PROCESS_ROWS 7700 9000
-# NCEP and TOMS filenames
-# if commented or missing, MERIS level1 ancillary data will be used
-# ${ncep_toms}FILE_METEO $file_meteo
-# ${ncep_toms}FILE_OZONE $file_oz
-
 # possible values ERA_INTERIM or NCEP
 AUXDATA NCEP
 
 # BANDS DEFINITION #######
-
 BANDS_CORR 412 443 490 510 560 620 665     754 779 865
 BANDS_OC   412 443 490 510 560 620 665     754 779 865
 BANDS_RW   412 443 490 510 560 620 665     754 779 865
@@ -66,7 +58,7 @@ FILE_DETECTOR_WAVELENGTH  auxdata/meris/smile/v2/central_wavelen_rr.txt
 
 # ATMOSPHERIC MODEL #########
 
-POLY_EXPO         0. -1. -4.
+POLY_EXPO         0. -1. 0.
 
 
 # transmission factor applied to C0 term
@@ -84,8 +76,8 @@ RGLI_0 0.02
 
 # WATER REFLECTANCE MODEL #########
 
-# MODEL SELECTION: MOREL, MOREL_FOQ
-OC_MODEL MOREL_FOQ
+# MODEL SELECTION: MOREL, MOREL_FOQ, PARKRUDDICK
+OC_MODEL PARKRUDDICK
 
 # Morel's f/Q table
 FILE_MOREL_FOQ   auxdata/common/morel_fq.dat
@@ -101,21 +93,51 @@ WATER_SPECTRUM_NIR_AW    0
 # spectral dependency of suspended matter
 BBSS_SPEC -1.
 
+# Park and Ruddick
+FILE_OC_PARKRUDDICK      auxdata/common/AboveRrs_gCoef_w5.dat
+FILE_OC_POPEFRY          auxdata/common/pope97.dat
+FILE_OC_PALMERW          auxdata/common/palmer74.dat
+FILE_OC_BRICAUD          auxdata/common/aph_bricaud_1995.txt
+FILE_OC_MORELBUITEVELD   auxdata/common/morel_buiteveld_bsw.txt
+FILE_OC_RAMAN            auxdata/common/raman_westberry13.txt
+
 
 
 # OPTIMIZATION PARAMETERS #########
+
+# 1) Morel Maritorena
+
+#MAX_ITERATIONS        100
+#
+#FORCE_INITIALIZATION  0
+#SIZE_END_ITER         0.005
+#WEIGHT_SPEC           0
+#
+#INITIAL_POINT         -1 0
+#INITIAL_POINT_CASE2   1 1
+#INITIAL_STEP          0.05 0.0005
+#PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+#
+## Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
+#CONSTRAINT_BBS        1e-3 0.0001 0.005
+#
+#THRES_CHI2     0.005
+
+# 2) Park Ruddick
 
 MAX_ITERATIONS        100
 
 FORCE_INITIALIZATION  0
 SIZE_END_ITER         0.005
+WEIGHT_SPEC           0
 
 INITIAL_POINT         -1 0
-INITIAL_STEP          0.05 0.0005
-PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+INITIAL_POINT_CASE2   1 1
+INITIAL_STEP          0.2 0.2
+PARAMS_MIN_MAX        -2. 2. -3. 3.
 
 # Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
-CONSTRAINT_BBS        1e-3 0.0001 0.005
+CONSTRAINT_BBS        1e-3 0.2258 0.9233
 
 THRES_CHI2     0.005
 
@@ -133,6 +155,7 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
+WRITE_BBP      0
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -140,14 +163,15 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-WRITE_SZA      0
-WRITE_VZA      0
-WRITE_RAA      0
+WRITE_RTOA     0
+WRITE_RTOAGC     0
+WRITE_AYS      0
+WRITE_SZA     0
+WRITE_VZA     0
+WRITE_RAA     0
 
 # DEBUGGING ###########
 
 # 0: standard processing
 # 1: stop before minimization
 PARTIAL_PROCESSING 0
-
-

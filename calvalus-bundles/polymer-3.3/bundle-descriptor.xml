@@ -23,18 +23,10 @@ L1_FORMAT MERIS
 # output format: HDF, NETCDF, NETCDF_CLASSIC
 OUTPUT_FORMAT NETCDF
 
-# uncomments this to process only a subset of the rows in the L1 file
-# PROCESS_ROWS 7700 9000
-# NCEP and TOMS filenames
-# if commented or missing, MERIS level1 ancillary data will be used
-# ${ncep_toms}FILE_METEO $file_meteo
-# ${ncep_toms}FILE_OZONE $file_oz
-
 # possible values ERA_INTERIM or NCEP
 AUXDATA NCEP
 
 # BANDS DEFINITION #######
-
 BANDS_CORR 412 443 490 510 560 620 665     754 779 865
 BANDS_OC   412 443 490 510 560 620 665     754 779 865
 BANDS_RW   412 443 490 510 560 620 665     754 779 865
@@ -76,7 +68,7 @@ FILE_DETECTOR_WAVELENGTH  auxdata/meris/smile/v2/central_wavelen_rr.txt
 
 # ATMOSPHERIC MODEL #########
 
-POLY_EXPO         0. -1. -4.
+POLY_EXPO         0. -1. 0.
 
 
 # transmission factor applied to C0 term
@@ -94,8 +86,8 @@ RGLI_0 0.02
 
 # WATER REFLECTANCE MODEL #########
 
-# MODEL SELECTION: MOREL, MOREL_FOQ
-OC_MODEL MOREL_FOQ
+# MODEL SELECTION: MOREL, MOREL_FOQ, PARKRUDDICK
+OC_MODEL PARKRUDDICK
 
 # Morel's f/Q table
 FILE_MOREL_FOQ   auxdata/common/morel_fq.dat
@@ -111,21 +103,51 @@ WATER_SPECTRUM_NIR_AW    0
 # spectral dependency of suspended matter
 BBSS_SPEC -1.
 
+# Park and Ruddick
+FILE_OC_PARKRUDDICK      auxdata/common/AboveRrs_gCoef_w5.dat
+FILE_OC_POPEFRY          auxdata/common/pope97.dat
+FILE_OC_PALMERW          auxdata/common/palmer74.dat
+FILE_OC_BRICAUD          auxdata/common/aph_bricaud_1995.txt
+FILE_OC_MORELBUITEVELD   auxdata/common/morel_buiteveld_bsw.txt
+FILE_OC_RAMAN            auxdata/common/raman_westberry13.txt
+
 
 
 # OPTIMIZATION PARAMETERS #########
+
+# 1) Morel Maritorena
+
+#MAX_ITERATIONS        100
+#
+#FORCE_INITIALIZATION  0
+#SIZE_END_ITER         0.005
+#WEIGHT_SPEC           0
+#
+#INITIAL_POINT         -1 0
+#INITIAL_POINT_CASE2   1 1
+#INITIAL_STEP          0.05 0.0005
+#PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+#
+## Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
+#CONSTRAINT_BBS        1e-3 0.0001 0.005
+#
+#THRES_CHI2     0.005
+
+# 2) Park Ruddick
 
 MAX_ITERATIONS        100
 
 FORCE_INITIALIZATION  0
 SIZE_END_ITER         0.005
+WEIGHT_SPEC           0
 
 INITIAL_POINT         -1 0
-INITIAL_STEP          0.05 0.0005
-PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+INITIAL_POINT_CASE2   1 1
+INITIAL_STEP          0.2 0.2
+PARAMS_MIN_MAX        -2. 2. -3. 3.
 
 # Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
-CONSTRAINT_BBS        1e-3 0.0001 0.005
+CONSTRAINT_BBS        1e-3 0.2258 0.9233
 
 THRES_CHI2     0.005
 
@@ -143,6 +165,7 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
+WRITE_BBP      0
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -150,9 +173,12 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-WRITE_SZA      0
-WRITE_VZA      0
-WRITE_RAA      0
+WRITE_RTOA     0
+WRITE_RTOAGC     0
+WRITE_AYS      0
+WRITE_SZA     0
+WRITE_VZA     0
+WRITE_RAA     0
 
 # DEBUGGING ###########
 
@@ -250,7 +276,7 @@ PARTIAL_PROCESSING 0
 
 # INPUT/OUTPUT ######
 
-L1_FORMAT MODIS
+L1_FORMAT L2GEN_NETCDF
 
 # output format: HDF, NETCDF, NETCDF_CLASSIC
 OUTPUT_FORMAT NETCDF
@@ -258,18 +284,15 @@ OUTPUT_FORMAT NETCDF
 # possible values ERA_INTERIM or NCEP
 AUXDATA NCEP
 
-# PROCESS_ROWS 0 200
-
 # BANDS DEFINITION #######
-
-BANDS_CORR   412 443     488 531 551         667 678 748     869
-BANDS_OC     412 443     488 531 551         667 678 748     869
-BANDS_RW     412 443     488 531 551         667 678 748     869
+BANDS_CORR   412 443     488 531 547         667 678 748     869
+BANDS_OC     412 443     488 531 547         667 678 748     869
+BANDS_RW     412 443     488 531 547         667 678 748     869
 
 # NIR BANDS
-# BANDS_CORR   412 443     488 531 551         667 678 748     869 1240      2130
-# BANDS_OC     412 443     488 531 551         667 678 748     869 1240      2130
-# BANDS_RW     412 443     488 531 551         667 678 748     869 1240      2130
+# BANDS_CORR   412 443     488 531 547         667 678 748     869 1240      2130
+# BANDS_OC     412 443     488 531 547         667 678 748     869 1240      2130
+# BANDS_RW     412 443     488 531 547         667 678 748     869 1240      2130
 
 # GLINT BANDS
 # BANDS_CORR   412 443 469 488 531     555 645             858
@@ -281,8 +304,8 @@ BANDS_RW     412 443     488 531 551         667 678 748     869
 # BANDS_OC     412 443 469 488 531     555 645             858     1240      2130
 # BANDS_RW     412 443 469 488 531     555 645             858     1240      2130
 
-BANDS_LUTS   412 443 469 488 531 551 555 645 667 678 748 858 869 1240
-BANDS_L1     412 443 469 488 531 551 555 645 667 678 748 858 869 1240
+BANDS_LUTS   412 443 469 488 531 547 555 645 667 678 748 858 869 1240
+BANDS_L1     412 443 469 488 531 547 555 645 667 678 748 858 869 1240
 
 # ~~~ from SeaDAS, src/build/src/l2gen/l1_hmodis_hdf.c ~~~~~~~~~~~~
 #     Pos   Band   Wavelength      Resolution  EV_Position
@@ -291,7 +314,7 @@ BANDS_L1     412 443 469 488 531 551 555 645 667 678 748 858 869 1240
 #       2      3       469             500          0
 #       3     10       488            1000          2
 #       4     11       531            1000          3
-#       5     12       551            1000          4
+#       5     12       547            1000          4   # previously 551
 #       6      4       555             500          1
 #       7      1       645             250          0
 #       8     13       667lo          1000          5
@@ -305,13 +328,16 @@ BANDS_L1     412 443 469 488 531 551 555 645 667 678 748 858 869 1240
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+# NO VICARIOUS CALIBRATION
 # CALIB        1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
-CALIB 0.9731 0.9910 1.0132 0.9935 1.0002 0.9994 1.0012 1.0280 0.9996 0.9998 0.9989 1.0254 1.0  1.0
+# NASA CALIBRATION
+# CALIB 0.9731 0.9910 1.0132 0.9935 1.0002 0.9994 1.0012 1.0280 0.9996 0.9998 0.9989 1.0254 1.0  1.0
+# OC_CCI VICARIOUS CALIBRATION (VIC1, ERA-INTERIM)
+# CALIB        0.997 1.000 1. 0.999 1.001 0.999 1. 1. 0.993 1. 1. 1. 1. 1.
+# OC_CCI VICARIOUS CALIBRATION (VIC2, ERA-INTERIM)
+CALIB 0.995 1.001 1.0 1.000 1.001 1.000 1.0 1.0 0.992 1.0 1.0 1.0 1.0 1.0
 
-BAND_WAVELEN_L1 412 443 469 488 531 551 555 645 667 678 748 858 869 1240
-
-# LAND MASK
-FILE_LANDMASK      auxdata/common/landmask.dat
+BAND_WAVELEN_L1 412 443 469 488 531 547 555 645 667 678 748 858 869 1240
 
 # GASEOUS CORRECTION ########
 
@@ -327,7 +353,7 @@ NO2_FRAC200M auxdata/common/trop_f_no2_200m.hdf
 
 # LOOK-UP TABLE FILES ############
 
-FILE_LUT               LUTS/MODIS/LUT.hdf
+FILE_LUT               LUTS/MODIS/LUTB.hdf
 
 
 N_DETECTORS 1
@@ -338,7 +364,7 @@ FILE_DETECTOR_WAVELENGTH auxdata/modis/central_wavelen.txt
 
 # ATMOSPHERIC MODEL #########
 
-POLY_EXPO         0. -1. -4.
+POLY_EXPO         0. -1. 0.
 
 
 # transmission factor applied to C0 term
@@ -356,8 +382,8 @@ RGLI_0 0.02
 
 # WATER REFLECTANCE MODEL #########
 
-# MODEL SELECTION: MOREL, MOREL_FOQ
-OC_MODEL MOREL_FOQ
+# MODEL SELECTION: MOREL, MOREL_FOQ, PARKRUDDICK
+OC_MODEL PARKRUDDICK
 
 # Morel's f/Q table
 FILE_MOREL_FOQ   auxdata/common/morel_fq.dat
@@ -368,26 +394,56 @@ BRDF_OPT 1
 ADJUST_MM_MODEL_CLEARWATERS 1
 
 # NIR extension: similarity spectrum (0) or 1/AW (1)
-WATER_SPECTRUM_NIR_AW    1
+WATER_SPECTRUM_NIR_AW    0
 
 # spectral dependency of suspended matter
 BBSS_SPEC -1.
+
+# Park and Ruddick
+FILE_OC_PARKRUDDICK      auxdata/common/AboveRrs_gCoef_w5.dat
+FILE_OC_POPEFRY          auxdata/common/pope97.dat
+FILE_OC_PALMERW          auxdata/common/palmer74.dat
+FILE_OC_BRICAUD          auxdata/common/aph_bricaud_1995.txt
+FILE_OC_MORELBUITEVELD   auxdata/common/morel_buiteveld_bsw.txt
+FILE_OC_RAMAN            auxdata/common/raman_westberry13.txt
 
 
 
 # OPTIMIZATION PARAMETERS #########
 
+# 1) Morel Maritorena
+
+#MAX_ITERATIONS        100
+#
+#FORCE_INITIALIZATION  0
+#SIZE_END_ITER         0.005
+#WEIGHT_SPEC           0
+#
+#INITIAL_POINT         -1 0
+#INITIAL_POINT_CASE2   1 1
+#INITIAL_STEP          0.05 0.0005
+#PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+#
+## Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
+#CONSTRAINT_BBS        1e-3 0.0001 0.005
+#
+#THRES_CHI2     0.005
+
+# 2) Park Ruddick
+
 MAX_ITERATIONS        100
 
 FORCE_INITIALIZATION  0
 SIZE_END_ITER         0.005
+WEIGHT_SPEC           0
 
 INITIAL_POINT         -1 0
-INITIAL_STEP          0.05 0.0005
-PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+INITIAL_POINT_CASE2   1 1
+INITIAL_STEP          0.2 0.2
+PARAMS_MIN_MAX        -2. 2. -3. 3.
 
 # Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
-CONSTRAINT_BBS        1e-3 0.0001 0.005
+CONSTRAINT_BBS        1e-3 0.2258 0.9233
 
 THRES_CHI2     0.005
 
@@ -405,6 +461,7 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
+WRITE_BBP      0
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -412,9 +469,12 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-WRITE_SZA      0
-WRITE_VZA      0
-WRITE_RAA      0
+WRITE_RTOA     0
+WRITE_RTOAGC     0
+WRITE_AYS      0
+WRITE_SZA     0
+WRITE_VZA     0
+WRITE_RAA     0
 
 # DEBUGGING ###########
 
@@ -428,7 +488,7 @@ PARTIAL_PROCESSING 0
                 <![CDATA[<p>Performs Polymer processing.  Atmospheric correction of sun-glint
                   contaminated MODIS observations.</p>]]>
             </descriptionHtml>
-            <inputProductTypes>MODIS_L1B</inputProductTypes>
+            <inputProductTypes>MODIS_L1C</inputProductTypes>
             <outputProductType>POLYMER_L2</outputProductType>
             <validMaskExpression>true</validMaskExpression>
 
@@ -470,7 +530,7 @@ PARTIAL_PROCESSING 0
                     <name>Rw531</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rw551</name>
+                    <name>Rw547</name>
                 </outputVariable>
                 <outputVariable>
                     <name>Rw667</name>
@@ -630,6 +690,7 @@ THRES_R865_STD        0.04
 # Output datasets control #########
 
 WRITE_BBS      1
+WRITE_BBP      0
 WRITE_RW       1
 WRITE_CI       1
 WRITE_EPSILON  0
@@ -637,9 +698,12 @@ WRITE_ANCILLARY 0
 WRITE_RPRIME   0
 WRITE_TRANSMITTANCE 0
 WRITE_RATM     0
-WRITE_SZA      0
-WRITE_VZA      0
-WRITE_RAA      0
+WRITE_RTOA     0
+WRITE_RTOAGC     0
+WRITE_AYS      0
+WRITE_SZA     0
+WRITE_VZA     0
+WRITE_RAA     0
 
 # DEBUGGING ###########
 
@@ -701,10 +765,258 @@ PARTIAL_PROCESSING 0
                     <name>Rw670</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rw765</name>
+                    <name>Rw865</name>
+                </outputVariable>
+            </outputVariables>
+
+            <jobConfig>
+                <jobParameter>
+                    <name>calvalus.hadoop.mapreduce.map.failures.maxpercent</name>
+                    <value>5</value>
+                </jobParameter>
+            </jobConfig>
+        </processorDescriptor>
+
+        <processorDescriptor>
+            <executableName>polymerVIIRS</executableName>
+            <processorName>Polymer L2 Processing (VIIRS)</processorName>
+            <processorVersion>3.3</processorVersion>
+            <defaultParameters><![CDATA[
+########################
+# POLYMER COMMAND FILE #
+########################
+
+# NB: paths can be given as relative or absolute
+#     lines starting with character '#' are ignored
+
+
+# INPUT/OUTPUT ######
+
+L1_FORMAT L2GEN_NETCDF
+
+# output format: HDF, NETCDF, NETCDF_CLASSIC
+OUTPUT_FORMAT NETCDF
+
+# possible values ERA_INTERIM or NCEP
+AUXDATA NCEP
+
+# BANDS DEFINITION #######
+# 410 443 486 551 671 745 862 1238 1601 2257 (quid de la bande à 1300 ?)
+BANDS_CORR 410 443 486 551 671 745 862
+BANDS_OC   410 443 486 551 671 745 862
+BANDS_RW   410 443 486 551 671 745 862
+
+BANDS_LUTS 410 443 486 551 671 745 862 1238 1601 2257
+BANDS_L1   410 443 486 551 671 745 862 1238
+
+
+# calibration coefficients (corresponding to BANDS_L1)
+# vicarious calibration R2014.0
+CALIB    0.9631 1.0043 1.0085 0.9765 1.0204 1.0434 1.0 1.0
+
+BAND_WAVELEN_L1   410. 443. 486. 551. 671. 745. 862. 1238.
+
+
+
+
+# GASEOUS CORRECTION ########
+
+# Ozone absorption (1/cm)
+K_OZ 5.827E-04 3.079E-03 1.967E-02 8.934E-02 4.427E-02 1.122E-02 2.274E-03 0.
+
+# NO2 absorption
+K_NO2 5.914E-19 5.013E-19 3.004E-19 1.050E-19 1.080E-20 2.795E-21 3.109E-22 0.000E+00
+NO2_CLIMATOLOGY auxdata/common/no2_climatology.hdf
+NO2_FRAC200M auxdata/common/trop_f_no2_200m.hdf
+
+
+
+# LOOK-UP TABLE FILES ############
+
+FILE_LUT               LUTS/VIIRS/LUT.hdf
+
+
+N_DETECTORS 1
+FILE_SUN_SPEC_FLUX        auxdata/viirs/sun_spectral_flux.txt
+FILE_DETECTOR_WAVELENGTH  auxdata/viirs/central_wavelen.txt
+
+
+
+# ATMOSPHERIC MODEL #########
+
+POLY_EXPO         0. -1. 0.
+
+
+# transmission factor applied to C0 term
+# 0: old method, c0+c1*lambda^-1+c2*lambda^-4
+# 1: direct transmission, c0*exp(-taum*air_mass)+c1*lambda^-1+c2*lambda^-4
+# 2: diffuse transmission, c0*exp(-taum/2*air_mass)+c1*lambda^-1+c2*lambda^-4
+# 3: combination of the 2 previous: coefficient applied to taum = 1-1/2exp(-Rgli/Rgli0)
+C0_TRANSMISSION 3
+
+# threshold for switching between direct and diffuse transmission of the
+# spectrally white component (C0)
+RGLI_0 0.02
+
+
+
+# WATER REFLECTANCE MODEL #########
+
+# MODEL SELECTION: MOREL, MOREL_FOQ, PARKRUDDICK
+OC_MODEL PARKRUDDICK
+
+# Morel's f/Q table
+FILE_MOREL_FOQ   auxdata/common/morel_fq.dat
+
+# clear water adjustment
+ADJUST_MM_MODEL_CLEARWATERS 1
+
+# NIR extension: similarity spectrum (0) or 1/AW (1)
+WATER_SPECTRUM_NIR_AW    0
+
+# spectral dependency of suspended matter
+BBSS_SPEC -1.
+
+# Park and Ruddick
+FILE_OC_PARKRUDDICK      auxdata/common/AboveRrs_gCoef_w5.dat
+FILE_OC_POPEFRY          auxdata/common/pope97.dat
+FILE_OC_PALMERW          auxdata/common/palmer74.dat
+FILE_OC_BRICAUD          auxdata/common/aph_bricaud_1995.txt
+FILE_OC_MORELBUITEVELD   auxdata/common/morel_buiteveld_bsw.txt
+FILE_OC_RAMAN            auxdata/common/raman_westberry13.txt
+
+
+
+# OPTIMIZATION PARAMETERS #########
+
+# 1) Morel Maritorena
+
+#MAX_ITERATIONS        100
+#
+#FORCE_INITIALIZATION  0
+#SIZE_END_ITER         0.005
+#WEIGHT_SPEC           0
+#
+#INITIAL_POINT         -1 0
+#INITIAL_POINT_CASE2   1 1
+#INITIAL_STEP          0.05 0.0005
+#PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+#
+## Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
+#CONSTRAINT_BBS        1e-3 0.0001 0.005
+#
+#THRES_CHI2     0.005
+
+# 2) Park Ruddick
+
+MAX_ITERATIONS        100
+
+FORCE_INITIALIZATION  0
+SIZE_END_ITER         0.005
+WEIGHT_SPEC           0
+
+INITIAL_POINT         -1 0
+INITIAL_POINT_CASE2   1 1
+INITIAL_STEP          0.2 0.2
+PARAMS_MIN_MAX        -2. 2. -3. 3.
+
+# Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
+CONSTRAINT_BBS        1e-3 0.2258 0.9233
+
+THRES_CHI2     0.005
+
+
+
+# CLOUD MASK ############
+
+BAND_NIR              862
+
+# Basic cloud mask parameters (negative values disable)
+THRES_R865            0.2
+THRES_R865_STD        0.02
+
+
+# Output datasets control #########
+
+WRITE_BBS      1
+WRITE_BBP      0
+WRITE_RW       1
+WRITE_CI       1
+WRITE_EPSILON  0
+WRITE_ANCILLARY 0
+WRITE_RPRIME   0
+WRITE_TRANSMITTANCE 0
+WRITE_RATM     0
+WRITE_RTOA     0
+WRITE_RTOAGC     0
+WRITE_AYS      0
+WRITE_SZA     0
+WRITE_VZA     0
+WRITE_RAA     0
+
+
+# DEBUGGING ###########
+
+# 0: standard processing
+# 1: stop before minimization
+# 2: stop before minimization and skip rayleigh correction
+PARTIAL_PROCESSING 0
+]]></defaultParameters>
+            <outputFormats>HDF,NetCDF</outputFormats>
+            <formatting>IMPLICIT</formatting>
+            <descriptionHtml>
+                <![CDATA[<p>Performs Polymer processing.  Atmospheric correction of sun-glint
+                  contaminated VIIRS observations.</p>]]>
+            </descriptionHtml>
+            <inputProductTypes>VIIRS_L1C</inputProductTypes>
+            <outputProductType>POLYMER_L2</outputProductType>
+            <validMaskExpression>true</validMaskExpression>
+
+            <outputVariables>
+                <outputVariable>
+                    <name>R'865</name>
                 </outputVariable>
                 <outputVariable>
-                    <name>Rw865</name>
+                    <name>bitmask</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rgli</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>logchl</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>bbs</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>C0</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>C1</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>C2</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw410</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw443</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw486</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw551</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw671</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw745</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw862</name>
                 </outputVariable>
             </outputVariables>
 
