@@ -17,8 +17,8 @@ import traceback
 import socket
 
 #BC
-DIR_AUX_ERA='hdfs://master00:9000/calvalus/auxiliary/era_interim'
-DIR_AUX_NCEP='hdfs://master00:9000/calvalus/auxiliary/seadas/anc'
+DIR_AUX_ERA='hdfs://calvalus/calvalus/auxiliary/era_interim'
+DIR_AUX_NCEP='hdfs://calvalus/calvalus/auxiliary/seadas/anc'
 #PML
 if socket.gethostname().startswith("calvalus"):
     DIR_AUX_ERA='/data/datasets/ERA_Interim/level3/era_interim-downloaded_20140430/swath/0d'
@@ -218,8 +218,8 @@ def interp_meteo_toms(date):
 
     path_met_s_0 = '%s/%s/%03d/S%s%03d%02d_NCEP.MET' % (DIR_AUX_NCEP, dm0year, dm0doy, dm0year, dm0doy, dm0.hour)
     path_met_s_1 = '%s/%s/%03d/S%s%03d%02d_NCEP.MET' % (DIR_AUX_NCEP, dm1year, dm1doy, dm1year, dm1doy, dm1.hour)
-    path_met_n_0 = '%s/%s/%03d/N%s%03d%02d_MET_NCEPN_6h.hdf' % (DIR_AUX_NCEP, dm0year, dm0doy, dm0year, dm0doy, dm0.hour)
-    path_met_n_1 = '%s/%s/%03d/N%s%03d%02d_MET_NCEPN_6h.hdf' % (DIR_AUX_NCEP, dm1year, dm1doy, dm1year, dm1doy, dm1.hour)
+    path_met_n_0 = '%s/%s/%03d/N%s%03d%02d_MET_NCEPR2_6h.hdf' % (DIR_AUX_NCEP, dm0year, dm0doy, dm0year, dm0doy, dm0.hour)
+    path_met_n_1 = '%s/%s/%03d/N%s%03d%02d_MET_NCEPR2_6h.hdf' % (DIR_AUX_NCEP, dm1year, dm1doy, dm1year, dm1doy, dm1.hour)
 
     # download them
     path_met_0 = None
