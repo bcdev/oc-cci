@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+inputPath="$1"
+outputPath="$2"
+
+l1bFileName=${inputPath##*/}
+polymerFileNameNetcdf=${l1bFileName}.polymer.nc
+polymerFileNameHdf=${l1bFileName}.polymer.hdf
+
+if hadoop fs -ls ${outputPath}/${polymerFileNameNetcdf}; then
+  # netcdf output exist
+  echo CALVALUS_SKIP_PROCESSING yes
+elif hadoop fs -ls ${outputPath}/${polymerFileNameHdf}; then
+  # hdf output exist
+  echo CALVALUS_SKIP_PROCESSING yes
+fi
+
