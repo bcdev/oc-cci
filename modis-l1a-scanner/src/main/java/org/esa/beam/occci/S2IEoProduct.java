@@ -28,6 +28,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by marcoz on 17.08.15.
@@ -49,16 +50,16 @@ public class S2IEoProduct extends AbstractEoProduct {
     static int cellCounter = 0;
     static int poylgonCounter = 0;
 
-    private final String poygonString;
-    private final String cellUnionString;
+    private final double[] poygonData;
+    private final long[] cellUnionData;
 
     private S2Polygon polygon;
     private S2CellUnion cellUnion;
 
-    public S2IEoProduct(String name, long startTime, long endTime, String poygonString, String cellUnionString) {
+    public S2IEoProduct(String name, long startTime, long endTime, double[] poygonData, long[] cellUnionData) {
         super(name, startTime, endTime);
-        this.poygonString = poygonString;
-        this.cellUnionString = cellUnionString;
+        this.poygonData = poygonData;
+        this.cellUnionData = cellUnionData;
     }
 
     @Override
@@ -96,51 +97,72 @@ public class S2IEoProduct extends AbstractEoProduct {
 
     private S2Polygon getPolygon() {
         if (polygon == null) {
-            polygon = createS2Polygon(poygonString);
+            polygon = createS2Polygon(poygonData);
         }
         return polygon;
     }
 
+    private S2Polygon createS2Polygon(double[] poygonData) {
+        List<S2Point> vertices = new ArrayList<S2Point>(poygonData.length / 3);
+        for (int i = 0; i < poygonData.length; ) {
+            double x = poygonData[i++];
+            double y = poygonData[i++];
+            double z = poygonData[i++];
+            S2Point s2Point = new S2Point(x, y, z);
+            vertices.add(s2Point);
+        }
+        return new S2Polygon(new S2Loop(vertices));
+    }
+
     private S2CellUnion getCellUnion() {
         if (cellUnion == null) {
-            cellUnion = createS2CellUnion(cellUnionString);
+            cellUnion = createS2CellUnion(cellUnionData);
         }
+        return cellUnion;
+    }
+
+    private S2CellUnion createS2CellUnion(long[] cellUnionData) {
+        ArrayList<S2CellId> cellIds = new ArrayList<S2CellId>(cellUnionData.length);
+        for (long aCellUnionData : cellUnionData) {
+            cellIds.add(new S2CellId(aCellUnionData));
+        }
+        S2CellUnion cellUnion = new S2CellUnion();
+        cellUnion.initRawCellIds(cellIds);
         return cellUnion;
     }
 
 
     public static EoProduct parse(String line) throws ParseException {
-        String[] splits = line.split("\t");
-        if (splits.length == 5) {
-            String name = new File(splits[0]).getName();
-            long startTime = Long.parseLong(splits[1]);
-            long endTime = Long.parseLong(splits[2]);
-            String loopPointString = splits[3];
-            String cellIdString = splits[4];
-            return new S2IEoProduct(name, startTime, endTime, loopPointString, cellIdString);
-        } else {
-            System.out.println(line);
-        }
-        return null;
+        StringTokenizer st = new StringTokenizer(line, "\t");
+        String name = new File(st.nextToken()).getName();
+        long startTime = Long.parseLong(st.nextToken());
+        long endTime = Long.parseLong(st.nextToken());
+        String loopPointString = st.nextToken();
+        String cellIdString = st.nextToken();
+        return null;//new S2IEoProduct(name, startTime, endTime, loopPointString, cellIdString);
     }
 
     private static S2CellUnion createS2CellUnion(String cellIdString) {
-        S2CellUnion cellUnion = new S2CellUnion();
+        StringTokenizer st = new StringTokenizer(cellIdString, ";");
         ArrayList<S2CellId> cellIds = new ArrayList<S2CellId>();
-        for (String token : cellIdString.split(";")) {
-            cellIds.add(S2CellId.fromToken(token));
+        while (st.hasMoreTokens()) {
+            cellIds.add(new S2CellId(Long.parseLong(st.nextToken())));
         }
-        cellUnion.initFromCellIds(cellIds);
+        S2CellUnion cellUnion = new S2CellUnion();
+        cellUnion.initRawCellIds(cellIds);
         return cellUnion;
     }
 
     private static S2Polygon createS2Polygon(String loopPoints) {
-        String[] points = loopPoints.split(";");
+        StringTokenizer stPoints = new StringTokenizer(loopPoints, ";");
         List<S2Point> vertices = new ArrayList<S2Point>();
-        for (String point : points) {
+        while (stPoints.hasMoreTokens()) {
+            String point = stPoints.nextToken();
             String substring = point.substring(1, point.length() - 1);
-            String[] xyz = substring.split(",");
-            S2Point s2Point = new S2Point(Double.parseDouble(xyz[0]), Double.parseDouble(xyz[1]), Double.parseDouble(xyz[2]));
+            StringTokenizer stXYZ = new StringTokenizer(substring, ",");
+            S2Point s2Point = new S2Point(Double.parseDouble(stXYZ.nextToken()),
+                                          Double.parseDouble(stXYZ.nextToken()),
+                                          Double.parseDouble(stXYZ.nextToken()));
             vertices.add(s2Point);
         }
         S2Loop s2Loop = new S2Loop(vertices);

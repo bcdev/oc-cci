@@ -16,9 +16,10 @@
 
 package org.esa.beam.occci;
 
-import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
@@ -38,13 +39,23 @@ public class S2IndexCreatorMain {
             System.err.printf("productList file '%s' does not exits%n", args[0]);
             printUsage();
         }
+        int counter = 0;
         List<EoProduct> eoProductList = ProductDB.readProducts("s2", productListFile);
-        try (FileWriter fileWriter = new FileWriter(indexfile);
-             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+        try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indexfile)))) {
             for (EoProduct eoProduct : eoProductList) {
                 eoProduct.createGeo();
                 S2EoProduct s2EoProduct = (S2EoProduct) eoProduct;
-                bufferedWriter.write(s2EoProduct.getIndexString());
+                dos.writeUTF(eoProduct.getName());
+                dos.writeLong(eoProduct.getStartTime());
+                dos.writeLong(eoProduct.getEndTime());
+
+                s2EoProduct.writePolygone(dos);
+                s2EoProduct.writeCellUnion(dos);
+
+                counter++;
+                if (counter % 10000 == 0) {
+                    System.out.println("counter = " + counter);
+                }
             }
         }
     }

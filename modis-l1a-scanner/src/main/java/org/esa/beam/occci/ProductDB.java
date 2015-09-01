@@ -16,8 +16,15 @@
 
 package org.esa.beam.occci;
 
+import com.google.common.geometry.S2CellId;
+import com.google.common.geometry.S2CellUnion;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
@@ -61,6 +68,40 @@ public class ProductDB {
         }
         long t2 = System.currentTimeMillis();
         System.out.println("read products time (" + format + ") = " + ((t2 - t1) / 1000f));
+        return eoProducts;
+    }
+
+    static List<EoProduct> readProductIndex(File file) throws IOException, java.text.ParseException {
+        long t1 = System.currentTimeMillis();
+        List<EoProduct> eoProducts = new ArrayList<>(10000);
+        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file),256*1024))) {
+            boolean done = false;
+            while (!done) {
+                try {
+                    String name = dis.readUTF();
+                    long startTime = dis.readLong();
+                    long endTime = dis.readLong();
+
+                    int numLoopPoints = dis.readInt();
+                    double[] pointData = new double[numLoopPoints*3];
+                    for (int i = 0; i < pointData.length; i++) {
+                        pointData[i] = dis.readDouble();
+                    }
+
+                    int numCells  = dis.readInt();
+                    long[] cellData = new long[numCells];
+                    for (int i = 0; i < numCells; i++) {
+                        cellData[i] = dis.readLong();
+                    }
+
+                    eoProducts.add(new S2IEoProduct(name, startTime, endTime, pointData, cellData));
+                } catch (EOFException eof) {
+                    done = true;
+                }
+            }
+        }
+        long t2 = System.currentTimeMillis();
+        System.out.println("read products time (s2 index) = " + ((t2 - t1) / 1000f));
         return eoProducts;
     }
 
