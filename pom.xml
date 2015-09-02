@@ -11,7 +11,7 @@
     <version>1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <description>Ocean Color CCI</description>
+    <description>Ocean Color CCI Parent project</description>
 
     <modules>
         <module>operational</module>
