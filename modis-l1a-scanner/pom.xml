@@ -20,7 +20,6 @@
             <version>1.13</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
@@ -53,21 +52,6 @@
             <version>4.3.19</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.google.common.geometry</groupId>-->
-            <!--<artifactId>s2-geometry-java</artifactId>-->
-            <!--<version>1.0.0</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${basedir}/lib/s2-geometry-java.jar</systemPath>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.google.common</groupId>-->
-            <!--<artifactId>guava-r09</artifactId>-->
-            <!--<version>1.0.0</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${basedir}/lib/guava-r09.jar</systemPath>-->
-        <!--</dependency>-->
-
         <dependency>
           <groupId>org.jnegre.google</groupId>
           <artifactId>s2-geometry</artifactId>
@@ -97,14 +81,6 @@
                 <checksumPolicy>warn</checksumPolicy>
             </snapshots>
         </repository>
-        <!--<repository>-->
-            <!--<id>apache.snapshots</id>-->
-            <!--<name>Apache Snapshot Repository</name>-->
-            <!--<url>http://repository.apache.org/snapshots</url>-->
-            <!--<releases>-->
-                <!--<enabled>false</enabled>-->
-            <!--</releases>-->
-        <!--</repository>-->
         <repository>
             <snapshots>
                 <enabled>false</enabled>
@@ -195,8 +171,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-
 </project>
