@@ -52,6 +52,8 @@ public class S2IndexCreatorMain {
                 s2EoProduct.writePolygone(dos);
                 s2EoProduct.writeCellUnion(dos);
 
+                s2EoProduct.reset();
+
                 counter++;
                 if (counter % 10000 == 0) {
                     System.out.println("counter = " + counter);

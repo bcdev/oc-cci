@@ -94,6 +94,7 @@ public class S2EoProduct extends AbstractEoProduct {
     @Override
     public void reset() {
         polygon = null;
+        cellUnion= null;
     }
 
     @Override
@@ -116,24 +117,6 @@ public class S2EoProduct extends AbstractEoProduct {
 
     public static S2Polygon createPolygon(String wkt) {
         return (S2Polygon) wktReader.read(wkt);
-//        Polygon polygon;
-//        try {
-//            polygon = (Polygon) read;
-//        } catch (com.vividsolutions.jts.io.ParseException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//
-//        List<S2Point> vertices = new ArrayList<S2Point>();
-//        for (Coordinate coordinate : polygon.getCoordinates()) {
-//            double x = coordinate.getOrdinate(0);
-//            double y = coordinate.getOrdinate(1);
-//            vertices.add(S2LatLng.fromDegrees(y, x).toPoint());
-//        }
-//        vertices.remove(vertices.size() - 1);
-//        S2Loop loop = new S2Loop(vertices);
-//        loop.normalize();
-//        return new S2Polygon(loop);
     }
 
 
