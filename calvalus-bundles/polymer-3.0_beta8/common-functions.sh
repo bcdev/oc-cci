@@ -30,7 +30,7 @@ function handle_progress() {
 function process() {
 
     local inFile="${1}"
-    local inFileName="$(basename ${inFile}}"
+    local inFileName="$(basename ${inFile})"
 
     # create links to auxdata
     ln -sf ${POLYMER}/auxdata .
@@ -51,19 +51,19 @@ function process() {
         export LD_LIBRARY_PATH="${POLY_PYTHON}/pylib"
         export PYTHONPATH="${POLY_PYTHON}/pyshared"
     fi
-    if [ ! -d ${HOME} ]; then
+    if [ ! -d "${HOME}" ]; then
         export HOME=/tmp/
     fi
-    ./get_meteo_calvalus.py ${inFileName} ${meteo_type} >> parameters.txt
+    ./get_meteo_calvalus.py "${inFileName}" "${meteo_type}" >> parameters.txt
 
     outFile=${inFileName}.polymer.${suffix}
     # append input,output to parameters.txt
-    echo INPUT_FILE $inFile >> parameters.txt
-    echo OUTPUT_FILE $outFile >> parameters.txt
+    echo INPUT_FILE "$inFile" >> parameters.txt
+    echo OUTPUT_FILE "$outFile" >> parameters.txt
 
     set -o pipefail
     ${POLYMER}/polymer parameters.txt | while read x ; do handle_progress "$x" ; done
-    echo CALVALUS_OUTPUT_PRODUCT ${outFile}
+    echo CALVALUS_OUTPUT_PRODUCT "${outFile}"
 }
 
 function get_geo() {
@@ -72,14 +72,14 @@ function get_geo() {
 
     # MODIS needs geofile
     echo "getting GEO file"
-    ./getGEO.sh ${inPath}
+    ./getGEO.sh "${inPath}"
 
     # polymer expects a concrete name for the GEO file
     geoFileArchive=${inFileName:0:14}.GEO
     geoFileLocal=${inFileName%L1B_LAC}GEO
-    if [ -e ${geoFileArchive} ];then
-        if [ ! -e ${geoFileLocal} ];then
-            ln -vs ${geoFileArchive} ${geoFileLocal}
+    if [ -e "${geoFileArchive}" ];then
+        if [ ! -e "${geoFileLocal}" ];then
+            ln -vs "${geoFileArchive}" "${geoFileLocal}"
         fi
     fi
 }

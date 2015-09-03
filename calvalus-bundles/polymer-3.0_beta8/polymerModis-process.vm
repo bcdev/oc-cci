@@ -26,6 +26,6 @@ echo "CALVALUS_PRODUCT_TRANSFORMATION  subset 0, $inputRectangle.y, $productRect
 #end
 
 #[[
-geo_geo ${inPath} $(basename ${inFile}}
-process ${inFile}
+get_geo "${inPath}" "$(basename ${inFile})"
+process "${inFile}"
 ]]#

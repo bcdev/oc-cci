@@ -26,5 +26,5 @@ echo "CALVALUS_PRODUCT_TRANSFORMATION  subset 0, $inputRectangle.y, $productRect
 #end
 
 #[[
-process ${inFile}
+process "${inFile}"
 ]]#
