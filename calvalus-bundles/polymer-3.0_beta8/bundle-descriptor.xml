@@ -237,7 +237,7 @@ PARTIAL_PROCESSING 0
 
         <processorDescriptor>
             <executableName>polymerModis</executableName>
-            <processorName>Polymer L2 Processing (MODIS)</processorName>
+            <processorName>Polymer L2 Processing (MODIS L1B)</processorName>
             <processorVersion>3.0_beta8</processorVersion>
             <defaultParameters><![CDATA[
 ########################
