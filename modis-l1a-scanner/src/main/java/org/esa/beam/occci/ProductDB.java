@@ -17,7 +17,6 @@
 package org.esa.beam.occci;
 
 import com.google.common.geometry.S2CellId;
-import com.google.common.geometry.S2CellUnion;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -32,11 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * Created by marcoz on 17.08.15.
- */
 public class ProductDB {
 
     private static final long MILLIS_PER_DAY = 1000 * 60 * 60 * 24L;
@@ -45,6 +43,7 @@ public class ProductDB {
     private final int[] dayIndex;
     private final int firstDay;
     private final int lastDay;
+    private Map<S2CellId, List<EoProduct>> productCellMap;
 
     public ProductDB(List<EoProduct> eoProducts, int[] dayIndex, int firstDay, int lastDay) {
         this.eoProducts = eoProducts;
@@ -58,7 +57,7 @@ public class ProductDB {
         FileReader fileReader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line = bufferedReader.readLine();
-        List<EoProduct> eoProducts = new ArrayList<EoProduct>();
+        List<EoProduct> eoProducts = new ArrayList<>();
         while (line != null) {
             EoProduct eoProduct = createEoProduct(format, line);
             if (eoProduct != null) {
@@ -71,10 +70,12 @@ public class ProductDB {
         return eoProducts;
     }
 
-    static List<EoProduct> readProductIndex(File file) throws IOException, java.text.ParseException {
+    static ProductDB readProductIndex(File file) throws IOException, java.text.ParseException {
         long t1 = System.currentTimeMillis();
         List<EoProduct> eoProducts = new ArrayList<>(10000);
-        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file),256*1024))) {
+        Map<Long, S2CellId> cellMap = new HashMap<>();
+        Map<S2CellId, List<EoProduct>> productCellMap = new HashMap<>();
+        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             boolean done = false;
             while (!done) {
                 try {
@@ -83,18 +84,28 @@ public class ProductDB {
                     long endTime = dis.readLong();
 
                     int numLoopPoints = dis.readInt();
-                    double[] pointData = new double[numLoopPoints*3];
+                    double[] pointData = new double[numLoopPoints * 3];
                     for (int i = 0; i < pointData.length; i++) {
                         pointData[i] = dis.readDouble();
                     }
 
-                    int numCells  = dis.readInt();
-                    long[] cellData = new long[numCells];
-                    for (int i = 0; i < numCells; i++) {
-                        cellData[i] = dis.readLong();
-                    }
+                    int numCells = dis.readInt();
+                    ArrayList<S2CellId> cellIds = new ArrayList<>(numCells);
 
-                    eoProducts.add(new S2IEoProduct(name, startTime, endTime, pointData, cellData));
+                    S2IEoProduct product = new S2IEoProduct(name, startTime, endTime, pointData, cellIds);
+                    eoProducts.add(product);
+
+                    for (int i = 0; i < numCells; i++) {
+                        long id = dis.readLong();
+                        S2CellId s2CellId = cellMap.get(id);
+                        if (s2CellId == null) {
+                            s2CellId = new S2CellId(id);
+                            cellMap.put(id, s2CellId);
+                            productCellMap.put(s2CellId, new ArrayList<>());
+                        }
+                        productCellMap.get(s2CellId).add(product);
+                        cellIds.add(s2CellId);
+                    }
                 } catch (EOFException eof) {
                     done = true;
                 }
@@ -102,7 +113,9 @@ public class ProductDB {
         }
         long t2 = System.currentTimeMillis();
         System.out.println("read products time (s2 index) = " + ((t2 - t1) / 1000f));
-        return eoProducts;
+        ProductDB productDB = create(eoProducts);
+        productDB.setProductCellMap(productCellMap);
+        return productDB;
     }
 
     private static EoProduct createEoProduct(String format, String line) throws ParseException {
@@ -175,5 +188,13 @@ public class ProductDB {
 
     public List<EoProduct> list() {
         return eoProducts;
+    }
+
+    public void setProductCellMap(Map<S2CellId, List<EoProduct>> productCellMap) {
+        this.productCellMap = productCellMap;
+    }
+
+    public Map<S2CellId, List<EoProduct>> getProductCellMap() {
+        return productCellMap;
     }
 }

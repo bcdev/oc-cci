@@ -35,8 +35,8 @@ import java.util.StringTokenizer;
  */
 public class S2IEoProduct extends AbstractEoProduct {
 
-    private static final S2Polygon THE_PRODUCT;
-    private static final S2CellUnion THE_PRODUCT_UNION;
+    static final S2Polygon THE_PRODUCT;
+    static final S2CellUnion THE_PRODUCT_UNION;
 
     static {
         THE_PRODUCT = S2EoProduct.createPolygon(EoProduct.OVERLAP_WKT);
@@ -51,15 +51,15 @@ public class S2IEoProduct extends AbstractEoProduct {
     static int poylgonCounter = 0;
 
     private final double[] poygonData;
-    private final long[] cellUnionData;
+    private final ArrayList<S2CellId> cellIds;
 
     private S2Polygon polygon;
     private S2CellUnion cellUnion;
 
-    public S2IEoProduct(String name, long startTime, long endTime, double[] poygonData, long[] cellUnionData) {
+    public S2IEoProduct(String name, long startTime, long endTime, double[] poygonData, ArrayList<S2CellId> cellIds) {
         super(name, startTime, endTime);
         this.poygonData = poygonData;
-        this.cellUnionData = cellUnionData;
+        this.cellIds = cellIds;
     }
 
     @Override
@@ -116,16 +116,12 @@ public class S2IEoProduct extends AbstractEoProduct {
 
     private S2CellUnion getCellUnion() {
         if (cellUnion == null) {
-            cellUnion = createS2CellUnion(cellUnionData);
+            cellUnion = createS2CellUnion(cellIds);
         }
         return cellUnion;
     }
 
-    private S2CellUnion createS2CellUnion(long[] cellUnionData) {
-        ArrayList<S2CellId> cellIds = new ArrayList<S2CellId>(cellUnionData.length);
-        for (long aCellUnionData : cellUnionData) {
-            cellIds.add(new S2CellId(aCellUnionData));
-        }
+    private S2CellUnion createS2CellUnion(ArrayList<S2CellId> cellIds) {
         S2CellUnion cellUnion = new S2CellUnion();
         cellUnion.initRawCellIds(cellIds);
         return cellUnion;

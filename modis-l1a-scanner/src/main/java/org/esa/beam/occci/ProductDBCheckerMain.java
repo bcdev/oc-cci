@@ -81,23 +81,23 @@ public class ProductDBCheckerMain {
 //        performOverlap("jts", new FastMatcher(jtsProductDB));
 
         System.out.println();
-        ProductDB s2iProductDB = ProductDB.create(ProductDB.readProductIndex(productIndexListFile1));
+        ProductDB s2iProductDB = ProductDB.readProductIndex(productIndexListFile1);
         System.out.println("s2iProductDB.size() = " + s2iProductDB.size());
         performInsitu("s2i", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
         performOverlap("s2i", new FastMatcher(s2iProductDB));
         s2iProductDB = null;
 
-        System.out.println();
-        ProductDB s2ProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
-        System.out.println("s2ProductDB.size() = " + s2ProductDB.size());
-        performInsitu("s2", new FastMatcher(s2ProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-        performOverlap("s2", new FastMatcher(s2ProductDB));
-        s2ProductDB = null;
+//        System.out.println();
+//        ProductDB s2ProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
+//        System.out.println("s2ProductDB.size() = " + s2ProductDB.size());
+//        performInsitu("s2", new FastMatcher(s2ProductDB), insituRecords, HOURS_IN_MILLIS * hours);
+//        performOverlap("s2", new FastMatcher(s2ProductDB));
+//        s2ProductDB = null;
 
 //        System.out.println();
 //        System.out.println();
 //        System.out.println();
-//        s2iProductDB = ProductDB.create(ProductDB.readProducts("s2i", productIndexListFile1));
+//        s2iProductDB = ProductDB.readProductIndex(productIndexListFile1);
 //        System.out.println("s2iProductDB.size() = " + s2iProductDB.size());
 //        performInsitu("s2i", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
 //        performOverlap("s2i", new FastMatcher(s2iProductDB));

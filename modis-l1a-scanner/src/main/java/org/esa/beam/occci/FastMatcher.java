@@ -16,9 +16,12 @@
 
 package org.esa.beam.occci;
 
+import com.google.common.geometry.S2CellId;
+
 import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class FastMatcher extends BruteForceMatcher {
@@ -63,5 +66,28 @@ public class FastMatcher extends BruteForceMatcher {
             }
         }
         return matches;
+    }
+
+    @Override
+    public Set<EoProduct> matchProduct() {
+        Map<S2CellId, List<EoProduct>> productCellMap = productDB.getProductCellMap();
+        if (productCellMap == null) {
+            return super.matchProduct();
+        } else {
+            Set<EoProduct> candidates = new HashSet<EoProduct>();
+            for (Map.Entry<S2CellId, List<EoProduct>> entry : productCellMap.entrySet()) {
+                S2CellId s2CellId = entry.getKey();
+                if (S2IEoProduct.THE_PRODUCT_UNION.intersects(s2CellId)) {
+                    candidates.addAll(entry.getValue());
+                }
+            }
+            Set<EoProduct> matches = new HashSet<EoProduct>();
+            for (EoProduct candidate : candidates) {
+                if (candidate.overlaps()) {
+                    matches.add(candidate);
+                }
+            }
+            return matches;
+        }
     }
 }
