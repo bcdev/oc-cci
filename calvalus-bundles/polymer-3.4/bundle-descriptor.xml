@@ -1,12 +1,12 @@
 <bundleDescriptor>
     <bundleName>polymer</bundleName>
-    <bundleVersion>3.3</bundleVersion>
+    <bundleVersion>3.4</bundleVersion>
 
     <processorDescriptors>
         <processorDescriptor>
             <executableName>polymerMeris</executableName>
             <processorName>Polymer L2 Processing (Meris)</processorName>
-            <processorVersion>3.3</processorVersion>
+            <processorVersion>3.4</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
@@ -264,7 +264,7 @@ PARTIAL_PROCESSING 0
         <processorDescriptor>
             <executableName>polymerModis</executableName>
             <processorName>Polymer L2 Processing (MODIS L1C)</processorName>
-            <processorVersion>3.3</processorVersion>
+            <processorVersion>3.4</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
@@ -561,7 +561,7 @@ PARTIAL_PROCESSING 0
         <processorDescriptor>
             <executableName>polymerSeaWiFS</executableName>
             <processorName>Polymer L2 Processing (SeaWiFS)</processorName>
-            <processorVersion>3.3</processorVersion>
+            <processorVersion>3.4</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
@@ -591,6 +591,8 @@ BANDS_L1     412 443 490 510 555 670 765 865
 
 # calibration coefficients (corresponding to BANDS_L1)
 CALIB        1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
+# SeaDAS vicarious calibration
+# CALIB 1.0066 0.9983 0.9892 0.9924 1.0047 0.9799 0.9700 1.00
 
 BAND_WAVELEN_L1   412 443 490 510 555 670 765 865
 
@@ -623,7 +625,7 @@ FILE_DETECTOR_WAVELENGTH  auxdata/seawifs/central_wavelen.txt
 
 # ATMOSPHERIC MODEL #########
 
-POLY_EXPO         0. -1. -4.
+POLY_EXPO         0. -1. 0.
 
 
 # transmission factor applied to C0 term
@@ -641,8 +643,8 @@ RGLI_0 0.02
 
 # WATER REFLECTANCE MODEL #########
 
-# MODEL SELECTION: MOREL, MOREL_FOQ
-OC_MODEL MOREL_FOQ
+# MODEL SELECTION: MOREL, MOREL_FOQ, PARKRUDDICK
+OC_MODEL PARKRUDDICK
 
 # Morel's f/Q table
 FILE_MOREL_FOQ   auxdata/common/morel_fq.dat
@@ -658,6 +660,15 @@ WATER_SPECTRUM_NIR_AW    0
 # spectral dependency of suspended matter
 BBSS_SPEC -1.
 
+# Park and Ruddick
+FILE_OC_PARKRUDDICK      auxdata/common/AboveRrs_gCoef_w5.dat
+FILE_OC_POPEFRY          auxdata/common/pope97.dat
+FILE_OC_PALMERW          auxdata/common/palmer74.dat
+FILE_OC_BRICAUD          auxdata/common/aph_bricaud_1995.txt
+FILE_OC_MORELBUITEVELD   auxdata/common/morel_buiteveld_bsw.txt
+FILE_OC_RAMAN            auxdata/common/raman_westberry13.txt
+
+
 
 
 # OPTIMIZATION PARAMETERS #########
@@ -670,11 +681,11 @@ WEIGHT_SPEC           0
 
 INITIAL_POINT         -1 0
 INITIAL_POINT_CASE2   1 1
-INITIAL_STEP          0.05 0.0005
-PARAMS_MIN_MAX        -2. 2. -0.005 0.1
+INITIAL_STEP          0.2 0.2
+PARAMS_MIN_MAX        -2. 2. -3. 3.
 
 # Constraint on bbs: amplitude, sigma(chl=0.01), sigma(chl=0.1)
-CONSTRAINT_BBS        1e-3 0.0001 0.005
+CONSTRAINT_BBS        1e-3 0.2258 0.9233
 
 THRES_CHI2     0.005
 
@@ -782,7 +793,7 @@ PARTIAL_PROCESSING 0
         <processorDescriptor>
             <executableName>polymerVIIRS</executableName>
             <processorName>Polymer L2 Processing (VIIRS L1C)</processorName>
-            <processorVersion>3.3</processorVersion>
+            <processorVersion>3.4</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
@@ -869,6 +880,8 @@ OC_MODEL PARKRUDDICK
 
 # Morel's f/Q table
 FILE_MOREL_FOQ   auxdata/common/morel_fq.dat
+
+BRDF_OPT 1
 
 # clear water adjustment
 ADJUST_MM_MODEL_CLEARWATERS 1
