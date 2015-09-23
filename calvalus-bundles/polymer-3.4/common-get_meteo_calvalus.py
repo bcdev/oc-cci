@@ -173,6 +173,19 @@ def write_interpolated(filename, f0, f1, fact, datasets):
 
     hdf.end()
 
+def getNcepAuxdataOZ(templates, year, doy):
+    for template in templates:
+        path = template.format(BASE=DIR_AUX_NCEP, year=year, doy=doy)
+        if existPath(path):
+            return copyToLocal(path)
+    return None
+
+def getNcepAuxdataMET(templates, year, doy, hour):
+    for template in templates:
+        path = template.format(BASE=DIR_AUX_NCEP, year=year, doy=doy, hour=hour)
+        if existPath(path):
+            return copyToLocal(path)
+    return None
 
 def interp_meteo_toms(date):
     '''
@@ -200,12 +213,15 @@ def interp_meteo_toms(date):
     do0doy = do0.timetuple().tm_yday
     do1doy = do1.timetuple().tm_yday
 
-    path_oz_0_a = '%s/%s/%03d/N%s%03d00_O3_TOMSOMI_24h.hdf' % (DIR_AUX_NCEP, do0year, do0doy, do0year, do0doy)
-    path_oz_1_a = '%s/%s/%03d/N%s%03d00_O3_TOMSOMI_24h.hdf' % (DIR_AUX_NCEP, do1year, do1doy, do1year, do1doy)
-    path_oz_0_b = '%s/%d/%03d/S%s%03d00%03d23_TOVS.OZONE' % (DIR_AUX_NCEP, do0year, do0doy, do0year, do0doy, do0doy)
-    path_oz_1_b = '%s/%d/%03d/S%s%03d00%03d23_TOVS.OZONE' % (DIR_AUX_NCEP, do1year, do1doy, do1year, do1doy, do1doy)
-    path_oz_0_c = '%s/%d/%03d/S%s%03d00%03d23_TOAST.OZONE' % (DIR_AUX_NCEP, do0year, do0doy, do0year, do0doy, do0doy)
-    path_oz_1_c = '%s/%d/%03d/S%s%03d00%03d23_TOAST.OZONE' % (DIR_AUX_NCEP, do1year, do1doy, do1year, do1doy, do1doy)
+    OZ_TEMPLATES = [
+        '{BASE}/{year:d}/{doy:03d}/N{year:d}{doy:03d}00_O3_TOMSOMI_24h.hdf',
+        '{BASE}/{year:d}/{doy:03d}/S{year:d}{doy:03d}00{doy:03d}23_TOVS.OZONE',
+        '{BASE}/{year:d}/{doy:03d}/N{year:d}{doy:03d}00_O3_AURAOMI_24h.hdf',
+        '{BASE}/{year:d}/{doy:03d}/S{year:d}{doy:03d}00{doy:03d}23_TOAST.OZONE'
+        ]
+    path_oz_0 = getNcepAuxdataOZ(OZ_TEMPLATES, do0year, do0doy)
+    path_oz_1 = getNcepAuxdataOZ(OZ_TEMPLATES, do1year, do1doy)
+
 
     # 2) meteo
     dm0 = datetime(date.year, date.month, date.day, 6*int(date.hour/6.))
@@ -216,45 +232,13 @@ def interp_meteo_toms(date):
     dm0doy = dm0.timetuple().tm_yday
     dm1doy = dm1.timetuple().tm_yday
 
-    path_met_s_0 = '%s/%s/%03d/S%s%03d%02d_NCEP.MET' % (DIR_AUX_NCEP, dm0year, dm0doy, dm0year, dm0doy, dm0.hour)
-    path_met_s_1 = '%s/%s/%03d/S%s%03d%02d_NCEP.MET' % (DIR_AUX_NCEP, dm1year, dm1doy, dm1year, dm1doy, dm1.hour)
-    path_met_n_0 = '%s/%s/%03d/N%s%03d%02d_MET_NCEPR2_6h.hdf' % (DIR_AUX_NCEP, dm0year, dm0doy, dm0year, dm0doy, dm0.hour)
-    path_met_n_1 = '%s/%s/%03d/N%s%03d%02d_MET_NCEPR2_6h.hdf' % (DIR_AUX_NCEP, dm1year, dm1doy, dm1year, dm1doy, dm1.hour)
-
-    # download them
-    path_met_0 = None
-    if existPath(path_met_s_0):
-        path_met_0 = copyToLocal(path_met_s_0)
-    else:
-        if existPath(path_met_n_0):
-            path_met_0 = copyToLocal(path_met_n_0)
-        
-    path_met_1 = None
-    if existPath(path_met_s_1):
-        path_met_1 = copyToLocal(path_met_s_1)
-    else:
-        if existPath(path_met_n_1):
-            path_met_1 = copyToLocal(path_met_n_1)
-
-    path_oz_0 = None
-    if existPath(path_oz_0_a):
-        path_oz_0 = copyToLocal(path_oz_0_a)
-    else:
-        if existPath(path_oz_0_b):
-            path_oz_0 = copyToLocal(path_oz_0_b)
-        else:
-            if existPath(path_oz_0_c):
-              path_oz_0 = copyToLocal(path_oz_0_c)
-
-    path_oz_1 = None
-    if existPath(path_oz_1_a):
-        path_oz_1 = copyToLocal(path_oz_1_a)
-    else:
-        if existPath(path_oz_1_b):
-            path_oz_1 = copyToLocal(path_oz_1_b)
-        else:
-            if existPath(path_oz_1_c):
-              path_oz_1 = copyToLocal(path_oz_1_c)
+    MET_TEMPLATES = [
+        '{BASE}/{year:d}/{doy:03d}/N{year:d}{doy:03d}{hour:02d}_MET_NCEPR2_6h.hdf',
+        '{BASE}/{year:d}/{doy:03d}/N{year:d}{doy:03d}{hour:02d}_MET_NCEPN_6h.hdf',
+        '{BASE}/{year:d}/{doy:03d}/S{year:d}{doy:03d}{hour:02d}_NCEP.MET'
+        ]
+    path_met_0 = getNcepAuxdataMET(MET_TEMPLATES, dm0year, dm0doy, dm0.hour)
+    path_met_1 = getNcepAuxdataMET(MET_TEMPLATES, dm1year, dm1doy, dm1.hour)
 
     # data interpolation factor
     fact_met = (date-dm0).total_seconds()/(dm1-dm0).total_seconds()
