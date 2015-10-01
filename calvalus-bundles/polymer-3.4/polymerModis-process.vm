@@ -26,6 +26,7 @@ echo "CALVALUS_PRODUCT_TRANSFORMATION  subset 0, $inputRectangle.y, $productRect
 #end
 
 #[[
-get_geo "${inPath}" "$(basename ${inFile})"
+# for MODIS now L1C is used as input, no GEO required
+# get_geo "${inPath}" "$(basename ${inFile})"
 process "${inFile}"
 ]]#
