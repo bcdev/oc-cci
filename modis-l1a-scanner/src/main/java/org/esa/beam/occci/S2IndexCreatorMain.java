@@ -16,12 +16,15 @@
 
 package org.esa.beam.occci;
 
+import com.google.common.geometry.S2CellId;
+
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,23 +37,53 @@ public class S2IndexCreatorMain {
             printUsage();
         }
         File productListFile = new File(args[0]);
-        File indexfile = new File(args[1]);
+
         if (!productListFile.exists()) {
             System.err.printf("productList file '%s' does not exits%n", args[0]);
             printUsage();
         }
         int counter = 0;
         List<EoProduct> eoProductList = ProductDB.readProducts("s2", productListFile);
-        try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indexfile)))) {
+
+        File indexFile = new File(args[1]);
+        File urlFile = new File(indexFile + ".url");
+        File poylFile = new File(indexFile + ".polygon");
+        File cellFile = new File(indexFile + ".cellIds");
+
+        List<S2CellId> allCellIds = new ArrayList<>();
+
+        try (
+                DataOutputStream dosIndex = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indexFile)));
+                DataOutputStream dosUrl = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(urlFile)));
+                DataOutputStream dosPoly = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(poylFile)))
+        ) {
             for (EoProduct eoProduct : eoProductList) {
                 eoProduct.createGeo();
                 S2EoProduct s2EoProduct = (S2EoProduct) eoProduct;
-                dos.writeUTF(eoProduct.getName());
-                dos.writeLong(eoProduct.getStartTime());
-                dos.writeLong(eoProduct.getEndTime());
 
-                s2EoProduct.writePolygone(dos);
-                s2EoProduct.writeCellUnion(dos);
+                dosUrl.writeUTF(eoProduct.getName());
+
+                dosIndex.writeLong(eoProduct.getStartTime());
+                dosIndex.writeLong(eoProduct.getEndTime());
+
+                ArrayList<S2CellId> s2CellIds = s2EoProduct.cellUnion.cellIds();
+                dosIndex.writeInt(s2CellIds.size());
+
+                for (S2CellId s2CellId : s2CellIds) {
+                    int index = allCellIds.indexOf(s2CellId);
+                    if (index > 0) {
+                        dosIndex.writeInt(index);
+                    } else {
+                        allCellIds.add(s2CellId);
+                        index = allCellIds.size() - 1;
+                        dosIndex.writeInt(index);
+                    }
+//                    dos.writeLong(s2CellId.id());
+                }
+
+//                s2EoProduct.writeCellUnion(dosIndex);
+
+                s2EoProduct.writePolygone(dosPoly);
 
                 s2EoProduct.reset();
 
@@ -60,7 +93,18 @@ public class S2IndexCreatorMain {
                 }
             }
         }
+
+        System.out.println("allCellIds.size() = " + allCellIds.size());
+        try (
+                DataOutputStream dosCell = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(cellFile)))
+        ) {
+            dosCell.writeInt(allCellIds.size());
+            for (S2CellId s2CellId : allCellIds) {
+                dosCell.writeLong(s2CellId.id());
+            }
+        }
     }
+
 
     private static void printUsage() {
         System.err.println("Usage: S2IndexCreatorMain <productList> <indexfile>");

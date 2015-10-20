@@ -18,10 +18,21 @@ package org.esa.beam.occci;
 
 import org.esa.beam.occci.insitu.CsvRecordSource;
 import org.esa.beam.occci.insitu.Record;
+import org.esa.beam.occci.util.StopWatch;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -61,10 +72,13 @@ public class ProductDBCheckerMain {
             System.err.printf("cannot parse hours '%s' %n", args[3]);
             printUsage();
         }
-
-        List<SimpleRecord> insituRecords = readInsituRecords(insituCSVtFile);
-        System.out.println("num insituRecords = " + insituRecords.size());
-//        ProductDB jtsProductDB = ProductDB.create(ProductDB.readProducts("jts", productListFile));
+        try (StopWatch sw = new StopWatch("TTT ++++TOTAL TIME+++")) {
+            List<SimpleRecord> insituRecords;
+            try (StopWatch swi = new StopWatch("TTT read insitu")) {
+                insituRecords = readInsituRecords(insituCSVtFile);
+                System.out.println("num insituRecords = " + insituRecords.size());
+            }
+//        ProductDB jtsProductDB = ProductDB.create(ProductDB.readProducts("jts", productListFile2));
 //        ProductDB spatial3dProductDB = ProductDB.create(ProductDB.readProducts("spatial3d", productListFile));
 //        System.out.println("num jts products =  " + jtsProductDB.size());
 //        System.out.println("num spatial3d products =  " + spatial3dProductDB.size());
@@ -80,12 +94,23 @@ public class ProductDBCheckerMain {
 //        resetProductDB(jtsProductDB);
 //        performOverlap("jts", new FastMatcher(jtsProductDB));
 
-        System.out.println();
-        ProductDB s2iProductDB = ProductDB.readProductIndex(productIndexListFile1);
-        System.out.println("s2iProductDB.size() = " + s2iProductDB.size());
-        performInsitu("s2i", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-        performOverlap("s2i", new FastMatcher(s2iProductDB));
+            ProductDB s2iProductDB;
+//        System.out.println();
+//        s2iProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
+//        System.out.println("s2ProductDB.size() = " + s2iProductDB.size());
+//        performInsitu("s2", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
+//        performOverlap("s2i", new FastMatcher(s2iProductDB));
         s2iProductDB = null;
+//
+            System.out.println();
+            try (StopWatch swp = new StopWatch("TTT read product index")) {
+                s2iProductDB = ProductDB.readProductIndex(productIndexListFile1);
+                System.out.println("s2iProductDB.size() = " + s2iProductDB.size());
+            }
+            try (StopWatch swm = new StopWatch("TTT matching")) {
+                Set<EoProduct> eoProducts = performInsitu("s2i", new MultiPassMatcher(s2iProductDB, new File(args[0] + ".polygon")), insituRecords, HOURS_IN_MILLIS * hours);
+                printURLs(eoProducts, new File(productIndexListFile1.getAbsolutePath() + ".url"));
+            }
 
 //        System.out.println();
 //        ProductDB s2ProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
@@ -109,7 +134,7 @@ public class ProductDBCheckerMain {
 //        performInsitu("s2", new FastMatcher(s2ProductDB), insituRecords, HOURS_IN_MILLIS * hours);
 //        performOverlap("s2", new FastMatcher(s2ProductDB));
 //        s2ProductDB = null;
-
+        }
     }
 
     private static void resetProductDB(ProductDB productDB) {
@@ -128,7 +153,7 @@ public class ProductDBCheckerMain {
 
     }
 
-    private static void performInsitu(String format, EoProductMatcher matcher, List<SimpleRecord> insituRecords, long maxTimeDifference) {
+    private static Set<EoProduct> performInsitu(String format, EoProductMatcher matcher, List<SimpleRecord> insituRecords, long maxTimeDifference) {
         System.out.println("==================== insitu " + format + "-" + matcher.getClass().getSimpleName() + " ====================================");
 
         long t1 = System.currentTimeMillis();
@@ -136,13 +161,15 @@ public class ProductDBCheckerMain {
         long t2 = System.currentTimeMillis();
 
         System.out.println("num matches =  " + eoProducts.size());
-        if (format.equals("s2i")) {
-            System.out.println("cellCounter    =  " + S2IEoProduct.cellCounter);
-            System.out.println("poylgonCounter =  " + S2IEoProduct.poylgonCounter);
-            S2IEoProduct.cellCounter = 0;
-            S2IEoProduct.poylgonCounter = 0;
-        }
+//        if (format.equals("s2i")) {
+//            System.out.println("cellCounter    =  " + S2IEoProduct.cellCounter);
+//            System.out.println("poylgonCounter =  " + S2IEoProduct.poylgonCounter);
+//            S2IEoProduct.cellCounter = 0;
+//            S2IEoProduct.poylgonCounter = 0;
+//        }
         System.out.println("delta time  = " + ((t2 - t1) / 1000f));
+
+        return eoProducts;
     }
 
     private static void performOverlap(String format, EoProductMatcher matcher) {
@@ -171,14 +198,44 @@ public class ProductDBCheckerMain {
     }
 
     static List<SimpleRecord> readInsituRecords(File file) throws Exception {
-        FileReader fileReader = new FileReader(file);
-        CsvRecordSource recordSource = new CsvRecordSource(fileReader, SimpleRecord.INSITU_DATE_FORMAT);
-        List<SimpleRecord> records = new ArrayList<SimpleRecord>();
-        for (Record record : recordSource.getRecords()) {
-            records.add(new SimpleRecord(record.getTime().getTime(), record.getLocation()));
+        try (Reader reader = new LineNumberReader(new FileReader(file), 100 * 1024)) {
+            CsvRecordSource recordSource = new CsvRecordSource(reader, SimpleRecord.INSITU_DATE_FORMAT);
+            List<SimpleRecord> records = new ArrayList<>();
+            for (Record record : recordSource.getRecords()) {
+                records.add(new SimpleRecord(record.getTime().getTime(), record.getLocation()));
+            }
+            return records;
         }
-        fileReader.close();
-        return records;
     }
 
+    static void printURLs(Collection<EoProduct> eoProducts, File urlFile) throws IOException {
+        List<S2IEoProduct> uniqueProductList = new ArrayList<>(eoProducts.size());
+        for (EoProduct eoProduct : eoProducts) {
+            uniqueProductList.add((S2IEoProduct) eoProduct);
+        }
+        Collections.sort(uniqueProductList, (o1, o2) -> Integer.compare(o1.productID, o2.productID));
+
+        try(FileWriter urlWriter = new FileWriter("urls_matchin_insitu.txt")) {
+            try (StopWatch sw = new StopWatch("  >>load urls")) {
+                try (
+                        DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(urlFile)))
+                ) {
+                    int streamPID = 0;
+                    for (S2IEoProduct eoProduct : uniqueProductList) {
+                        int productID = eoProduct.productID;
+                        while (streamPID < productID) {
+                            int utflen = dis.readUnsignedShort();
+                            dis.skipBytes(utflen);
+                            streamPID++;
+                        }
+                        String url = dis.readUTF();
+                        streamPID++;
+
+                        urlWriter.write(url);
+                        urlWriter.write('\n');
+                    }
+                }
+            }
+        }
+    }
 }

@@ -65,7 +65,7 @@ public class S2EoProduct extends AbstractEoProduct {
 
     private final String wkt;
     private S2Polygon polygon;
-    private S2CellUnion cellUnion;
+    S2CellUnion cellUnion;
 
     public S2EoProduct(String name, long startTime, long endTime, String wkt) {
         super(name, startTime, endTime);
@@ -122,7 +122,7 @@ public class S2EoProduct extends AbstractEoProduct {
 
     public static EoProduct parse(String line) throws ParseException {
         String[] splits = line.split("\t");
-        String name = new File(splits[0]).getName();
+        String name = splits[0];
         long startTime = AbstractEoProduct.DATE_FORMAT.parse(DateUtils.getNoFractionString(splits[1])).getTime();
         long endTime = AbstractEoProduct.DATE_FORMAT.parse(DateUtils.getNoFractionString(splits[2])).getTime();
         String wkt = splits[3];

@@ -27,6 +27,7 @@ import com.google.common.geometry.S2RegionCoverer;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -50,36 +51,38 @@ public class S2IEoProduct extends AbstractEoProduct {
     static int cellCounter = 0;
     static int poylgonCounter = 0;
 
-    private final double[] poygonData;
-    private final ArrayList<S2CellId> cellIds;
+    final int productID;
+    private double[] poygonData;
+    final S2CellId[] cellIds;
 
     private S2Polygon polygon;
     private S2CellUnion cellUnion;
 
-    public S2IEoProduct(String name, long startTime, long endTime, double[] poygonData, ArrayList<S2CellId> cellIds) {
+    public S2IEoProduct(int productID, String name, long startTime, long endTime, double[] poygonData, S2CellId[] cellIds) {
         super(name, startTime, endTime);
+        this.productID = productID;
         this.poygonData = poygonData;
         this.cellIds = cellIds;
     }
 
     @Override
     public boolean contains(double lon, double lat) {
-        S2Point s2Point = S2LatLng.fromDegrees(lat, lon).toPoint();
-        cellCounter++;
-        if (getCellUnion().contains(s2Point)) {
-            poylgonCounter++;
-            return getPolygon().contains(s2Point);
-        }
+//        S2Point s2Point = S2LatLng.fromDegrees(lat, lon).toPoint();
+//        cellCounter++;
+//        if (cellUnionContains(s2Point)) {
+//            poylgonCounter++;
+//            return getPolygon().contains(s2Point);
+//        }
         return false;
     }
 
     @Override
     public boolean overlaps() {
-        cellCounter++;
-        if (getCellUnion().intersects(THE_PRODUCT_UNION)) {
-            poylgonCounter++;
-            return getPolygon().intersects(THE_PRODUCT);
-        }
+//        cellCounter++;
+//        if (getCellUnion().intersects(THE_PRODUCT_UNION)) {
+//            poylgonCounter++;
+//            return getPolygon().intersects(THE_PRODUCT);
+//        }
         return false;
     }
 
@@ -92,17 +95,17 @@ public class S2IEoProduct extends AbstractEoProduct {
     @Override
     public void createGeo() {
         getPolygon();
-        getCellUnion();
+//        getCellUnion();
     }
 
-    private S2Polygon getPolygon() {
+    S2Polygon getPolygon() {
         if (polygon == null) {
             polygon = createS2Polygon(poygonData);
         }
         return polygon;
     }
 
-    private S2Polygon createS2Polygon(double[] poygonData) {
+    static S2Polygon createS2Polygon(double[] poygonData) {
         List<S2Point> vertices = new ArrayList<S2Point>(poygonData.length / 3);
         for (int i = 0; i < poygonData.length; ) {
             double x = poygonData[i++];
@@ -114,12 +117,12 @@ public class S2IEoProduct extends AbstractEoProduct {
         return new S2Polygon(new S2Loop(vertices));
     }
 
-    private S2CellUnion getCellUnion() {
-        if (cellUnion == null) {
-            cellUnion = createS2CellUnion(cellIds);
-        }
-        return cellUnion;
-    }
+//    S2CellUnion getCellUnion() {
+//        if (cellUnion == null) {
+//            cellUnion = createS2CellUnion(cellIds);
+//        }
+//        return cellUnion;
+//    }
 
     private S2CellUnion createS2CellUnion(ArrayList<S2CellId> cellIds) {
         S2CellUnion cellUnion = new S2CellUnion();
@@ -163,5 +166,23 @@ public class S2IEoProduct extends AbstractEoProduct {
         }
         S2Loop s2Loop = new S2Loop(vertices);
         return new S2Polygon(s2Loop);
+    }
+
+    public void setPointData(double[] pointData) {
+        this.poygonData = pointData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof S2IEoProduct)) return false;
+
+        S2IEoProduct that = (S2IEoProduct) o;
+        return productID == that.productID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(productID);
     }
 }

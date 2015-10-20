@@ -17,6 +17,7 @@
 package org.esa.beam.occci;
 
 import com.google.common.geometry.S2CellId;
+import org.esa.beam.occci.util.StopWatch;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -71,51 +72,67 @@ public class ProductDB {
     }
 
     static ProductDB readProductIndex(File file) throws IOException, java.text.ParseException {
-        long t1 = System.currentTimeMillis();
         List<EoProduct> eoProducts = new ArrayList<>(10000);
-        Map<Long, S2CellId> cellMap = new HashMap<>();
         Map<S2CellId, List<EoProduct>> productCellMap = new HashMap<>();
-        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+
+        S2CellId[] allCellIds;
+        File cellFile = new File(file.getAbsolutePath() + ".cellIds");
+        try (
+                StopWatch sw = new StopWatch("R " + cellFile.getName());
+                DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(cellFile)))
+        ) {
+            int numCells = dis.readInt();
+            allCellIds = new S2CellId[numCells];
+            for (int i = 0; i < numCells; i++) {
+                allCellIds[i] = new S2CellId(dis.readLong());
+            }
+        }
+        try (
+                StopWatch sw = new StopWatch("R " + file.getName());
+                DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))
+        ) {
             boolean done = false;
+            int productID = 0;
             while (!done) {
                 try {
-                    String name = dis.readUTF();
+//                    String name = dis.readUTF();
+                    String name = null;
                     long startTime = dis.readLong();
                     long endTime = dis.readLong();
 
-                    int numLoopPoints = dis.readInt();
-                    double[] pointData = new double[numLoopPoints * 3];
-                    for (int i = 0; i < pointData.length; i++) {
-                        pointData[i] = dis.readDouble();
-                    }
+                    double[] pointData = null;
+//                    int numLoopPoints = dis.readInt();
+//                    double[] pointData = new double[numLoopPoints * 3];
+//                    for (int i = 0; i < pointData.length; i++) {
+//                        pointData[i] = dis.readDouble();
+//                    }
 
                     int numCells = dis.readInt();
-                    ArrayList<S2CellId> cellIds = new ArrayList<>(numCells);
+                    S2CellId[] cellIds = new S2CellId[numCells];
 
-                    S2IEoProduct product = new S2IEoProduct(name, startTime, endTime, pointData, cellIds);
+                    S2IEoProduct product = new S2IEoProduct(productID++, name, startTime, endTime, pointData, cellIds);
                     eoProducts.add(product);
 
                     for (int i = 0; i < numCells; i++) {
-                        long id = dis.readLong();
-                        S2CellId s2CellId = cellMap.get(id);
-                        if (s2CellId == null) {
-                            s2CellId = new S2CellId(id);
-                            cellMap.put(id, s2CellId);
-                            productCellMap.put(s2CellId, new ArrayList<>());
-                        }
-                        productCellMap.get(s2CellId).add(product);
-                        cellIds.add(s2CellId);
+                        cellIds[i] = allCellIds[dis.readInt()];
+
+//                        List<EoProduct> eoProductList = productCellMap.get(s2CellId);
+//                        if (eoProductList == null) {
+//                            eoProductList = new ArrayList<>();
+//                            productCellMap.put(s2CellId, eoProductList);
+//                        }
+//                        eoProductList.add(product);
                     }
                 } catch (EOFException eof) {
                     done = true;
                 }
             }
         }
-        long t2 = System.currentTimeMillis();
-        System.out.println("read products time (s2 index) = " + ((t2 - t1) / 1000f));
-        ProductDB productDB = create(eoProducts);
-        productDB.setProductCellMap(productCellMap);
-        return productDB;
+        try (StopWatch sw = new StopWatch("prepare product index (s2 index)")){
+            ProductDB productDB = create(eoProducts);
+            productDB.setProductCellMap(productCellMap);
+            return productDB;
+        }
     }
 
     private static EoProduct createEoProduct(String format, String line) throws ParseException {
