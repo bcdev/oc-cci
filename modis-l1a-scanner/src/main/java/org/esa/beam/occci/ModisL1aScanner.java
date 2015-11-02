@@ -21,12 +21,15 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
+import ucar.nc2.Attribute;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.iosp.IOServiceProvider;
 import ucar.nc2.iosp.hdf4.H4iosp;
 import ucar.nc2.iosp.hdf4.ODLparser;
+import ucar.nc2.iosp.hdf5.H5header;
+import ucar.nc2.iosp.hdf5.H5iosp;
 import ucar.unidata.io.RandomAccessFile;
 import ucar.unidata.io.UncompressInputStream;
 import ucar.unidata.io.bzip2.CBZip2InputStream;
@@ -124,21 +127,21 @@ public class ModisL1aScanner {
     }
 
     private static void processSingleFileInMemory(String filename) throws IOException {
-        File modisL1aFile = new File(filename);
-        String absolutePath = modisL1aFile.getAbsolutePath();
+        File file = new File(filename);
+        String absolutePath = file.getAbsolutePath();
         System.err.println("processing absolutePath = " + absolutePath);
-        if (!modisL1aFile.exists()) {
+        if (!file.exists()) {
             System.err.println("File does not exist: " + absolutePath);
             return;
         }
-        RandomAccessFile inMemoryRaf = openRandomAccessFile(modisL1aFile);
+        RandomAccessFile raf = openRandomAccessFile(file);
         IOServiceProvider h4iosp = new H4iosp();
-        if (h4iosp.isValidFile(inMemoryRaf)) {
+        if (h4iosp.isValidFile(raf)) {
             NetcdfFile netcdfFile = null;
             try {
-                netcdfFile = new DummyNetcdfFile(h4iosp, inMemoryRaf, modisL1aFile.getAbsolutePath());
+                netcdfFile = new DummyNetcdfFile(h4iosp, raf, file.getAbsolutePath());
                 analyzeFile(absolutePath, netcdfFile);
-            }catch (IOException ioe) {
+            } catch (IOException ioe) {
                 System.err.println("Error while processing:" + filename);
                 ioe.printStackTrace();
             } finally {
@@ -148,6 +151,21 @@ public class ModisL1aScanner {
             }
         } else {
             h4iosp.close();
+            boolean isValidHdf5 = H5header.isValidFile(raf);
+            if (isValidHdf5) {
+                NetcdfFile netcdfFile = null;
+                try {
+                    netcdfFile = new DummyNetcdfFile(new H5iosp(), raf, file.getAbsolutePath());
+                    analyzeFile(absolutePath, netcdfFile);
+                } catch (IOException ioe) {
+                    System.err.println("Error while processing:" + filename);
+                    ioe.printStackTrace();
+                } finally {
+                    if (netcdfFile != null) {
+                        netcdfFile.close();
+                    }
+                }
+            }
         }
     }
 
@@ -182,6 +200,76 @@ public class ModisL1aScanner {
     }
 
     private static void analyzeFile(String absolutePath, NetcdfFile netcdfFile) throws IOException {
+        File file = new File(absolutePath);
+        String name = file.getName();
+        if (name.startsWith("A")) {
+            analyzeModisFile(absolutePath, netcdfFile);
+        } else if (name.startsWith("V")) {
+            analyzeViirsFile(absolutePath, netcdfFile);
+        }
+    }
+
+    private static void analyzeViirsFile(String absolutePath, NetcdfFile netcdfFile) {
+        String startTime = getTime(netcdfFile, "time_coverage_start");
+        String endTime = getTime(netcdfFile, "time_coverage_end");
+        String polygon = getPolygon(netcdfFile);
+
+        System.out.println(absolutePath + "\t" + startTime + "\t" + endTime + "\t" + polygon);
+    }
+
+   private static String getPolygon(NetcdfFile netcdfFile) {
+       Group navigation_data = netcdfFile.findGroup("navigation_data");
+       Attribute ringPointLongitude = navigation_data.findAttribute("gringpointlongitude");
+       Attribute ringPointLatitude = navigation_data.findAttribute("gringpointlatitude");
+       Attribute ringPointSequence = navigation_data.findAttribute("gringpointsequence");
+
+       double[] lonValues = new double[4];
+       for (int i = 0; i < lonValues.length; i++) {
+           lonValues[i] = ringPointLongitude.getNumericValue(i).doubleValue();
+       }
+       double[] latValues = new double[4];
+       for (int i = 0; i < latValues .length; i++) {
+           latValues[i] = ringPointLatitude.getNumericValue(i).doubleValue();
+       }
+       int[] sequenceNo = new int[4];
+       for (int i = 0; i < sequenceNo .length; i++) {
+           sequenceNo [i] = ringPointSequence.getNumericValue(i).intValue();
+       }
+       StringBuilder sb = new StringBuilder();
+       sb.append("POLYGON((");
+       for (int aSequenceNo : sequenceNo) {
+           int sequenceIndex = aSequenceNo - 1;
+           sb.append(lonValues[sequenceIndex]).append(" ").append(latValues[sequenceIndex]).append(",");
+       }
+       int sequenceIndex = sequenceNo[0] - 1;
+       sb.append(lonValues[sequenceIndex]).append(" ").append(latValues[sequenceIndex]);
+       sb.append("))");
+       return sb.toString();
+
+   }
+   /* private static String getPolygon(NetcdfFile netcdfFile) {
+        float latMin = netcdfFile.findGlobalAttribute("geospatial_lat_min").getNumericValue().floatValue();
+        float latMax = netcdfFile.findGlobalAttribute("geospatial_lat_max").getNumericValue().floatValue();
+        float lonMin = netcdfFile.findGlobalAttribute("geospatial_lon_min").getNumericValue().floatValue();
+        float lonMax = netcdfFile.findGlobalAttribute("geospatial_lon_max").getNumericValue().floatValue();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("POLYGON((");
+        sb.append(lonMin).append(" ").append(latMin).append(",");
+        sb.append(lonMin).append(" ").append(latMax).append(",");
+        sb.append(lonMax).append(" ").append(latMax).append(",");
+        sb.append(lonMax).append(" ").append(latMin).append(",");
+        sb.append(lonMin).append(" ").append(latMin);
+        sb.append("))");
+        return sb.toString();
+    }*/
+
+    private static String getTime(NetcdfFile netcdfFile, String attributeName) {
+        String startTime = netcdfFile.findGlobalAttribute(attributeName).getStringValue();
+        return startTime.substring(0, startTime.length() - 1);
+    }
+
+    private static void analyzeModisFile(String absolutePath, NetcdfFile netcdfFile) throws IOException {
         //System.out.println("netcdfFile = " + netcdfFile);
         Group rootGroup = netcdfFile.getRootGroup();
         Element coreElem = getEosElement(CORE_METADATA, rootGroup);
@@ -234,7 +322,8 @@ public class ModisL1aScanner {
         Element valueElement = element.getChild("VALUE");
         List<Element> children = valueElement.getChildren();
         if (children.size() != numValues) {
-            String msg = String.format("Error in parsing GRINGPOINT. %d childs, but 'num_val' is %d", children.size(), numValues);
+            String msg = String.format("Error in parsing GRINGPOINT. %d childs, but 'num_val' is %d", children.size(),
+                                       numValues);
             throw new IllegalArgumentException(msg);
         }
         double[] values = new double[numValues];
@@ -320,11 +409,13 @@ public class ModisL1aScanner {
             if (suffix.equalsIgnoreCase("bz2")) {
                 in = new CBZip2InputStream(inputStream, true);
                 copy(in, fout, BUFFER_SIZE);
-                System.err.println("unbzipped " + inputFile.getAbsolutePath() + " to " + uncompressedFile.getAbsolutePath());
+                System.err.println(
+                        "unbzipped " + inputFile.getAbsolutePath() + " to " + uncompressedFile.getAbsolutePath());
             } else if (suffix.equalsIgnoreCase("gzip") || suffix.equalsIgnoreCase("gz")) {
                 in = new GZIPInputStream(inputStream);
                 copy(in, fout, BUFFER_SIZE);
-                System.err.println("ungzipped " + inputFile.getAbsolutePath() + " to " + uncompressedFile.getAbsolutePath());
+                System.err.println(
+                        "ungzipped " + inputFile.getAbsolutePath() + " to " + uncompressedFile.getAbsolutePath());
             }
         } catch (IOException e) {
             // appears we have to close before we can delete
@@ -367,7 +458,8 @@ public class ModisL1aScanner {
 
     private static RandomAccessFile openRandomAccessFile(File file) throws IOException {
         if (isCompressed(file)) {
-            MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(openCompressedInputStream(file));
+            MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(
+                    openCompressedInputStream(file));
             return new ImageInputStreamRandomAccessFile(imageInputStream, file.length());
         } else {
             return new RandomAccessFile(file.getAbsolutePath(), "r");
@@ -376,7 +468,8 @@ public class ModisL1aScanner {
 
     private static boolean isCompressed(File file) {
         String fileName = file.getName().toLowerCase();
-        return fileName.endsWith(".z") || fileName.endsWith(".zip") || fileName.endsWith(".bz2") || fileName.endsWith(".gzip") || fileName.endsWith(".gz");
+        return fileName.endsWith(".z") || fileName.endsWith(".zip") || fileName.endsWith(".bz2") || fileName.endsWith(
+                ".gzip") || fileName.endsWith(".gz");
     }
 
     private static InputStream openCompressedInputStream(File file) throws IOException {
