@@ -28,6 +28,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,13 +51,30 @@ public class MultiPassMatcher extends BruteForceMatcher {
     public Set<EoProduct> matchInsitu(List<SimpleRecord> insituRecords, long maxTimeDifference) {
         Map<S2IEoProduct, List<S2Point>> candidatesMap = new HashMap<>();
 
+        long globalStartTime;
+        long globalEndTime;
+        try {
+            globalStartTime = AbstractEoProduct.DATE_FORMAT.parse(DateUtils.getNoFractionString("2014-01-01T00:00:00")).getTime();
+            globalEndTime = AbstractEoProduct.DATE_FORMAT.parse(DateUtils.getNoFractionString("2015-01-01T00:00:00")).getTime();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
         try (StopWatch sw = new StopWatch("  >>test for time and cell")) {
             for (SimpleRecord insituRecord : insituRecords) {
                 S2CellId s2CellId = null;
                 S2Point s2Point = null;
+                int level1Mask = 0;
                 final long referenceTime = insituRecord.getTime();
-                final long windowStartTime = referenceTime - maxTimeDifference;
-                final long windowEndTime = referenceTime + maxTimeDifference;
+                final long windowStartTime;
+                final long windowEndTime;
+                if (referenceTime == -1) {
+                    windowStartTime = globalStartTime;
+                    windowEndTime = globalEndTime;
+                } else {
+                    windowStartTime = referenceTime - maxTimeDifference;
+                    windowEndTime = referenceTime + maxTimeDifference;
+                }
 
                 int productIndex = productDB.getIndexForTime(windowStartTime);
                 if (productIndex == -1) {
@@ -70,9 +88,9 @@ public class MultiPassMatcher extends BruteForceMatcher {
 
                     if (eoProduct == null) {
                         finishedWithInsitu = true;
-                    } else if (eoProduct.getEndTime() > windowEndTime) {
+                    } else if (eoProduct.getStartTime() > windowEndTime) {
                         finishedWithInsitu = true;
-                    } else if (eoProduct.getStartTime() < windowStartTime) {
+                    } else if (eoProduct.getEndTime() < windowStartTime) {
                         //test next product;
                     } else {
                         // time match
@@ -83,14 +101,17 @@ public class MultiPassMatcher extends BruteForceMatcher {
                             S2LatLng s2LatLng = S2LatLng.fromDegrees(lat, lon);
                             s2Point = s2LatLng.toPoint();
                             s2CellId = S2CellId.fromPoint(s2Point);
+                            level1Mask = (1 << (int) (s2CellId.id() >>> S2IndexCreatorMain.MASK_SHIFT));
                         }
-                        if (containsPoint(eoProduct.cellIds, s2CellId)) {
-                            List<S2Point> candidateProducts = candidatesMap.get(eoProduct);
-                            if (candidateProducts == null) {
-                                candidateProducts = new ArrayList<>();
-                                candidatesMap.put(eoProduct, candidateProducts);
+                        if ((eoProduct.level1Mask & level1Mask) != 0) {
+                            if (S2CellIdInteger.containsPoint(eoProduct.cellIds, s2CellId)) {
+                                List<S2Point> candidateProducts = candidatesMap.get(eoProduct);
+                                if (candidateProducts == null) {
+                                    candidateProducts = new ArrayList<>();
+                                    candidatesMap.put(eoProduct, candidateProducts);
+                                }
+                                candidateProducts.add(s2Point);
                             }
-                            candidateProducts.add(s2Point);
                         }
                     }
                 }

@@ -52,16 +52,16 @@ public class S2IEoProduct extends AbstractEoProduct {
     static int poylgonCounter = 0;
 
     final int productID;
-    private double[] poygonData;
-    final S2CellId[] cellIds;
+//    private double[] poygonData;
+    final int[] cellIds;
 
-    private S2Polygon polygon;
-    private S2CellUnion cellUnion;
+//    private S2Polygon polygon;
+//    private S2CellUnion cellUnion;
+    int level1Mask;
 
-    public S2IEoProduct(int productID, String name, long startTime, long endTime, double[] poygonData, S2CellId[] cellIds) {
+    public S2IEoProduct(int productID, String name, long startTime, long endTime, int[] cellIds) {
         super(name, startTime, endTime);
         this.productID = productID;
-        this.poygonData = poygonData;
         this.cellIds = cellIds;
     }
 
@@ -88,22 +88,22 @@ public class S2IEoProduct extends AbstractEoProduct {
 
     @Override
     public void reset() {
-        polygon = null;
-        cellUnion = null;
+//        polygon = null;
+//        cellUnion = null;
     }
 
     @Override
     public void createGeo() {
-        getPolygon();
+//        getPolygon();
 //        getCellUnion();
     }
 
-    S2Polygon getPolygon() {
-        if (polygon == null) {
-            polygon = createS2Polygon(poygonData);
-        }
-        return polygon;
-    }
+//    S2Polygon getPolygon() {
+//        if (polygon == null) {
+//            polygon = createS2Polygon(poygonData);
+//        }
+//        return polygon;
+//    }
 
     static S2Polygon createS2Polygon(double[] poygonData) {
         List<S2Point> vertices = new ArrayList<S2Point>(poygonData.length / 3);
@@ -168,9 +168,9 @@ public class S2IEoProduct extends AbstractEoProduct {
         return new S2Polygon(s2Loop);
     }
 
-    public void setPointData(double[] pointData) {
-        this.poygonData = pointData;
-    }
+//    public void setPointData(double[] pointData) {
+//        this.poygonData = pointData;
+//    }
 
     @Override
     public boolean equals(Object o) {

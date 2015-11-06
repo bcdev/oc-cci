@@ -100,7 +100,7 @@ public class ProductDBCheckerMain {
 //        System.out.println("s2ProductDB.size() = " + s2iProductDB.size());
 //        performInsitu("s2", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
 //        performOverlap("s2i", new FastMatcher(s2iProductDB));
-        s2iProductDB = null;
+            s2iProductDB = null;
 //
             System.out.println();
             try (StopWatch swp = new StopWatch("TTT read product index")) {
@@ -200,9 +200,14 @@ public class ProductDBCheckerMain {
     static List<SimpleRecord> readInsituRecords(File file) throws Exception {
         try (Reader reader = new LineNumberReader(new FileReader(file), 100 * 1024)) {
             CsvRecordSource recordSource = new CsvRecordSource(reader, SimpleRecord.INSITU_DATE_FORMAT);
+            boolean hasTime = recordSource.getHeader().hasTime();
             List<SimpleRecord> records = new ArrayList<>();
             for (Record record : recordSource.getRecords()) {
-                records.add(new SimpleRecord(record.getTime().getTime(), record.getLocation()));
+                if (hasTime) {
+                    records.add(new SimpleRecord(record.getTime().getTime(), record.getLocation()));
+                } else {
+                    records.add(new SimpleRecord(-1, record.getLocation()));
+                }
             }
             return records;
         }
@@ -215,7 +220,7 @@ public class ProductDBCheckerMain {
         }
         Collections.sort(uniqueProductList, (o1, o2) -> Integer.compare(o1.productID, o2.productID));
 
-        try(FileWriter urlWriter = new FileWriter("urls_matchin_insitu.txt")) {
+        try (FileWriter urlWriter = new FileWriter("urls_matchin_insitu.txt")) {
             try (StopWatch sw = new StopWatch("  >>load urls")) {
                 try (
                         DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(urlFile)))

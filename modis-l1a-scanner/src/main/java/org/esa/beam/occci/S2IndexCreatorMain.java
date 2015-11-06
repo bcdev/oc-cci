@@ -32,6 +32,8 @@ import java.util.List;
  */
 public class S2IndexCreatorMain {
 
+    static final short MASK_SHIFT = 2 * S2CellId.MAX_LEVEL - 1;
+
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length != 2) {
             printUsage();
@@ -50,7 +52,7 @@ public class S2IndexCreatorMain {
         File poylFile = new File(indexFile + ".polygon");
         File cellFile = new File(indexFile + ".cellIds");
 
-        List<S2CellId> allCellIds = new ArrayList<>();
+//        List<S2CellId> allCellIds = new ArrayList<>();
 
         try (
                 DataOutputStream dosIndex = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indexFile)));
@@ -69,19 +71,19 @@ public class S2IndexCreatorMain {
                 ArrayList<S2CellId> s2CellIds = s2EoProduct.cellUnion.cellIds();
                 dosIndex.writeInt(s2CellIds.size());
 
+                int level1Mask = 0;
                 for (S2CellId s2CellId : s2CellIds) {
-                    int index = allCellIds.indexOf(s2CellId);
-                    if (index > 0) {
-                        dosIndex.writeInt(index);
-                    } else {
-                        allCellIds.add(s2CellId);
-                        index = allCellIds.size() - 1;
-                        dosIndex.writeInt(index);
-                    }
-//                    dos.writeLong(s2CellId.id());
+//                    int index = allCellIds.indexOf(s2CellId);
+//                    if (index > 0) {
+                        dosIndex.writeInt(S2CellIdInteger.asInt(s2CellId));
+//                    } else {
+//                        allCellIds.add(s2CellId);
+//                        index = allCellIds.size() - 1;
+//                        dosIndex.writeInt(index);
+//                    }
+                    level1Mask |= (1 << (int) (s2CellId.id() >>> MASK_SHIFT));
                 }
-
-//                s2EoProduct.writeCellUnion(dosIndex);
+                dosIndex.writeInt(level1Mask);
 
                 s2EoProduct.writePolygone(dosPoly);
 
@@ -94,15 +96,15 @@ public class S2IndexCreatorMain {
             }
         }
 
-        System.out.println("allCellIds.size() = " + allCellIds.size());
-        try (
-                DataOutputStream dosCell = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(cellFile)))
-        ) {
-            dosCell.writeInt(allCellIds.size());
-            for (S2CellId s2CellId : allCellIds) {
-                dosCell.writeLong(s2CellId.id());
-            }
-        }
+//        System.out.println("allCellIds.size() = " + allCellIds.size());
+//        try (
+//                DataOutputStream dosCell = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(cellFile)))
+//        ) {
+//            dosCell.writeInt(allCellIds.size());
+//            for (S2CellId s2CellId : allCellIds) {
+//                dosCell.writeLong(s2CellId.id());
+//            }
+//        }
     }
 
 

@@ -39,6 +39,14 @@ import java.util.Map;
 public class ProductDB {
 
     private static final long MILLIS_PER_DAY = 1000 * 60 * 60 * 24L;
+    private static final Comparator<EoProduct> EO_PRODUCT_COMPARATOR = new Comparator<EoProduct>() {
+        @Override
+        public int compare(EoProduct eo1, EoProduct eo2) {
+            final long t1 = eo1.getStartTime();
+            final long t2 = eo2.getStartTime();
+            return (t1 < t2 ? -1 : (t1 == t2 ? 0 : 1));
+        }
+    };
 
     private final List<EoProduct> eoProducts;
     private final int[] dayIndex;
@@ -75,54 +83,39 @@ public class ProductDB {
         List<EoProduct> eoProducts = new ArrayList<>(10000);
         Map<S2CellId, List<EoProduct>> productCellMap = new HashMap<>();
 
-        S2CellId[] allCellIds;
-        File cellFile = new File(file.getAbsolutePath() + ".cellIds");
-        try (
-                StopWatch sw = new StopWatch("R " + cellFile.getName());
-                DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(cellFile)))
-        ) {
-            int numCells = dis.readInt();
-            allCellIds = new S2CellId[numCells];
-            for (int i = 0; i < numCells; i++) {
-                allCellIds[i] = new S2CellId(dis.readLong());
-            }
-        }
+//        S2CellId[] allCellIds;
+//        File cellFile = new File(file.getAbsolutePath() + ".cellIds");
+//        try (
+//                StopWatch sw = new StopWatch("R " + cellFile.getName());
+//                DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(cellFile)))
+//        ) {
+//            int numCells = dis.readInt();
+//            allCellIds = new S2CellId[numCells];
+//            for (int i = 0; i < numCells; i++) {
+//                allCellIds[i] = new S2CellId(dis.readLong());
+//            }
+//        }
         try (
                 StopWatch sw = new StopWatch("R " + file.getName());
                 DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))
         ) {
+            final String name = null;
             boolean done = false;
             int productID = 0;
             while (!done) {
                 try {
-//                    String name = dis.readUTF();
-                    String name = null;
                     long startTime = dis.readLong();
                     long endTime = dis.readLong();
-
-                    double[] pointData = null;
-//                    int numLoopPoints = dis.readInt();
-//                    double[] pointData = new double[numLoopPoints * 3];
-//                    for (int i = 0; i < pointData.length; i++) {
-//                        pointData[i] = dis.readDouble();
-//                    }
-
                     int numCells = dis.readInt();
-                    S2CellId[] cellIds = new S2CellId[numCells];
 
-                    S2IEoProduct product = new S2IEoProduct(productID++, name, startTime, endTime, pointData, cellIds);
-                    eoProducts.add(product);
-
+                    int[] cellIds = new int[numCells];
                     for (int i = 0; i < numCells; i++) {
-                        cellIds[i] = allCellIds[dis.readInt()];
-
-//                        List<EoProduct> eoProductList = productCellMap.get(s2CellId);
-//                        if (eoProductList == null) {
-//                            eoProductList = new ArrayList<>();
-//                            productCellMap.put(s2CellId, eoProductList);
-//                        }
-//                        eoProductList.add(product);
+                        cellIds[i] = dis.readInt();
                     }
+                    S2IEoProduct product = new S2IEoProduct(productID++, name, startTime, endTime, cellIds);
+                    product.level1Mask = dis.readInt();
+
+                    eoProducts.add(product);
                 } catch (EOFException eof) {
                     done = true;
                 }
@@ -149,34 +142,41 @@ public class ProductDB {
     }
 
     static ProductDB create(List<EoProduct> eoProducts) {
-        Collections.sort(eoProducts, new Comparator<EoProduct>() {
-            @Override
-            public int compare(EoProduct eo1, EoProduct eo2) {
-                final long t1 = eo1.getStartTime();
-                final long t2 = eo2.getStartTime();
-                return (t1 < t2 ? -1 : (t1 == t2 ? 0 : 1));
-            }
-        });
+        Collections.sort(eoProducts, EO_PRODUCT_COMPARATOR);
 
-        EoProduct eoFirst = eoProducts.get(0);
-        EoProduct eoLast = eoProducts.get(eoProducts.size() - 1);
+//        EoProduct eoFirst = eoProducts.get(0);
+//        EoProduct eoLast = eoProducts.get(eoProducts.size() - 1);
+//
+//        int firstDay = getDaySinceEpoch(eoFirst.getStartTime());
+//        int lastDay = getDaySinceEpoch(eoLast.getEndTime());
+//        int indexLength = lastDay - firstDay + 1;
+//        int[] dayIndex = new int[indexLength];
+//        Arrays.fill(dayIndex, -1);
+//        for (int i = 0; i < eoProducts.size(); i++) {
+//            EoProduct eoProduct = eoProducts.get(i);
+//
+//            int daysSinceEpoch = getDaySinceEpoch(eoProduct.getStartTime());
+//            int indexID = daysSinceEpoch - firstDay;
+//            if (dayIndex[indexID] == -1) {
+//                dayIndex[indexID] = i;
+//            }
+//        }
+//        for (int i = 0; i < dayIndex.length; i++) {
+//            if (dayIndex[i] == -1) {
+//                int j = i+1;
+//                boolean found = false;
+//                while (j < dayIndex.length && ! found) {
+//                    if (dayIndex[j] != -1) {
+//                        found = true;
+//                        dayIndex[i] = dayIndex[j];
+//                    }
+//                    j++;
+//                }
+//            }
+//        }
 
-        int firstDay = getDaySinceEpoch(eoFirst.getStartTime());
-        int lastDay = getDaySinceEpoch(eoLast.getEndTime());
-        int indexLength = lastDay - firstDay + 1;
-        int[] dayIndex = new int[indexLength];
-        Arrays.fill(dayIndex, -1);
-        for (int i = 0; i < eoProducts.size(); i++) {
-            EoProduct eoProduct = eoProducts.get(i);
-
-            int daysSinceEpoch = getDaySinceEpoch(eoProduct.getStartTime());
-            int indexID = daysSinceEpoch - firstDay;
-            if (dayIndex[indexID] == -1) {
-                dayIndex[indexID] = i;
-            }
-        }
-
-        return new ProductDB(eoProducts, dayIndex, firstDay, lastDay);
+//        return new ProductDB(eoProducts, dayIndex, firstDay, lastDay);
+        return new ProductDB(eoProducts, null, 0, 0);
     }
 
     public static int getDaySinceEpoch(long time) {
@@ -184,11 +184,37 @@ public class ProductDB {
     }
 
     public int getIndexForTime(long startTime) {
-        int daysSinceEpoch = getDaySinceEpoch(startTime);
-        if (daysSinceEpoch < firstDay || daysSinceEpoch > lastDay) {
-            return -1;
+//        int daysSinceEpoch = getDaySinceEpoch(startTime);
+//        if (daysSinceEpoch < firstDay || daysSinceEpoch > lastDay) {
+//            return -1;
+//        }
+//        int day = daysSinceEpoch - firstDay;
+//        int low = dayIndex[day];
+//        int high;
+//        if (day + 1 >= dayIndex.length) {
+//            high = eoProducts.size() -1;
+//        } else {
+//            high = dayIndex[day + 1];
+//        }
+//        return indexedBinarySearch(eoProducts, startTime, low, high);
+        int low = 0;
+        int high = eoProducts.size() -1;
+        return indexedBinarySearch(eoProducts, startTime, low, high);
+    }
+
+    private static int indexedBinarySearch(List<EoProduct> list, long startTime, int low, int high) {
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            final long t1 = list.get(mid).getStartTime();
+            if (t1 < startTime) {
+                low = mid + 1;
+            } else if (t1 == startTime) {
+                return mid; // key found
+            } else {
+                high = mid - 1;
+            }
         }
-        return dayIndex[(daysSinceEpoch - firstDay)];
+        return low;  // key not found
     }
 
     public EoProduct getRecord(int index) {
