@@ -300,6 +300,11 @@ def getDate(filename):
     if re.compile("^S\d{13}").match(filename):
         date = datetime.strptime(filename[1:14], '%Y%j%H%M%S')
 
+    # VIIRS
+    # V2006131132000.L1C
+    if re.compile("^V\d{13}").match(filename):
+        date = datetime.strptime(filename[1:14], '%Y%j%H%M%S')
+
     print >> stderr, date
     return date
 
