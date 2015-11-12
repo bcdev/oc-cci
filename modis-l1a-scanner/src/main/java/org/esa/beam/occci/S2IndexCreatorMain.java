@@ -17,6 +17,7 @@
 package org.esa.beam.occci;
 
 import com.google.common.geometry.S2CellId;
+import com.google.common.geometry.S2CellUnion;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -25,7 +26,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by marcoz on 18.08.15.
@@ -50,10 +54,9 @@ public class S2IndexCreatorMain {
         File indexFile = new File(args[1]);
         File urlFile = new File(indexFile + ".url");
         File poylFile = new File(indexFile + ".polygon");
-        File cellFile = new File(indexFile + ".cellIds");
+        File coverFile = new File(indexFile + ".coverages");
 
-//        List<S2CellId> allCellIds = new ArrayList<>();
-
+        List<S2IntCoverage> allCoverages = new ArrayList<>();
         try (
                 DataOutputStream dosIndex = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indexFile)));
                 DataOutputStream dosUrl = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(urlFile)));
@@ -68,19 +71,18 @@ public class S2IndexCreatorMain {
                 dosIndex.writeLong(eoProduct.getStartTime());
                 dosIndex.writeLong(eoProduct.getEndTime());
 
-                ArrayList<S2CellId> s2CellIds = s2EoProduct.cellUnion.cellIds();
-                dosIndex.writeInt(s2CellIds.size());
+                S2CellUnion cellUnion = s2EoProduct.cellUnion;
+                S2IntCoverage s2IntCoverage = new S2IntCoverage(cellUnion);
+                int index = allCoverages.indexOf(s2IntCoverage);
+                if (index <= 0) {
+                    allCoverages.add(s2IntCoverage);
+                    index = allCoverages.size() - 1;
+                }
+                dosIndex.writeInt(index);
 
                 int level1Mask = 0;
-                for (S2CellId s2CellId : s2CellIds) {
-//                    int index = allCellIds.indexOf(s2CellId);
-//                    if (index > 0) {
-                        dosIndex.writeInt(S2CellIdInteger.asInt(s2CellId));
-//                    } else {
-//                        allCellIds.add(s2CellId);
-//                        index = allCellIds.size() - 1;
-//                        dosIndex.writeInt(index);
-//                    }
+                for (int i = 0; i < cellUnion.cellIds().size(); i++) {
+                    S2CellId s2CellId = cellUnion.cellIds().get(i);
                     level1Mask |= (1 << (int) (s2CellId.id() >>> MASK_SHIFT));
                 }
                 dosIndex.writeInt(level1Mask);
@@ -95,16 +97,43 @@ public class S2IndexCreatorMain {
                 }
             }
         }
+        System.out.println("allCoverages.size() = " + allCoverages.size());
+        try (
+                DataOutputStream dosCover = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(coverFile)))
+        ) {
+            dosCover.writeInt(allCoverages.size());
+            for (S2IntCoverage s2Cover : allCoverages) {
+                int[] intIds = s2Cover.intIds;
+                dosCover.writeInt(intIds.length);
+                for (int intId : intIds) {
+                    dosCover.writeInt(intId);
+                }
+            }
+        }
+    }
 
-//        System.out.println("allCellIds.size() = " + allCellIds.size());
-//        try (
-//                DataOutputStream dosCell = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(cellFile)))
-//        ) {
-//            dosCell.writeInt(allCellIds.size());
-//            for (S2CellId s2CellId : allCellIds) {
-//                dosCell.writeLong(s2CellId.id());
-//            }
-//        }
+    private static class S2IntCoverage {
+        private final int[] intIds;
+
+        public S2IntCoverage(S2CellUnion cellUnion) {
+            ArrayList<S2CellId> s2CellIds = cellUnion.cellIds();
+            intIds = new int[s2CellIds.size()];
+            for (int i = 0; i < intIds.length; i++) {
+                intIds[i] = S2CellIdInteger.asInt(s2CellIds.get(i));
+            }
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            if (!(other instanceof S2IntCoverage)) return false;
+            return Arrays.equals(intIds, ((S2IntCoverage) other).intIds);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(intIds);
+        }
     }
 
 

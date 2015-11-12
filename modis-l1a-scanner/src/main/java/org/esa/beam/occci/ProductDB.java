@@ -83,18 +83,22 @@ public class ProductDB {
         List<EoProduct> eoProducts = new ArrayList<>(10000);
         Map<S2CellId, List<EoProduct>> productCellMap = new HashMap<>();
 
-//        S2CellId[] allCellIds;
-//        File cellFile = new File(file.getAbsolutePath() + ".cellIds");
-//        try (
-//                StopWatch sw = new StopWatch("R " + cellFile.getName());
-//                DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(cellFile)))
-//        ) {
-//            int numCells = dis.readInt();
-//            allCellIds = new S2CellId[numCells];
-//            for (int i = 0; i < numCells; i++) {
-//                allCellIds[i] = new S2CellId(dis.readLong());
-//            }
-//        }
+        int[][] allCoverages;
+        File coverFile = new File(file.getAbsolutePath() + ".coverages");
+        try (
+                StopWatch sw = new StopWatch("R " + coverFile.getName());
+                DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(coverFile)))
+        ) {
+            int numCovers = dis.readInt();
+            allCoverages = new int[numCovers][0];
+            for (int i = 0; i < allCoverages.length; i++) {
+                int numCells = dis.readInt();
+                allCoverages[i] = new int[numCells];
+                for (int j = 0; j < allCoverages[i].length; j++) {
+                    allCoverages[i][j] = dis.readInt();
+                }
+            }
+        }
         try (
                 StopWatch sw = new StopWatch("R " + file.getName());
                 DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))
@@ -106,12 +110,9 @@ public class ProductDB {
                 try {
                     long startTime = dis.readLong();
                     long endTime = dis.readLong();
-                    int numCells = dis.readInt();
+                    int allCoveragesIndex = dis.readInt();
 
-                    int[] cellIds = new int[numCells];
-                    for (int i = 0; i < numCells; i++) {
-                        cellIds[i] = dis.readInt();
-                    }
+                    int[] cellIds = allCoverages[allCoveragesIndex];
                     S2IEoProduct product = new S2IEoProduct(productID++, name, startTime, endTime, cellIds);
                     product.level1Mask = dis.readInt();
 
