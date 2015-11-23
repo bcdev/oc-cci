@@ -39,7 +39,7 @@ import java.util.Map;
 public class ProductDB {
 
     private static final long MILLIS_PER_DAY = 1000 * 60 * 60 * 24L;
-    private static final Comparator<EoProduct> EO_PRODUCT_COMPARATOR = new Comparator<EoProduct>() {
+    static final Comparator<EoProduct> EO_PRODUCT_COMPARATOR = new Comparator<EoProduct>() {
         @Override
         public int compare(EoProduct eo1, EoProduct eo2) {
             final long t1 = eo1.getStartTime();

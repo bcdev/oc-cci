@@ -28,14 +28,15 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by marcoz on 18.08.15.
  */
-public class S2IndexCreatorMain {
+public class S2ReverseIndexCreatorMain {
 
     static final short MASK_SHIFT = 2 * S2CellId.MAX_LEVEL - 1;
 
@@ -49,21 +50,27 @@ public class S2IndexCreatorMain {
             System.err.printf("productList file '%s' does not exits%n", args[0]);
             printUsage();
         }
-        int counter = 0;
         List<EoProduct> eoProductList = ProductDB.readProducts("s2", productListFile);
         Collections.sort(eoProductList, ProductDB.EO_PRODUCT_COMPARATOR);
+//        List<EoProduct> eoProductList2 = new ArrayList<>();
+//        eoProductList2.add(eoProductList.get(365));
+//        eoProductList = eoProductList2;
+
 
         File indexFile = new File(args[1]);
         File urlFile = new File(indexFile + ".url");
         File poylFile = new File(indexFile + ".polygon");
         File coverFile = new File(indexFile + ".coverages");
 
-        List<S2IntCoverage> allCoverages = new ArrayList<>();
+
+        Map<Integer, List<Integer>> reverseIndex = new HashMap<>();
         try (
                 DataOutputStream dosIndex = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indexFile)));
                 DataOutputStream dosUrl = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(urlFile)));
                 DataOutputStream dosPoly = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(poylFile)))
         ) {
+            int productCounter = 0;
+            dosIndex.writeInt(eoProductList.size());
             for (EoProduct eoProduct : eoProductList) {
                 eoProduct.createGeo();
                 S2EoProduct s2EoProduct = (S2EoProduct) eoProduct;
@@ -75,39 +82,37 @@ public class S2IndexCreatorMain {
 
                 S2CellUnion cellUnion = s2EoProduct.cellUnion;
                 S2IntCoverage s2IntCoverage = new S2IntCoverage(cellUnion);
-                int index = allCoverages.indexOf(s2IntCoverage);
-                if (index <= 0) {
-                    allCoverages.add(s2IntCoverage);
-                    index = allCoverages.size() - 1;
+                for (int cellId : s2IntCoverage.intIds) {
+                    List<Integer> productIndices = reverseIndex.get(cellId);
+                    if (productIndices == null) {
+                        productIndices = new ArrayList<>();
+                        reverseIndex.put(cellId, productIndices);
+                    }
+                    productIndices.add(productCounter);
                 }
-                dosIndex.writeInt(index);
-
-                int level1Mask = 0;
-                for (int i = 0; i < cellUnion.cellIds().size(); i++) {
-                    S2CellId s2CellId = cellUnion.cellIds().get(i);
-                    level1Mask |= (1 << (int) (s2CellId.id() >>> MASK_SHIFT));
-                }
-                dosIndex.writeInt(level1Mask);
-
                 s2EoProduct.writePolygone(dosPoly);
 
                 s2EoProduct.reset();
 
-                counter++;
-                if (counter % 10000 == 0) {
-                    System.out.println("counter = " + counter);
+                productCounter++;
+                if (productCounter % 10000 == 0) {
+                    System.out.println("counter = " + productCounter);
                 }
             }
         }
-        System.out.println("allCoverages.size() = " + allCoverages.size());
+        System.out.println("reverseIndex.size() = " + reverseIndex.size());
         try (
                 DataOutputStream dosCover = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(coverFile)))
         ) {
-            dosCover.writeInt(allCoverages.size());
-            for (S2IntCoverage s2Cover : allCoverages) {
-                int[] intIds = s2Cover.intIds;
-                dosCover.writeInt(intIds.length);
-                for (int intId : intIds) {
+            dosCover.writeInt(reverseIndex.size());
+
+            ArrayList<Integer> keys = new ArrayList<>(reverseIndex.keySet());
+            Collections.sort(keys);
+            for (Integer key : keys) {
+                dosCover.writeInt(key);
+                List<Integer> integerList = reverseIndex.get(key);
+                dosCover.writeInt(integerList.size());
+                for (int intId : integerList) {
                     dosCover.writeInt(intId);
                 }
             }
@@ -118,10 +123,19 @@ public class S2IndexCreatorMain {
         private final int[] intIds;
 
         public S2IntCoverage(S2CellUnion cellUnion) {
-            ArrayList<S2CellId> s2CellIds = cellUnion.cellIds();
-            intIds = new int[s2CellIds.size()];
+            List<Integer> intIdList = new ArrayList<>();
+            for (S2CellId s2CellId : cellUnion.cellIds()) {
+                if (s2CellId.level() < 2) {
+                    for (S2CellId c = s2CellId.childBegin(2); !c.equals(s2CellId.childEnd(2)); c = c.next()) {
+                        intIdList.add(S2CellIdInteger.asInt(c));
+                    }
+                } else {
+                    intIdList.add(S2CellIdInteger.asInt(s2CellId));
+                }
+            }
+            intIds = new int[intIdList.size()];
             for (int i = 0; i < intIds.length; i++) {
-                intIds[i] = S2CellIdInteger.asInt(s2CellIds.get(i));
+                intIds[i] = intIdList.get(i);
             }
         }
 

@@ -21,7 +21,6 @@ import org.esa.beam.occci.insitu.Record;
 import org.esa.beam.occci.util.StopWatch;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,13 +38,13 @@ import java.util.Set;
 /**
  * Created by marcoz on 17.08.15.
  */
-public class ProductDBCheckerMain {
+public class ReverseCheckerMain {
 
     private static final long HOURS_IN_MILLIS = 1000 * 60 * 60; // Note: time in ms (NOT h)
 
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 4) {
+        if (args.length != 3) {
             printUsage();
         }
         File productIndexListFile1 = new File(args[0]);
@@ -53,111 +52,47 @@ public class ProductDBCheckerMain {
             System.err.printf("productList file '%s' does not exits%n", args[0]);
             printUsage();
         }
-        File productListFile2 = new File(args[1]);
-        if (!productListFile2.exists()) {
-            System.err.printf("productList file '%s' does not exits%n", args[1]);
-            printUsage();
-        }
 
-        File insituCSVtFile = new File(args[2]);
+        File insituCSVtFile = new File(args[1]);
         if (!insituCSVtFile.exists()) {
-            System.err.printf("insituList file '%s' does not exits%n", args[2]);
+            System.err.printf("insituList file '%s' does not exits%n", args[1]);
             printUsage();
         }
         int hours = 0;
         try {
-            hours = Integer.parseInt(args[3]);
+            hours = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            System.err.printf("cannot parse hours '%s' %n", args[3]);
+            System.err.printf("cannot parse hours '%s' %n", args[2]);
             printUsage();
         }
+
         try (StopWatch sw = new StopWatch("TTT ++++TOTAL TIME+++")) {
             List<SimpleRecord> insituRecords;
             try (StopWatch swi = new StopWatch("TTT read insitu")) {
                 insituRecords = readInsituRecords(insituCSVtFile);
                 System.out.println("num insituRecords = " + insituRecords.size());
             }
-//        ProductDB jtsProductDB = ProductDB.create(ProductDB.readProducts("jts", productListFile2));
-//        ProductDB spatial3dProductDB = ProductDB.create(ProductDB.readProducts("spatial3d", productListFile));
-//        System.out.println("num jts products =  " + jtsProductDB.size());
-//        System.out.println("num spatial3d products =  " + spatial3dProductDB.size());
-//        System.out.println("num s2 products =  " + s2ProductDB.size());
-//
-//        System.out.println();
-//        performInsitu("spatial3d", new FastMatcher(spatial3dProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-//        resetProductDB(spatial3dProductDB);
-//        performOverlap("spatial3d", new FastMatcher(spatial3dProductDB));
-//
-//        System.out.println();
-//        performInsitu("jts", new FastMatcher(jtsProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-//        resetProductDB(jtsProductDB);
-//        performOverlap("jts", new FastMatcher(jtsProductDB));
-
-            ProductDB s2iProductDB;
-//        System.out.println();
-//        s2iProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
-//        System.out.println("s2ProductDB.size() = " + s2iProductDB.size());
-//        performInsitu("s2", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-//        performOverlap("s2i", new FastMatcher(s2iProductDB));
-            s2iProductDB = null;
-//
             System.out.println();
+
+            ReverseProductDB reverseProductDB;
             try (StopWatch swp = new StopWatch("TTT read product index")) {
-                s2iProductDB = ProductDB.readProductIndex(productIndexListFile1);
-                System.out.println("s2iProductDB.size() = " + s2iProductDB.size());
+                reverseProductDB = ReverseProductDB.readProductIndex(productIndexListFile1);
+                System.out.println("reverseProductDB.size() = " + reverseProductDB.size());
             }
             try (StopWatch swm = new StopWatch("TTT matching")) {
-                Set<EoProduct> eoProducts = performInsitu("s2i", new MultiPassMatcher(s2iProductDB, new File(args[0] + ".polygon")), insituRecords, HOURS_IN_MILLIS * hours);
+                ReverseMatcher reverseMatcher = new ReverseMatcher(reverseProductDB, new File(args[0] + ".polygon"));
+                Set<Integer> eoProducts = performInsitu("s2i", reverseMatcher, insituRecords, HOURS_IN_MILLIS * hours);
 //                printURLs(eoProducts, new File(productIndexListFile1.getAbsolutePath() + ".url"));
             }
-
-//        System.out.println();
-//        ProductDB s2ProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
-//        System.out.println("s2ProductDB.size() = " + s2ProductDB.size());
-//        performInsitu("s2", new FastMatcher(s2ProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-//        performOverlap("s2", new FastMatcher(s2ProductDB));
-//        s2ProductDB = null;
-
-//        System.out.println();
-//        System.out.println();
-//        System.out.println();
-//        s2iProductDB = ProductDB.readProductIndex(productIndexListFile1);
-//        System.out.println("s2iProductDB.size() = " + s2iProductDB.size());
-//        performInsitu("s2i", new FastMatcher(s2iProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-//        performOverlap("s2i", new FastMatcher(s2iProductDB));
-//        s2iProductDB = null;
-//
-//        System.out.println();
-//        s2ProductDB = ProductDB.create(ProductDB.readProducts("s2", productListFile2));
-//        System.out.println("s2ProductDB.size() = " + s2ProductDB.size());
-//        performInsitu("s2", new FastMatcher(s2ProductDB), insituRecords, HOURS_IN_MILLIS * hours);
-//        performOverlap("s2", new FastMatcher(s2ProductDB));
-//        s2ProductDB = null;
         }
     }
 
-    private static void resetProductDB(ProductDB productDB) {
-        for (EoProduct eoProduct : productDB.list()) {
-            eoProduct.reset();
-        }
-    }
-
-    private static void createGeometries(ProductDB productDB) {
-        long t1 = System.currentTimeMillis();
-        for (EoProduct eoProduct : productDB.list()) {
-            eoProduct.createGeo();
-        }
-        long t2 = System.currentTimeMillis();
-        System.out.println("delta time createGeometries = " + ((t2 - t1) / 1000f));
-
-    }
-
-    private static Set<EoProduct> performInsitu(String format, EoProductMatcher matcher, List<SimpleRecord> insituRecords, long maxTimeDifference) {
+    private static Set<Integer> performInsitu(String format, ReverseMatcher matcher, List<SimpleRecord> insituRecords, long maxTimeDifference) {
         System.out.println("==================== insitu " + format + "-" + matcher.getClass().getSimpleName() + " ====================================");
 
         long t1 = System.currentTimeMillis();
-        Set<EoProduct> eoProducts = matcher.matchInsitu(insituRecords, maxTimeDifference);
+        Set<Integer> eoProducts = matcher.matchInsitu(insituRecords, maxTimeDifference);
         long t2 = System.currentTimeMillis();
 
         System.out.println("num matches =  " + eoProducts.size());
