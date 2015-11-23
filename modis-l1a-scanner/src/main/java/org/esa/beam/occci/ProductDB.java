@@ -49,16 +49,10 @@ public class ProductDB {
     };
 
     private final List<EoProduct> eoProducts;
-    private final int[] dayIndex;
-    private final int firstDay;
-    private final int lastDay;
     private Map<S2CellId, List<EoProduct>> productCellMap;
 
-    public ProductDB(List<EoProduct> eoProducts, int[] dayIndex, int firstDay, int lastDay) {
+    public ProductDB(List<EoProduct> eoProducts) {
         this.eoProducts = eoProducts;
-        this.dayIndex = dayIndex;
-        this.firstDay = firstDay;
-        this.lastDay = lastDay;
     }
 
     static List<EoProduct> readProducts(String format, File file) throws IOException, java.text.ParseException {
@@ -177,7 +171,7 @@ public class ProductDB {
 //        }
 
 //        return new ProductDB(eoProducts, dayIndex, firstDay, lastDay);
-        return new ProductDB(eoProducts, null, 0, 0);
+        return new ProductDB(eoProducts);
     }
 
     public static int getDaySinceEpoch(long time) {
