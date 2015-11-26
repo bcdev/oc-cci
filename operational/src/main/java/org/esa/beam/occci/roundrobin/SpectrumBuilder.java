@@ -57,6 +57,32 @@ class SpectrumBuilder {
     private static final int SEAWIFS_BAND_555_IDX = 45;
     private static final int SEAWIFS_BAND_670_IDX = 47;
 
+    // insitu DB v3
+    /*
+    private static final int MERIS_BAND_413_IDX = 3;
+    private static final int MERIS_BAND_443_IDX = 4;
+    private static final int MERIS_BAND_490_IDX = 5;
+    private static final int MERIS_BAND_510_IDX = 6;
+    private static final int MERIS_BAND_560_IDX = 7;
+    private static final int MERIS_BAND_620_IDX = 8;
+    private static final int MERIS_BAND_665_IDX = 9;
+
+    private static final int MODIS_BAND_412_IDX = 11;
+    private static final int MODIS_BAND_443_IDX = 12;
+    private static final int MODIS_BAND_488_IDX = 13;
+    private static final int MODIS_BAND_531_IDX = 14;
+    private static final int MODIS_BAND_547_IDX = 15;
+    private static final int MODIS_BAND_667_IDX = 16;
+    private static final int MODIS_BAND_678_IDX = 17;
+
+    private static final int SEAWIFS_BAND_412_IDX = 18;
+    private static final int SEAWIFS_BAND_443_IDX = 19;
+    private static final int SEAWIFS_BAND_490_IDX = 20;
+    private static final int SEAWIFS_BAND_510_IDX = 21;
+    private static final int SEAWIFS_BAND_555_IDX = 22;
+    private static final int SEAWIFS_BAND_670_IDX = 23;
+    */
+
     private static final int SUBDATASET_RRS_1_IDX = 234;
 
 
