@@ -35,15 +35,17 @@ public class BandShiftMain {
                 qaaAt443[0] = qaaResult.getAph()[1];
                 qaaAt443[1] = qaaResult.getAdg()[1];
                 qaaAt443[2] = qaaResult.getBbp()[1];
+                try {
+                    final double[] merisRss = BandShifter.toMeris(spectrum, qaaAt443);
+                    final double[] modisRss = BandShifter.toModis(spectrum, qaaAt443);
+                    final double[] seaWifsRss = BandShifter.toSeaWifs(spectrum, qaaAt443);
 
-                final double[] merisRss = BandShifter.toMeris(spectrum, qaaAt443);
-                final double[] modisRss = BandShifter.toModis(spectrum, qaaAt443);
-                final double[] seaWifsRss = BandShifter.toSeaWifs(spectrum, qaaAt443);
+                    inSituGroupWriter.write(merisRss, modisRss, seaWifsRss, spectrum);
+                    countShiftedRecords++;
 
-                inSituGroupWriter.write(merisRss, modisRss, seaWifsRss, spectrum);
-                countShiftedRecords++;
-
-                System.out.println("read = " + countReadRecords + " shifted = " + countShiftedRecords);
+                    System.out.println("read = " + countReadRecords + " shifted = " + countShiftedRecords);
+                }catch (Throwable t) {
+                }
             }
         } finally {
             csvReader.close();
@@ -55,7 +57,7 @@ public class BandShiftMain {
         final File inSituCsv = new File(arg);
         final FileReader fileReader = new FileReader(inSituCsv);
 
-        final CsvReader csvReader = new CsvReader(fileReader, new char[]{','});
+        final CsvReader csvReader = new CsvReader(fileReader, new char[]{'\t'});
         csvReader.readRecord(); // skip heading line
         return csvReader;
     }
