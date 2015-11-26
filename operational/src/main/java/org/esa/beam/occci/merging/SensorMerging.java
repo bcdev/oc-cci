@@ -171,11 +171,6 @@ public class SensorMerging extends AbstractAggregator {
         public Config() {
             super(NAME);
         }
-
-        @Override
-        public String[] getVarNames() {
-            return BinningUtils.concat(rrsFeatureNames, "sensor");
-        }
     }
 
     public static class Descriptor implements AggregatorDescriptor {
@@ -194,6 +189,18 @@ public class SensorMerging extends AbstractAggregator {
         public Aggregator createAggregator(VariableContext varCtx, AggregatorConfig aggregatorConfig) {
             Config config = (Config) aggregatorConfig;
             return new SensorMerging(varCtx, config.mode, config.rrsFeatureNames);
+        }
+
+        @Override
+        public String[] getSourceVarNames(AggregatorConfig aggregatorConfig) {
+            Config config = (Config) aggregatorConfig;
+            return BinningUtils.concat(config.rrsFeatureNames, "sensor");
+        }
+
+        @Override
+        public String[] getTargetVarNames(AggregatorConfig aggregatorConfig) {
+            Config config = (Config) aggregatorConfig;
+            return createOutputFeatureNames(config.mode, config.rrsFeatureNames);
         }
     }
 

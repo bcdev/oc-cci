@@ -80,10 +80,6 @@ public class DescriptorTest {
     }
 
     private class InvalidConfig extends AggregatorConfig {
-        @Override
-        public String[] getVarNames() {
-            return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
-        }
     }
 }
 

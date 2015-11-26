@@ -175,6 +175,18 @@ public class BiasClimatologyAggregator extends AbstractAggregator {
         }
 
         @Override
+        public String[] getSourceVarNames(AggregatorConfig aggregatorConfig) {
+            Config config = (Config) aggregatorConfig;
+            return config.varNames;
+        }
+
+        @Override
+        public String[] getTargetVarNames(AggregatorConfig aggregatorConfig) {
+            Config config = (Config) aggregatorConfig;
+            return createOutputFeatureNames(config);
+        }
+
+        @Override
         public String getName() {
             return NAME;
         }
@@ -209,7 +221,6 @@ public class BiasClimatologyAggregator extends AbstractAggregator {
             noDataValue = Float.NaN;
         }
 
-        @Override
         public String[] getVarNames() {
             return varNames;
         }

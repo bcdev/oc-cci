@@ -18,6 +18,7 @@ public class QaaOpTest {
     @Test
     public void testOperator() throws Exception {
         QaaOp qaaOp = new QaaOp();
+        qaaOp.setParameterDefaultValues();
         qaaOp.setParameter("validPixelExpression", "true");
         qaaOp.setParameter("divideByPI", "false");
         qaaOp.setParameter("reflectanceBandNames", "Rrs412,Rrs443,Rrs490,Rrs510,Rrs560,Rrs620");

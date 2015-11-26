@@ -11,7 +11,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <beam.version>4.11.1-SNAPSHOT</beam.version>
+        <ceres.version>[0.14,0.15-SNAPSHOT)</ceres.version>
+        <beam.version>[5.0,5.1-SNAPSHOT)</beam.version>
     </properties>
 
     <dependencies>
@@ -27,13 +28,13 @@
         </dependency>
         <dependency>
             <groupId>org.esa.beam</groupId>
-            <artifactId>beam-binning2</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <artifactId>beam-binning</artifactId>
+            <version>${beam.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.beam</groupId>
             <artifactId>beam-netcdf</artifactId>
-            <version>1.1.1</version>
+            <version>${beam.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.beam.coastcolour</groupId>
@@ -101,7 +102,7 @@
         <dependency>
             <groupId>org.esa.beam</groupId>
             <artifactId>beam-envisat-reader</artifactId>
-            <version>1.5.2</version>
+            <version>${beam.version}</version>
             <scope>test</scope>
         </dependency>
 
