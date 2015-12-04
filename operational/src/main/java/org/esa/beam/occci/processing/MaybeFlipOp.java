@@ -62,6 +62,10 @@ public class MaybeFlipOp extends Operator {
 
     @Override
     public void initialize() throws OperatorException {
+        getLogger().info("testing for flip");
+        getLogger().info("sourceProduct = " + sourceProduct);
+        getLogger().info("referenceProduct = " + referenceProduct);
+        getLogger().info("geographicError = " + geographicError);
         GeoCoding sgc = sourceProduct.getGeoCoding();
         GeoCoding rgc = referenceProduct.getGeoCoding();
         int width = sourceProduct.getSceneRasterWidth();
@@ -94,7 +98,7 @@ public class MaybeFlipOp extends Operator {
             sgc.getGeoPos(pixelPos, gpSource);
             rgc.getGeoPos(pixelPos, gpReference);
             if (equalsLatLon(gpSource, gpReference, geographicError)) {
-                // no flipping required
+                getLogger().info("flipping not required");
                 productReader = sourceProduct.getProductReader();
                 setTargetProduct(sourceProduct);
                 return;
@@ -108,6 +112,7 @@ public class MaybeFlipOp extends Operator {
                 sgc.getGeoPos(pixelPos2, gpSource);
                 rgc.getGeoPos(pixelPos, gpReference);
                 if (equalsLatLon(gpSource, gpReference, geographicError)) {
+                    getLogger().info("flipping horizontal and vertical");
                     final int flipType = ProductFlipper.FLIP_BOTH;
                     try {
                         productReader = new ProductFlipper(flipType, false);
@@ -115,7 +120,7 @@ public class MaybeFlipOp extends Operator {
                         setTargetProduct(targetProduct);
                         return;
                     } catch (IOException e) {
-                        throw new OperatorException("product flipp falied", e);
+                        throw new OperatorException("product flipp failed", e);
                     }
                 }
             }
