@@ -18,6 +18,12 @@ package org.esa.beam.occci;
 
 import com.google.common.geometry.S2CellId;
 import com.google.common.geometry.S2CellUnion;
+import me.lemire.integercompression.ByteIntegerCODEC;
+import me.lemire.integercompression.IntWrapper;
+import me.lemire.integercompression.differential.IntegratedBinaryPacking;
+import me.lemire.integercompression.differential.IntegratedComposition;
+import me.lemire.integercompression.differential.IntegratedIntegerCODEC;
+import me.lemire.integercompression.differential.IntegratedVariableByte;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -106,15 +112,44 @@ public class S2ReverseIndexCreatorMain {
         ) {
             dosCover.writeInt(reverseIndex.size());
 
+            IntegratedIntegerCODEC codec =  new IntegratedComposition(
+                    new IntegratedBinaryPacking(),
+                    new IntegratedVariableByte()
+            );
+
             ArrayList<Integer> keys = new ArrayList<>(reverseIndex.keySet());
             Collections.sort(keys);
+            System.out.println("keys.size() = " + keys.size());
             for (Integer key : keys) {
                 dosCover.writeInt(key);
                 List<Integer> integerList = reverseIndex.get(key);
-                dosCover.writeInt(integerList.size());
-                for (int intId : integerList) {
+
+                int[] data = new int[integerList.size()];
+//                System.out.println("Compressing "+data.length+" integers in one go");
+                // data should be sorted for best results
+                for(int i = 0; i < data.length; ++i) {
+                    data[i] = integerList.get(i);
+                }
+                int [] compressed = new int[data.length+1024];
+                IntWrapper inputoffset = new IntWrapper(0);
+                IntWrapper outputoffset = new IntWrapper(0);
+                codec.compress(data, inputoffset, data.length, compressed, outputoffset);
+//                System.out.println("compressed from "+data.length*4/1024+"KB to "+outputoffset.intValue()*4/1024+"KB");
+
+                compressed = Arrays.copyOf(compressed, outputoffset.intValue());
+
+                dosCover.writeInt(data.length);
+                dosCover.writeInt(compressed.length);
+                for (int intId : compressed) {
                     dosCover.writeInt(intId);
                 }
+
+                int[] restored = new int[data.length];
+                codec.uncompress(compressed, new IntWrapper(0), compressed.length, restored, new IntWrapper(0));
+
+                if(!Arrays.equals(data, restored))
+                         throw new RuntimeException("bug");
+
             }
         }
     }
@@ -125,8 +160,8 @@ public class S2ReverseIndexCreatorMain {
         public S2IntCoverage(S2CellUnion cellUnion) {
             List<Integer> intIdList = new ArrayList<>();
             for (S2CellId s2CellId : cellUnion.cellIds()) {
-                if (s2CellId.level() < 2) {
-                    for (S2CellId c = s2CellId.childBegin(2); !c.equals(s2CellId.childEnd(2)); c = c.next()) {
+                if (s2CellId.level() < 3) {
+                    for (S2CellId c = s2CellId.childBegin(3); !c.equals(s2CellId.childEnd(3)); c = c.next()) {
                         intIdList.add(S2CellIdInteger.asInt(c));
                     }
                 } else {

@@ -19,6 +19,11 @@ package org.esa.beam.occci;
 import com.google.common.geometry.S2CellId;
 import com.google.common.geometry.S2LatLng;
 import com.google.common.geometry.S2Point;
+import me.lemire.integercompression.IntWrapper;
+import me.lemire.integercompression.differential.IntegratedBinaryPacking;
+import me.lemire.integercompression.differential.IntegratedComposition;
+import me.lemire.integercompression.differential.IntegratedIntegerCODEC;
+import me.lemire.integercompression.differential.IntegratedVariableByte;
 import org.esa.beam.occci.util.StopWatch;
 
 import java.awt.geom.Point2D;
@@ -72,21 +77,28 @@ public class ReverseProductDB {
                 StopWatch sw = new StopWatch("R " + coverFile.getName());
                 DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(coverFile)))
         ) {
-            int sumProducts = 0;
+
+            IntegratedIntegerCODEC codec =  new IntegratedComposition(
+                                new IntegratedBinaryPacking(),
+                                new IntegratedVariableByte()
+                        );
+
             int numCellIds = dis.readInt();
             reverseIndex = new int[numCellIds][0];
             cellIds = new int[numCellIds];
             for (int i = 0; i < reverseIndex.length; i++) {
                 cellIds[i] = dis.readInt();
                 int numProducts = dis.readInt();
-                sumProducts = sumProducts + numProducts;
-                reverseIndex[i] = new int[numProducts];
-                for (int j = 0; j < reverseIndex[i].length; j++) {
-                    reverseIndex[i][j] = dis.readInt();
+                int lengthCompressed = dis.readInt();
+                int[] compressed = new int[lengthCompressed];
+                for (int j = 0; j < compressed.length; j++) {
+                    compressed[j] = dis.readInt();
                 }
+                int[] data = new int[numProducts];
+                IntWrapper recoffset = new IntWrapper(0);
+                codec.uncompress(compressed, new IntWrapper(0), compressed.length, data, recoffset);
+                reverseIndex[i] = data;
             }
-            System.out.println("sumProducts = " + sumProducts);
-
         }
         try (
                 StopWatch sw = new StopWatch("R " + file.getName());
@@ -106,7 +118,7 @@ public class ReverseProductDB {
 
     private int indexedBinarySearch(int[] productIndices, long startTime) {
         int low = 0;
-        int high = productIndices.length;
+        int high = productIndices.length - 1;
         while (low <= high) {
             int mid = (low + high) >>> 1;
             int productIndice = productIndices[mid];
@@ -134,7 +146,7 @@ public class ReverseProductDB {
         }
 
         List<Integer> list = new ArrayList<>();
-        while (true) {
+        while (productIndex < products.length) {
             int productID = products[productIndex];
             if (startTimes[productID] > windowEndTime) {
                 break;

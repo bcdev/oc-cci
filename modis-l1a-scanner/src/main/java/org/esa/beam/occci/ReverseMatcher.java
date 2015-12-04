@@ -64,7 +64,7 @@ public class ReverseMatcher  {
                 S2LatLng s2LatLng = S2LatLng.fromDegrees(lat, lon);
                 S2Point s2Point = s2LatLng.toPoint();
                 S2CellId s2CellId = S2CellId.fromPoint(s2Point);
-                final int cellIntL3 = S2CellIdInteger.asInt(s2CellId.parent(2));
+                final int cellIntL3 = S2CellIdInteger.asInt(s2CellId.parent(3));
 
                 List<Integer> productIndices = reverseProductDB.findInsitu(cellIntL3, windowStartTime, windowEndTime);
                 for (Integer productIndex : productIndices) {
