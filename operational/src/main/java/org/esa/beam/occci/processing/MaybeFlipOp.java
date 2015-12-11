@@ -32,7 +32,6 @@ import org.esa.beam.framework.gpf.Tile;
 import org.esa.beam.framework.gpf.annotations.OperatorMetadata;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.framework.gpf.annotations.SourceProduct;
-import org.esa.beam.util.math.MathUtils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -57,24 +56,27 @@ public class MaybeFlipOp extends Operator {
     @Parameter(defaultValue = "1.0E-5f",
             description = "Defines the maximum lat/lon error in degree between the products.")
     private float geographicError;
+
     private ProductReader productReader;
+    private GeoCoding sourceGC;
+    private GeoCoding referenceGC;
 
 
     @Override
     public void initialize() throws OperatorException {
-        getLogger().info("testing for flip");
-        getLogger().info("sourceProduct = " + sourceProduct);
-        getLogger().info("referenceProduct = " + referenceProduct);
-        getLogger().info("geographicError = " + geographicError);
-        GeoCoding sgc = sourceProduct.getGeoCoding();
-        GeoCoding rgc = referenceProduct.getGeoCoding();
+        getLogger().fine("testing for flip");
+        getLogger().fine("source = " + sourceProduct.getName());
+        getLogger().fine("reference = " + referenceProduct.getName());
+        getLogger().fine("geographicError = " + geographicError);
+        sourceGC = sourceProduct.getGeoCoding();
+        referenceGC = referenceProduct.getGeoCoding();
         int width = sourceProduct.getSceneRasterWidth();
         int height = sourceProduct.getSceneRasterHeight();
 
-        if (sgc == null) {
+        if (sourceGC == null) {
             throw new OperatorException("source product has no geo-coding");
         }
-        if (rgc == null) {
+        if (referenceGC == null) {
             throw new OperatorException("reference product has no geo-coding");
         }
         if (width != referenceProduct.getSceneRasterWidth()) {
@@ -84,45 +86,28 @@ public class MaybeFlipOp extends Operator {
             throw new OperatorException("product height differs");
         }
 
-        final PixelPos pixelPos = new PixelPos();
-        final GeoPos gpSource = new GeoPos();
-        final GeoPos gpReference = new GeoPos();
+        final PixelPos topLeftPP = new PixelPos(0.5f, 0.5f);
+        final PixelPos bottomRightPP = new PixelPos(width - 1 + 0.5f, height - 1 + 0.5f);
 
-        pixelPos.x = 0.5f;
-        pixelPos.y = 0.5f;
-        sgc.getGeoPos(pixelPos, gpSource);
-        rgc.getGeoPos(pixelPos, gpReference);
-        if (equalsLatLon(gpSource, gpReference, geographicError)) {
-            pixelPos.x = width - 1 + 0.5f;
-            pixelPos.y = height - 1 + 0.5f;
-            sgc.getGeoPos(pixelPos, gpSource);
-            rgc.getGeoPos(pixelPos, gpReference);
-            if (equalsLatLon(gpSource, gpReference, geographicError)) {
-                getLogger().info("flipping not required");
-                productReader = sourceProduct.getProductReader();
-                setTargetProduct(sourceProduct);
+        // testing one corner would be enoug, but sometimes the are anomalies and the test fails.
+        // so we test a second corner
+        if (equalsLatLon(topLeftPP, topLeftPP, "tl,tl") ||
+                equalsLatLon(bottomRightPP, bottomRightPP, "br,br")) {
+            getLogger().info("flipping not required");
+            productReader = sourceProduct.getProductReader();
+            setTargetProduct(sourceProduct);
+            return;
+        } else if (equalsLatLon(topLeftPP, bottomRightPP, "tl,br") ||
+                equalsLatLon(bottomRightPP, topLeftPP, "br,tl")) {
+            getLogger().info("flipping horizontal and vertical");
+            final int flipType = ProductFlipper.FLIP_BOTH;
+            try {
+                productReader = new ProductFlipper(flipType, false);
+                Product targetProduct = productReader.readProductNodes(sourceProduct, null);
+                setTargetProduct(targetProduct);
                 return;
-            }
-        } else {
-            final PixelPos pixelPos2 = new PixelPos();
-            pixelPos2.x = width - 1 + 0.5f;
-            pixelPos2.y = height - 1 + 0.5f;
-            rgc.getGeoPos(pixelPos2, gpReference);
-            if (equalsLatLon(gpSource, gpReference, geographicError)) {
-                sgc.getGeoPos(pixelPos2, gpSource);
-                rgc.getGeoPos(pixelPos, gpReference);
-                if (equalsLatLon(gpSource, gpReference, geographicError)) {
-                    getLogger().info("flipping horizontal and vertical");
-                    final int flipType = ProductFlipper.FLIP_BOTH;
-                    try {
-                        productReader = new ProductFlipper(flipType, false);
-                        Product targetProduct = productReader.readProductNodes(sourceProduct, null);
-                        setTargetProduct(targetProduct);
-                        return;
-                    } catch (IOException e) {
-                        throw new OperatorException("product flipp failed", e);
-                    }
-                }
+            } catch (IOException e) {
+                throw new OperatorException("product flipp failed", e);
             }
         }
         throw new OperatorException("Unsupported product geometry. Neither fliped nor aligned.");
@@ -134,19 +119,55 @@ public class MaybeFlipOp extends Operator {
         Rectangle rectangle = targetTile.getRectangle();
         try {
             productReader.readBandRasterData(band,
-                                              rectangle.x,
-                                              rectangle.y,
-                                              rectangle.width,
-                                              rectangle.height,
-                                              destBuffer, pm);
+                                             rectangle.x,
+                                             rectangle.y,
+                                             rectangle.width,
+                                             rectangle.height,
+                                             destBuffer, pm);
             targetTile.setRawSamples(destBuffer);
         } catch (IOException e) {
             throw new OperatorException(e);
         }
     }
 
-    private static boolean equalsLatLon(final GeoPos pos1, final GeoPos pos2, final float eps) {
-        return MathUtils.equalValues(pos1.lat, pos2.lat, eps) && MathUtils.equalValues(pos1.lon, pos2.lon, eps);
+    private boolean equalsLatLon(final PixelPos sourcePP, final PixelPos referencePP, String corner) {
+        GeoPos sourceGP = sourceGC.getGeoPos(sourcePP, null);
+        GeoPos referenceGP = referenceGC.getGeoPos(referencePP, null);
+        return equalsLatLon(sourceGP, referenceGP, corner);
+    }
+
+    private boolean equalsLatLon(final GeoPos source, final GeoPos reference, String corner) {
+        StringBuilder sb = new StringBuilder(corner).append(" :");
+        sb.append(" source = ").append(getGeoPosString(source));
+        sb.append(" reference = ").append(getGeoPosString(reference));
+
+        double distanceInDegree = distanceInDegree(source, reference);
+        sb.append(" distanceInDegree = ").append(distanceInDegree);
+        boolean result = false;
+        if (distanceInDegree <= geographicError) {
+            result = true;
+        }
+        sb.append(" equalsLatLon = ").append(result);
+        getLogger().fine(sb.toString());
+        return result;
+    }
+
+    private static String getGeoPosString(GeoPos geoPos) {
+        return "[" + geoPos.getLatString() + "," + geoPos.getLonString() + "]";
+    }
+
+    private static double distanceInDegree(GeoPos p1, GeoPos p2) {
+        double lon1_rad = Math.toRadians(p1.getLon());
+        double lon2_rad = Math.toRadians(p2.getLon());
+        double lat1_rad = Math.toRadians(p1.getLat());
+        double lat2_rad = Math.toRadians(p2.getLat());
+
+        double deltaLon = lon1_rad - lon2_rad;
+        double cosDeltaLon = Math.cos(deltaLon);
+        double sinLat = Math.sin(lat1_rad) * Math.sin(lat2_rad);
+        double cosLat = Math.cos(lat1_rad) * Math.cos(lat2_rad);
+        double distanceRad = Math.acos(sinLat + cosLat * cosDeltaLon);
+        return Math.toDegrees(distanceRad);
     }
 
     public static class Spi extends OperatorSpi {
