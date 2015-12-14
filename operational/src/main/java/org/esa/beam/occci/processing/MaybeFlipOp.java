@@ -64,10 +64,10 @@ public class MaybeFlipOp extends Operator {
 
     @Override
     public void initialize() throws OperatorException {
-        getLogger().fine("testing for flip");
-        getLogger().fine("source = " + sourceProduct.getName());
-        getLogger().fine("reference = " + referenceProduct.getName());
-        getLogger().fine("geographicError = " + geographicError);
+        getLogger().info("testing for flip");
+        getLogger().info("source = " + sourceProduct.getName());
+        getLogger().info("reference = " + referenceProduct.getName());
+        getLogger().info("geographicError = " + geographicError);
         sourceGC = sourceProduct.getGeoCoding();
         referenceGC = referenceProduct.getGeoCoding();
         int width = sourceProduct.getSceneRasterWidth();
@@ -148,7 +148,7 @@ public class MaybeFlipOp extends Operator {
             result = true;
         }
         sb.append(" equalsLatLon = ").append(result);
-        getLogger().fine(sb.toString());
+        getLogger().info(sb.toString());
         return result;
     }
 
