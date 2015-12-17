@@ -25,6 +25,7 @@ import org.esa.beam.framework.datamodel.GeoPos;
 import org.esa.beam.framework.datamodel.PixelPos;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.TiePointGeoCoding;
 import org.esa.beam.framework.gpf.Operator;
 import org.esa.beam.framework.gpf.OperatorException;
 import org.esa.beam.framework.gpf.OperatorSpi;
@@ -32,6 +33,7 @@ import org.esa.beam.framework.gpf.Tile;
 import org.esa.beam.framework.gpf.annotations.OperatorMetadata;
 import org.esa.beam.framework.gpf.annotations.Parameter;
 import org.esa.beam.framework.gpf.annotations.SourceProduct;
+import org.esa.beam.util.math.MathUtils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -84,6 +86,32 @@ public class MaybeFlipOp extends Operator {
         }
         if (height != referenceProduct.getSceneRasterHeight()) {
             throw new OperatorException("product height differs");
+        }
+
+        boolean onlyBadValues = true;
+        if (sourceGC instanceof TiePointGeoCoding) {
+            TiePointGeoCoding tiePointGeoCoding = (TiePointGeoCoding) sourceGC;
+
+            ProductData latData = tiePointGeoCoding.getLatGrid().getData();
+            for (int i = 0; i < latData.getNumElems(); i++) {
+                if (!MathUtils.equalValues(latData.getElemFloatAt(i), -999.0f, 10E-6f)) {
+                    onlyBadValues = false;
+                    break;
+                }
+            }
+            if (onlyBadValues) {
+                ProductData lonData = tiePointGeoCoding.getLonGrid().getData();
+                for (int i = 0; i < lonData.getNumElems(); i++) {
+                    if (!MathUtils.equalValues(lonData.getElemFloatAt(i), -999.0f, 10E-6f)) {
+                        onlyBadValues = false;
+                        break;
+                    }
+                }
+            }
+            if (onlyBadValues) {
+                getLogger().warning("CORRUPTED PRODUCT: latitude and longitude of source is completey filled with '-999'");
+                throw new OperatorException("latitude and longitude of source is completey filled with '-999'");
+            }
         }
 
         final PixelPos topLeftPP = new PixelPos(0.5f, 0.5f);
