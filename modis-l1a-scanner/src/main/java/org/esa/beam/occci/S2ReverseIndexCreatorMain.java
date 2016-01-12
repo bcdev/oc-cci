@@ -154,8 +154,8 @@ public class S2ReverseIndexCreatorMain {
         }
     }
 
-    private static class S2IntCoverage {
-        private final int[] intIds;
+    static class S2IntCoverage {
+        public final int[] intIds;
 
         public S2IntCoverage(S2CellUnion cellUnion) {
             List<Integer> intIdList = new ArrayList<>();

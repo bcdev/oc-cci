@@ -17,9 +17,12 @@
 package org.esa.beam.occci;
 
 import com.google.common.geometry.S2CellId;
+import com.google.common.geometry.S2CellUnion;
 import com.google.common.geometry.S2LatLng;
 import com.google.common.geometry.S2Point;
 import com.google.common.geometry.S2Polygon;
+import com.google.common.geometry.S2Region;
+import com.google.common.geometry.S2RegionCoverer;
 import org.esa.beam.occci.util.StopWatch;
 
 import java.awt.geom.Point2D;
@@ -39,7 +42,7 @@ import java.util.Set;
 /**
  * Created by marco on 22.11.15.
  */
-public class ReverseMatcher  {
+public class ReverseMatcher {
 
     private final ReverseProductDB reverseProductDB;
     private final File polygonFile;
@@ -64,9 +67,9 @@ public class ReverseMatcher  {
                 S2LatLng s2LatLng = S2LatLng.fromDegrees(lat, lon);
                 S2Point s2Point = s2LatLng.toPoint();
                 S2CellId s2CellId = S2CellId.fromPoint(s2Point);
-                final int cellIntL3 = S2CellIdInteger.asInt(s2CellId.parent(3));
+                final int cellInt = S2CellIdInteger.asInt(s2CellId.parent(3));
 
-                List<Integer> productIndices = reverseProductDB.findInsitu(cellIntL3, windowStartTime, windowEndTime);
+                List<Integer> productIndices = reverseProductDB.findInsitu(cellInt, windowStartTime, windowEndTime);
                 for (Integer productIndex : productIndices) {
                     List<S2Point> candidateProducts = candidatesMap.get(productIndex);
                     if (candidateProducts == null) {
@@ -119,7 +122,54 @@ public class ReverseMatcher  {
         return matches;
     }
 
-    public Set<EoProduct> matchProduct() {
-        return null;
+    public Set<Integer> matchProduct(String testWKT, long windowStartTime, long windowEndTime) {
+        S2Region testRegion = new S2WKTReader().read(testWKT);
+        S2Polygon testPoly = (S2Polygon) testRegion;
+        S2RegionCoverer coverer = new S2RegionCoverer();
+        coverer.setMinLevel(3);
+        coverer.setMaxLevel(3);
+        coverer.setMaxCells(500);
+        S2CellUnion covering = coverer.getCovering(testRegion);
+        S2ReverseIndexCreatorMain.S2IntCoverage s2IntCoverage = new S2ReverseIndexCreatorMain.S2IntCoverage(covering);
+
+        Set<Integer> candidatesSet = new HashSet<>();
+        for (int cellId : s2IntCoverage.intIds) {
+            candidatesSet.addAll(reverseProductDB.findInsitu(cellId, windowStartTime, windowEndTime));
+        }
+
+        System.out.println("candidatesSet = " + candidatesSet.size());
+        List<Integer> uniqueProductList = new ArrayList<>(candidatesSet);
+
+        Set<Integer> matches = new HashSet<>();
+        try (StopWatch sw = new StopWatch("  >>load and test polygons")) {
+            Collections.sort(uniqueProductList);
+            try (
+                    DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(polygonFile)))
+            ) {
+                int streamPID = 0;
+                for (Integer productID : uniqueProductList) {
+                    while (streamPID < productID) {
+                        int numLoopPoints = dis.readInt();
+                        dis.skipBytes(numLoopPoints * 3 * 8);
+                        streamPID++;
+                    }
+                    final int numLoopPoints = dis.readInt();
+                    final double[] pointData = new double[numLoopPoints * 3];
+                    for (int i = 0; i < pointData.length; i++) {
+                        pointData[i] = dis.readDouble();
+                    }
+                    streamPID++;
+
+                    S2Polygon s2Polygon = S2IEoProduct.createS2Polygon(pointData);
+                    if (testPoly.intersects(s2Polygon)) {
+                        matches.add(productID);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return matches;
     }
 }

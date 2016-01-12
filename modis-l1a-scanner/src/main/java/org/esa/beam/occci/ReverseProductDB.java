@@ -134,8 +134,8 @@ public class ReverseProductDB {
         return low;  // key not found
     }
 
-    public List<Integer> findInsitu(int cellLevel3, long windowStartTime, long windowEndTime) {
-        int cellIdIndex = Arrays.binarySearch(cellIds, cellLevel3);
+    public List<Integer> findInsitu(int cellInt, long windowStartTime, long windowEndTime) {
+        int cellIdIndex = Arrays.binarySearch(cellIds, cellInt);
         if (cellIdIndex < 0) {
             return Collections.EMPTY_LIST;
         }

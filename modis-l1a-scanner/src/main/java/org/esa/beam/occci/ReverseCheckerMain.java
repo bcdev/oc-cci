@@ -44,91 +44,90 @@ public class ReverseCheckerMain {
 
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 3) {
-            printUsage();
-        }
-        File productIndexListFile1 = new File(args[0]);
-        if (!productIndexListFile1.exists()) {
-            System.err.printf("productList file '%s' does not exits%n", args[0]);
-            printUsage();
-        }
-
-        File insituCSVtFile = new File(args[1]);
-        if (!insituCSVtFile.exists()) {
-            System.err.printf("insituList file '%s' does not exits%n", args[1]);
-            printUsage();
-        }
-        int hours = 0;
-        try {
-            hours = Integer.parseInt(args[2]);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            System.err.printf("cannot parse hours '%s' %n", args[2]);
-            printUsage();
-        }
-
-        try (StopWatch sw = new StopWatch("TTT ++++TOTAL TIME+++")) {
-            List<SimpleRecord> insituRecords;
-            try (StopWatch swi = new StopWatch("TTT read insitu")) {
-                insituRecords = readInsituRecords(insituCSVtFile);
-                System.out.println("num insituRecords = " + insituRecords.size());
+        File productIndexListFile1;
+        if (args.length == 2) {
+            productIndexListFile1 = new File(args[0]);
+            if (!productIndexListFile1.exists()) {
+                System.err.printf("productList file '%s' does not exits%n", args[0]);
+                printUsage();
             }
-            System.out.println();
 
-            ReverseProductDB reverseProductDB;
-            try (StopWatch swp = new StopWatch("TTT read product index")) {
-                reverseProductDB = ReverseProductDB.readProductIndex(productIndexListFile1);
-                System.out.println("reverseProductDB.size() = " + reverseProductDB.size());
+            try (StopWatch sw = new StopWatch("TTT ++++TOTAL TIME polygon+++")) {
+                ReverseProductDB reverseProductDB;
+                try (StopWatch swp = new StopWatch("TTT read product index")) {
+                    reverseProductDB = ReverseProductDB.readProductIndex(productIndexListFile1);
+                    System.out.println("reverseProductDB.size() = " + reverseProductDB.size());
+                }
+                try (StopWatch swm = new StopWatch("TTT matching")) {
+                    ReverseMatcher reverseMatcher = new ReverseMatcher(reverseProductDB, new File(args[0] + ".polygon"));
+                    Set<Integer> eoProducts = performOverlap(reverseMatcher, args[1]);
+                    printURLs(eoProducts, new File(productIndexListFile1.getAbsolutePath() + ".url"));
+                }
             }
-            try (StopWatch swm = new StopWatch("TTT matching")) {
-                ReverseMatcher reverseMatcher = new ReverseMatcher(reverseProductDB, new File(args[0] + ".polygon"));
-                Set<Integer> eoProducts = performInsitu("s2i", reverseMatcher, insituRecords, HOURS_IN_MILLIS * hours);
-//                printURLs(eoProducts, new File(productIndexListFile1.getAbsolutePath() + ".url"));
+        } else if (args.length == 3) {
+            productIndexListFile1 = new File(args[0]);
+            if (!productIndexListFile1.exists()) {
+                System.err.printf("productList file '%s' does not exits%n", args[0]);
+                printUsage();
             }
+
+            File insituCSVtFile = new File(args[1]);
+            if (!insituCSVtFile.exists()) {
+                System.err.printf("insituList file '%s' does not exits%n", args[1]);
+                printUsage();
+            }
+            int hours = 0;
+            try {
+                hours = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                System.err.printf("cannot parse hours '%s' %n", args[2]);
+                printUsage();
+            }
+
+            try (StopWatch sw = new StopWatch("TTT ++++TOTAL TIME insitu+++")) {
+                List<SimpleRecord> insituRecords;
+                try (StopWatch swi = new StopWatch("TTT read insitu")) {
+                    insituRecords = readInsituRecords(insituCSVtFile);
+                    System.out.println("num insituRecords = " + insituRecords.size());
+                }
+                System.out.println();
+
+                ReverseProductDB reverseProductDB;
+                try (StopWatch swp = new StopWatch("TTT read product index")) {
+                    reverseProductDB = ReverseProductDB.readProductIndex(productIndexListFile1);
+                    System.out.println("reverseProductDB.size() = " + reverseProductDB.size());
+                }
+                try (StopWatch swm = new StopWatch("TTT matching")) {
+                    ReverseMatcher reverseMatcher = new ReverseMatcher(reverseProductDB, new File(args[0] + ".polygon"));
+                    Set<Integer> eoProducts = performInsitu(reverseMatcher, insituRecords, HOURS_IN_MILLIS * hours);
+    //                printURLs(eoProducts, new File(productIndexListFile1.getAbsolutePath() + ".url"));
+                }
+            }
+        } else {
+            printUsage();
         }
     }
 
-    private static Set<Integer> performInsitu(String format, ReverseMatcher matcher, List<SimpleRecord> insituRecords, long maxTimeDifference) {
-        System.out.println("==================== insitu " + format + "-" + matcher.getClass().getSimpleName() + " ====================================");
-
-        long t1 = System.currentTimeMillis();
+    private static Set<Integer> performInsitu(ReverseMatcher matcher, List<SimpleRecord> insituRecords, long maxTimeDifference) {
+        System.out.println("==================== insitu " + matcher.getClass().getSimpleName() + " ====================================");
         Set<Integer> eoProducts = matcher.matchInsitu(insituRecords, maxTimeDifference);
-        long t2 = System.currentTimeMillis();
-
         System.out.println("num matches =  " + eoProducts.size());
-//        if (format.equals("s2i")) {
-//            System.out.println("cellCounter    =  " + S2IEoProduct.cellCounter);
-//            System.out.println("poylgonCounter =  " + S2IEoProduct.poylgonCounter);
-//            S2IEoProduct.cellCounter = 0;
-//            S2IEoProduct.poylgonCounter = 0;
-//        }
-        System.out.println("delta time  = " + ((t2 - t1) / 1000f));
-
         return eoProducts;
     }
 
-    private static void performOverlap(String format, EoProductMatcher matcher) {
-        System.out.println("==================== overlap " + format + "-" + matcher.getClass().getSimpleName() + " ====================================");
-
-        long t1 = System.currentTimeMillis();
-        Set<EoProduct> eoProducts = matcher.matchProduct();
-        long t2 = System.currentTimeMillis();
-
+    private static Set<Integer> performOverlap(ReverseMatcher matcher, String polyWKT) {
+        System.out.println("==================== overlap " + matcher.getClass().getSimpleName() + " ====================================");
+        Set<Integer> eoProducts = matcher.matchProduct(polyWKT, 0L, Long.MAX_VALUE);
         System.out.println("num matches =  " + eoProducts.size());
-        if (format.equals("jts")) {
-            System.out.println("num TopologyExceptions =  " + JtsEoProduct.topExceptions);
-        } else if (format.equals("s2i")) {
-            System.out.println("cellCounter    =  " + S2IEoProduct.cellCounter);
-            System.out.println("poylgonCounter =  " + S2IEoProduct.poylgonCounter);
-            S2IEoProduct.cellCounter = 0;
-            S2IEoProduct.poylgonCounter = 0;
-        }
-        System.out.println("delta time  = " + ((t2 - t1) / 1000f));
+        return eoProducts;
     }
 
 
     private static void printUsage() {
-        System.err.println("Usage: ProductDBCheckerMain <productIndexList> <productList> <insituList> <hours>");
+        System.err.println("Usage: ReverseCheckerMain <productIndexList> <insituList> <hours>");
+        System.err.println("or");
+        System.err.println("Usage: ReverseCheckerMain <productIndexList> polygon");
         System.exit(1);
     }
 
@@ -148,22 +147,18 @@ public class ReverseCheckerMain {
         }
     }
 
-    static void printURLs(Collection<EoProduct> eoProducts, File urlFile) throws IOException {
-        List<S2IEoProduct> uniqueProductList = new ArrayList<>(eoProducts.size());
-        for (EoProduct eoProduct : eoProducts) {
-            uniqueProductList.add((S2IEoProduct) eoProduct);
-        }
-        Collections.sort(uniqueProductList, (o1, o2) -> Integer.compare(o1.productID, o2.productID));
+    static void printURLs(Collection<Integer> eoProducts, File urlFile) throws IOException {
+        List<Integer> uniqueProductIndices = new ArrayList<>(eoProducts);
+        Collections.sort(uniqueProductIndices);
 
-        try (FileWriter urlWriter = new FileWriter("urls_matchin_insitu.txt")) {
+        try (FileWriter urlWriter = new FileWriter("urls_matchin_request.txt")) {
             try (StopWatch sw = new StopWatch("  >>load urls")) {
                 try (
                         DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(urlFile)))
                 ) {
                     int streamPID = 0;
-                    for (S2IEoProduct eoProduct : uniqueProductList) {
-                        int productID = eoProduct.productID;
-                        while (streamPID < productID) {
+                    for (int productIndex : uniqueProductIndices) {
+                        while (streamPID < productIndex) {
                             int utflen = dis.readUnsignedShort();
                             dis.skipBytes(utflen);
                             streamPID++;
