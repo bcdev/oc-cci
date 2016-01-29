@@ -101,7 +101,7 @@ public class ReverseCheckerMain {
                 try (StopWatch swm = new StopWatch("TTT matching")) {
                     ReverseMatcher reverseMatcher = new ReverseMatcher(reverseProductDB, new File(args[0] + ".polygon"));
                     Set<Integer> eoProducts = performInsitu(reverseMatcher, insituRecords, HOURS_IN_MILLIS * hours);
-    //                printURLs(eoProducts, new File(productIndexListFile1.getAbsolutePath() + ".url"));
+                    printURLs(eoProducts, new File(productIndexListFile1.getAbsolutePath() + ".url"));
                 }
             }
         } else {
@@ -151,7 +151,7 @@ public class ReverseCheckerMain {
         List<Integer> uniqueProductIndices = new ArrayList<>(eoProducts);
         Collections.sort(uniqueProductIndices);
 
-        try (FileWriter urlWriter = new FileWriter("urls_matchin_request.txt")) {
+        try (FileWriter urlWriter = new FileWriter("urls_matching_request.txt")) {
             try (StopWatch sw = new StopWatch("  >>load urls")) {
                 try (
                         DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(urlFile)))

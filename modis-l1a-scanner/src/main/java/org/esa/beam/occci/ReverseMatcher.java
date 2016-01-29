@@ -31,6 +31,8 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,12 +46,23 @@ import java.util.Set;
  */
 public class ReverseMatcher {
 
+    private static final DateFormat DATE_FORMAT = DateUtils.createDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private final long globalStartTime;
+    private final long globalEndTime;
+
     private final ReverseProductDB reverseProductDB;
     private final File polygonFile;
 
     public ReverseMatcher(ReverseProductDB reverseProductDB, File polygonFile) {
         this.reverseProductDB = reverseProductDB;
         this.polygonFile = polygonFile;
+        try {
+            globalStartTime = DATE_FORMAT.parse("2008-01-01 00:00:00").getTime();
+            globalEndTime = DATE_FORMAT.parse("2009-01-01 00:00:00").getTime();
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public Set<Integer> matchInsitu(List<SimpleRecord> insituRecords, long maxTimeDifference) {
@@ -58,8 +71,15 @@ public class ReverseMatcher {
         try (StopWatch sw = new StopWatch("  >>test for time and cell")) {
             for (SimpleRecord insituRecord : insituRecords) {
                 final long referenceTime = insituRecord.getTime();
-                final long windowStartTime = referenceTime - maxTimeDifference;
-                final long windowEndTime = referenceTime + maxTimeDifference;
+                final long windowStartTime;
+                final long windowEndTime;
+                if (referenceTime == -1) {
+                    windowStartTime = globalStartTime;
+                    windowEndTime = globalEndTime;
+                } else {
+                    windowStartTime = referenceTime - maxTimeDifference;
+                    windowEndTime = referenceTime + maxTimeDifference;
+                }
 
                 Point2D.Float location = insituRecord.getLocation();
                 final double lon = location.getX();
