@@ -1,3 +1,4 @@
 org.esa.beam.occci.qaa.QaaOp$Spi
 org.esa.beam.occci.processing.MaybeFlipOp$Spi
 org.esa.beam.occci.processing.ExtendMaskOp$Spi
+org.esa.beam.occci.processing.BinningDetectionOP$Spi
