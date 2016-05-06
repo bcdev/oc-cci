@@ -37,6 +37,11 @@
             <version>${beam.version}</version>
         </dependency>
         <dependency>
+            <groupId>gov.nasa.gsfc.seadas</groupId>
+            <artifactId>seadas-reader</artifactId>
+            <version>1.5.9-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.esa.beam.coastcolour</groupId>
             <artifactId>coastcolour-fuzzy-classification</artifactId>
             <version>1.2</version>

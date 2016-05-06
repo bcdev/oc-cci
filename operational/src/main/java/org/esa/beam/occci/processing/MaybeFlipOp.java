@@ -190,6 +190,10 @@ public class MaybeFlipOp extends Operator {
         double lat1_rad = Math.toRadians(p1.getLat());
         double lat2_rad = Math.toRadians(p2.getLat());
 
+        if (lon1_rad == lon2_rad && lat1_rad == lat2_rad) {
+            return 0.0;
+        }
+
         double deltaLon = lon1_rad - lon2_rad;
         double cosDeltaLon = Math.cos(deltaLon);
         double sinLat = Math.sin(lat1_rad) * Math.sin(lat2_rad);
