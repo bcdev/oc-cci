@@ -62,7 +62,9 @@ function process() {
     echo OUTPUT_FILE "$outFile" >> parameters.txt
 
     set -o pipefail
-    ${POLYMER}/polymer parameters.txt | while read x ; do handle_progress "$x" ; done
+    trap "kill %1" EXIT
+    stdbuf -oL -eL ${POLYMER}/polymer parameters.txt | while read x ; do handle_progress "$x" ; done
+    trap "" EXIT
     echo CALVALUS_OUTPUT_PRODUCT "${outFile}"
 }
 
