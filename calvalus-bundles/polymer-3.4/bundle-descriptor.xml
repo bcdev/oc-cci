@@ -193,7 +193,7 @@ PARTIAL_PROCESSING 0
                   contaminated MERIS observations.</p>]]>
             </descriptionHtml>
             <inputProductTypes>MERIS_L1B</inputProductTypes>
-            <outputProductType>POLYMER_L2</outputProductType>
+            <outputProductType>MERIS_L2</outputProductType>
             <validMaskExpression>true</validMaskExpression>
 
             <outputVariables>
@@ -254,9 +254,29 @@ PARTIAL_PROCESSING 0
             </outputVariables>
 
             <jobConfig>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.memory.mb</name>
+                   <value>1536</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.java.opts</name>
+                   <value>-Djava.awt.headless=true -Xmx384M</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.task.timeout</name>
+                   <value>7200000</value>
+               </jobParameter>
                 <jobParameter>
                     <name>calvalus.hadoop.mapreduce.map.failures.maxpercent</name>
                     <value>5</value>
+                </jobParameter>
+                <jobParameter>
+                    <name>calvalus.calvalus.bundle</name>
+                    <value>calvalus-2.7-portal</value>
+                </jobParameter>
+                <jobParameter>
+                    <name>calvalus.snap.bundle</name>
+                    <value>beam-5.0.1-portal</value>
                 </jobParameter>
             </jobConfig>
         </processorDescriptor>
@@ -489,7 +509,7 @@ PARTIAL_PROCESSING 0
                   contaminated MODIS observations.</p>]]>
             </descriptionHtml>
             <inputProductTypes>MODIS_L1C</inputProductTypes>
-            <outputProductType>POLYMER_L2</outputProductType>
+            <outputProductType>MODIS_L2</outputProductType>
             <validMaskExpression>true</validMaskExpression>
 
             <outputVariables>
@@ -551,9 +571,29 @@ PARTIAL_PROCESSING 0
                     <name>calvalus.auxdata.modis_geo</name>
                     <value>'/calvalus/eodata/MODISA_GEO/v1/'yyyy'/'MM'/'dd'/'</value>
                 </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.memory.mb</name>
+                   <value>1536</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.java.opts</name>
+                   <value>-Djava.awt.headless=true -Xmx384M</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.task.timeout</name>
+                   <value>7200000</value>
+               </jobParameter>
                 <jobParameter>
                     <name>calvalus.hadoop.mapreduce.map.failures.maxpercent</name>
                     <value>5</value>
+                </jobParameter>
+                <jobParameter>
+                    <name>calvalus.calvalus.bundle</name>
+                    <value>calvalus-2.7-portal</value>
+                </jobParameter>
+                <jobParameter>
+                    <name>calvalus.snap.bundle</name>
+                    <value>beam-5.0.1-portal</value>
                 </jobParameter>
             </jobConfig>
         </processorDescriptor>
@@ -730,8 +770,8 @@ PARTIAL_PROCESSING 0
                 <![CDATA[<p>Performs Polymer processing.  Atmospheric correction of sun-glint
                   contaminated SeaWiFS observations.</p>]]>
             </descriptionHtml>
-            <inputProductTypes>SeaWiFS_L1B</inputProductTypes>
-            <outputProductType>POLYMER_L2</outputProductType>
+            <inputProductTypes>SEAWIFS_L1B</inputProductTypes>
+            <outputProductType>SEAWIFS_L2</outputProductType>
             <validMaskExpression>true</validMaskExpression>
 
             <outputVariables>
@@ -783,9 +823,29 @@ PARTIAL_PROCESSING 0
             </outputVariables>
 
             <jobConfig>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.memory.mb</name>
+                   <value>1536</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.java.opts</name>
+                   <value>-Djava.awt.headless=true -Xmx384M</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.task.timeout</name>
+                   <value>7200000</value>
+               </jobParameter>
                 <jobParameter>
                     <name>calvalus.hadoop.mapreduce.map.failures.maxpercent</name>
                     <value>5</value>
+                </jobParameter>
+                <jobParameter>
+                    <name>calvalus.calvalus.bundle</name>
+                    <value>calvalus-2.7-portal</value>
+                </jobParameter>
+                <jobParameter>
+                    <name>calvalus.snap.bundle</name>
+                    <value>beam-5.0.1-portal</value>
                 </jobParameter>
             </jobConfig>
         </processorDescriptor>
@@ -984,7 +1044,7 @@ PARTIAL_PROCESSING 0
                   contaminated VIIRS observations.</p>]]>
             </descriptionHtml>
             <inputProductTypes>VIIRS_L1C</inputProductTypes>
-            <outputProductType>POLYMER_L2</outputProductType>
+            <outputProductType>VIIRS_L2</outputProductType>
             <validMaskExpression>true</validMaskExpression>
 
             <outputVariables>
@@ -1036,9 +1096,29 @@ PARTIAL_PROCESSING 0
             </outputVariables>
 
             <jobConfig>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.memory.mb</name>
+                   <value>1536</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.java.opts</name>
+                   <value>-Djava.awt.headless=true -Xmx384M</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.task.timeout</name>
+                   <value>7200000</value>
+               </jobParameter>
                 <jobParameter>
                     <name>calvalus.hadoop.mapreduce.map.failures.maxpercent</name>
                     <value>5</value>
+                </jobParameter>
+                <jobParameter>
+                    <name>calvalus.calvalus.bundle</name>
+                    <value>calvalus-2.7-portal</value>
+                </jobParameter>
+                <jobParameter>
+                    <name>calvalus.snap.bundle</name>
+                    <value>beam-5.0.1-portal</value>
                 </jobParameter>
             </jobConfig>
         </processorDescriptor>
