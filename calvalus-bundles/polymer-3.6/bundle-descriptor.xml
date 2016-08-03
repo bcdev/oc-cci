@@ -1,12 +1,12 @@
 <bundleDescriptor>
     <bundleName>polymer</bundleName>
-    <bundleVersion>3.4</bundleVersion>
+    <bundleVersion>3.6</bundleVersion>
 
     <processorDescriptors>
         <processorDescriptor>
             <executableName>polymerMeris</executableName>
             <processorName>Polymer L2 Processing (Meris)</processorName>
-            <processorVersion>3.4</processorVersion>
+            <processorVersion>3.6</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
@@ -284,7 +284,7 @@ PARTIAL_PROCESSING 0
         <processorDescriptor>
             <executableName>polymerModis</executableName>
             <processorName>Polymer L2 Processing (MODIS L1C)</processorName>
-            <processorVersion>3.4</processorVersion>
+            <processorVersion>3.6</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
@@ -601,7 +601,7 @@ PARTIAL_PROCESSING 0
         <processorDescriptor>
             <executableName>polymerSeaWiFS</executableName>
             <processorName>Polymer L2 Processing (SeaWiFS)</processorName>
-            <processorVersion>3.4</processorVersion>
+            <processorVersion>3.6</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #
@@ -853,7 +853,7 @@ PARTIAL_PROCESSING 0
         <processorDescriptor>
             <executableName>polymerVIIRS</executableName>
             <processorName>Polymer L2 Processing (VIIRS L1C)</processorName>
-            <processorVersion>3.4</processorVersion>
+            <processorVersion>3.6</processorVersion>
             <defaultParameters><![CDATA[
 ########################
 # POLYMER COMMAND FILE #

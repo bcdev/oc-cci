@@ -1,5 +1,5 @@
 
-POLYMER=./polymer-3.4
+POLYMER=./polymer-3.6
 
 function parameter_defaults() {
     minimumsize=100
