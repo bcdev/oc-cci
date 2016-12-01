@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+set -m
+
+inFile="${1}"
+outFile=$(basename ${inFile}.polymer.nc)
+
+PYTHON="./miniconda/bin/python"
+#POLYMER_DIR="polymer"
+#export PYTHONPATH="${POLYMER_DIR}"
+if [ -e "wrapper.py" ]; then
+  WRAPPER="wrapper.py"
+else
+  WRAPPER="polymer-wrapper.py"
+fi
+
+trap "kill %1" EXIT
+echo ${PYTHON} -u ${WRAPPER} ${inFile} ${outFile}
+${PYTHON} -u ${WRAPPER} ${inFile} ${outFile}
+trap "" EXIT
+echo CALVALUS_OUTPUT_PRODUCT "${outFile}"

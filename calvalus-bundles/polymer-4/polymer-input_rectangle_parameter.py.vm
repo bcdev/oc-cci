@@ -1,0 +1,22 @@
+
+def get_input_rect():
+#if ($inputRectangle)
+  y = int($inputRectangle.y)
+  x = int($inputRectangle.x)
+  w = int($inputRectangle.width)
+  h = int($inputRectangle.height)
+  return (x, y, w, h)
+#else
+  return (None, None, None, None)
+#end
+
+def get_product_rect():
+#if ($productRectangle)
+  y = int($productRectangle.y)
+  x = int($productRectangle.x)
+  w = int($productRectangle.width)
+  h = int($productRectangle.height)
+  return (x, y, w, h)
+#else
+  return (None, None, None, None)
+#end

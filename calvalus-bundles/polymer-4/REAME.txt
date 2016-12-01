@@ -1,0 +1,46 @@
+miniconda environment:
+======================
+conda create -n polymer-4.0beta3 python=2.7
+source activate polymer-4.0beta3
+
+conda install cython numpy scipy netcdf4 pandas
+conda install -c nsidc python-hdf4=0.9
+conda install -c sunpy glymur
+pip install -i https://pypi.anaconda.org/pypi/simple pyepr
+
+make
+
+edit: level2_nc.py
+replace
+from polymer.level2 import Level2_file
+with
+from .level2 import Level2_file
+
+
+----------------------------------------------------------------------
+
+Output
+======
+
+Starting processing at 2016-10-07 17:12:06.555376
+Opened "/home/marcoz/EOData/Meris/Pairs/MER_RR__1P_Danmark.N1", (1121x1121)
+Initializing output file "MER_RR__1P_Danmark.N1.nc"
+Read block: size (100, 1121), offset (0, 0)
+Processing block block: size (100, 1121), offset (0, 0)
+Read block: size (100, 1121), offset (100, 0)
+Processing block block: size (100, 1121), offset (100, 0)
+
+----------------------------------------------------------------------
+
+polymer(
+  Level1(filename=<filename>, 
+         sensor='MODIS',
+         ancillary=Ancillary_NASA(ozone=<ozone file>, meteo=<meteo file>, directory='.')
+         , sline=1500, eline=2000, srow=100, erow=500
+  ), 
+  Level2('output.hdf', 
+         fmt='netcdf4',
+         datasets=['Rw', 'sza', 'vza', '_raa', 'detector_index'] 
+  ),
+  params
+)

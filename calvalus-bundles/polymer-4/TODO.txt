@@ -1,0 +1,5 @@
++ region
++ package 4.0
++ different archive for auxdata, miniconda, polymer
+- progress
+- later adopt to FSG, RRG

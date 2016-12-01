@@ -1,0 +1,90 @@
+<bundleDescriptor>
+    <bundleName>polymer</bundleName>
+    <bundleVersion>4.0</bundleVersion>
+
+    <processorDescriptors>
+        <processorDescriptor>
+            <executableName>polymer</executableName>
+            <processorName>Polymer L2 Processing (MERIS, MODISm SEAWIFS, VIIRS)</processorName>
+            <processorVersion>4.0</processorVersion>
+            <defaultParameters></defaultParameters>
+            <outputFormats>NetCDF</outputFormats>
+            <formatting>IMPLICIT</formatting>
+            <descriptionHtml>
+                <![CDATA[<p>Performs Polymer processing.  Atmospheric correction of sun-glint
+                  contaminated observations.</p>]]>
+            </descriptionHtml>
+            <inputProductTypes>MERIS_L1B,MODIS_L1C,SEAWIFS_L1C,VIIRS_L1C</inputProductTypes>
+            <outputProductType>L2</outputProductType>
+            <validMaskExpression>true</validMaskExpression>
+
+            <outputVariables>
+                <outputVariable>
+                    <name>R'865</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>bitmask</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rgli</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>logchl</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>bbs</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>C0</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>C1</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>C2</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw412</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw443</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw490</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw510</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw560</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw620</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw665</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw754</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw779</name>
+                </outputVariable>
+                <outputVariable>
+                    <name>Rw865</name>
+                </outputVariable>
+            </outputVariables>
+
+            <jobConfig>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.memory.mb</name>
+                   <value>1536</value>
+               </jobParameter>
+               <jobParameter>
+                   <name>calvalus.hadoop.mapreduce.map.java.opts</name>
+                   <value>-Djava.awt.headless=true -Xmx384M</value>
+               </jobParameter>
+            </jobConfig>
+        </processorDescriptor>
+    </processorDescriptors>
+</bundleDescriptor>

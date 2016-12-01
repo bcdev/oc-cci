@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+inputPath="${1}"
+outputPath="${2}"
+
+l1bFileName=${inputPath##*/}
+polymerFileNameNetcdf=${l1bFileName}.polymer.nc
+
+if hadoop fs -ls ${outputPath}/${polymerFileNameNetcdf}; then
+  # netcdf output exist
+  echo CALVALUS_SKIP_PROCESSING yes
+fi
+
