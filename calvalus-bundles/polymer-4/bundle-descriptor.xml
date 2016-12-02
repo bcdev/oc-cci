@@ -5,7 +5,7 @@
     <processorDescriptors>
         <processorDescriptor>
             <executableName>polymer</executableName>
-            <processorName>Polymer L2 Processing (MERIS, MODISm SEAWIFS, VIIRS)</processorName>
+            <processorName>Polymer L2</processorName>
             <processorVersion>4.0</processorVersion>
             <defaultParameters></defaultParameters>
             <outputFormats>NetCDF</outputFormats>
