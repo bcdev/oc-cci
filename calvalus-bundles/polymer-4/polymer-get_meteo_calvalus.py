@@ -21,7 +21,7 @@ DIR_AUX_NCEP='hdfs://calvalus/calvalus/auxiliary/seadas/anc'
 #PML
 if socket.gethostname().startswith("calvalus"):
     DIR_AUX_ERA='/data/datasets/ERA_Interim/level3/era_interim-downloaded_20140430/swath/0d'
-    DIR_AUX_NCEP='/data/datasets/Sensor/modis/ancillary/metoz'
+    DIR_AUX_NCEP='/data/datasets/operational/ancillary/obpg/live_mirror/Meteorological'
 
 DIR_TMP='.'
 
@@ -227,9 +227,9 @@ def interp_meteo_toms(date):
     do1doy = do1.timetuple().tm_yday
 
     OZ_TEMPLATES = [
+        '{BASE}/{year:d}/{doy:03d}/N{year:d}{doy:03d}00_O3_AURAOMI_24h.hdf',
         '{BASE}/{year:d}/{doy:03d}/N{year:d}{doy:03d}00_O3_TOMSOMI_24h.hdf',
         '{BASE}/{year:d}/{doy:03d}/S{year:d}{doy:03d}00{doy:03d}23_TOVS.OZONE',
-        '{BASE}/{year:d}/{doy:03d}/N{year:d}{doy:03d}00_O3_AURAOMI_24h.hdf',
         '{BASE}/{year:d}/{doy:03d}/S{year:d}{doy:03d}00{doy:03d}23_TOAST.OZONE'
         ]
     path_oz_0 = getNcepAuxdataOZ(OZ_TEMPLATES, do0year, do0doy)
