@@ -219,9 +219,19 @@ public class ModisL1aScanner {
 
    private static String getPolygon(NetcdfFile netcdfFile) {
        Group navigation_data = netcdfFile.findGroup("navigation_data");
-       Attribute ringPointLongitude = navigation_data.findAttribute("gringpointlongitude");
-       Attribute ringPointLatitude = navigation_data.findAttribute("gringpointlatitude");
-       Attribute ringPointSequence = navigation_data.findAttribute("gringpointsequence");
+       Attribute ringPointLongitude = null;
+       Attribute ringPointLatitude = null;
+       Attribute ringPointSequence = null;
+       if (navigation_data != null) {
+           ringPointLongitude = navigation_data.findAttribute("gringpointlongitude");
+           ringPointLatitude = navigation_data.findAttribute("gringpointlatitude");
+           ringPointSequence = navigation_data.findAttribute("gringpointsequence");
+       }
+       if (ringPointLatitude == null || ringPointLongitude == null|| ringPointSequence == null)  {
+           ringPointLongitude = netcdfFile.findGlobalAttribute("GRingPointLongitude");
+           ringPointLatitude = netcdfFile.findGlobalAttribute("GRingPointLatitude");
+           ringPointSequence = netcdfFile.findGlobalAttribute("GRingPointSequenceNo");
+       }
 
        double[] lonValues = new double[4];
        for (int i = 0; i < lonValues.length; i++) {
