@@ -1,2 +1,3 @@
 org.esa.beam.occci.biascorrect.BiasClimatologyAggregator$Descriptor
 org.esa.beam.occci.merging.SensorMerging$Descriptor
+org.esa.beam.occci.processing.AggregatorCount$Descriptor
