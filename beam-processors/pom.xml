@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.esa.cci.oc</groupId>
-    <artifactId>oc-cci</artifactId>
+    <artifactId>oc-cci-beam</artifactId>
     <version>0.9-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>OceanColour-CCI</name>
+    <name>OceanColour-CCI for BEAM</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
