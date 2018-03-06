@@ -14,7 +14,8 @@
     <description>Ocean Color CCI Parent project</description>
 
     <modules>
-        <module>operational</module>
+        <module>beam-processors</module>
+        <module>snap-processors</module>
         <module>modis-l1a-scanner</module>
     </modules>
 </project>   
