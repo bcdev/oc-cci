@@ -74,6 +74,11 @@ public class DescriptorTest {
         }
 
         @Override
+        public String getVariableValidExpression(int index) {
+            return null;
+        }
+
+        @Override
         public String getValidMaskExpression() {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }

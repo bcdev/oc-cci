@@ -55,6 +55,11 @@ public class MyVariableContext implements VariableContext {
         return null;
     }
 
+    @Override
+    public String getVariableValidExpression(int index) {
+        return null;
+    }
+
 
     @Override
     public String getValidMaskExpression() {

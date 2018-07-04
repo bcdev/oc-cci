@@ -3,3 +3,4 @@ org.esa.beam.occci.processing.MaybeFlipOp$Spi
 org.esa.beam.occci.processing.DistanceOnEarthOp$Spi
 org.esa.beam.occci.processing.ExtendMaskOp$Spi
 org.esa.beam.occci.processing.BinningDetectionOP$Spi
+org.esa.beam.occci.processing.OccciFlipOp$Spi
