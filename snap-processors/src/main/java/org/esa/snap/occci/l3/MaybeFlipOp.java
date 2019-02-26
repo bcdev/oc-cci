@@ -41,7 +41,7 @@ import java.io.IOException;
 /**
  * Created by marcoz on 26.11.15.
  */
-@OperatorMetadata(alias = "OC-CCI.maybeflip",
+@OperatorMetadata(alias = "Snap.Occci.Maybeflip",
         description = "Flips the source product horizontal and vertical " +
                 "if they are afterwards aligned with the reference product",
         authors = "Marco Zuehlke (Brockmann Consult)",

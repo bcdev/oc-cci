@@ -51,12 +51,12 @@ import static org.esa.snap.binning.operator.BinningOp.DATE_INPUT_PATTERN;
  * Tests which products are needed for binnning by applying the filtering.
  * Especially the spatial data day filter.
  */
-@OperatorMetadata(alias = "OC-CCI.binning-detection",
+@OperatorMetadata(alias = "Snap.Occci.Binning-detection",
         description = "Tests which products are needed for binnning",
         authors = "Marco Zuehlke (Brockmann Consult)",
         copyright = "(C) 2018 by Brockmann Consult",
         version = "0.2")
-public class BinningDetectionOP extends Operator {
+public class BinningDetectionOp extends Operator {
 
     @Parameter(description = "A comma-separated list of file paths specifying the source products.\n" +
             "Each path may contain the wildcards '**' (matches recursively any directory),\n" +
@@ -296,7 +296,7 @@ public class BinningDetectionOP extends Operator {
 
     public static class Spi extends OperatorSpi {
         public Spi() {
-            super(BinningDetectionOP.class);
+            super(BinningDetectionOp.class);
         }
     }
 }
