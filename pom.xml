@@ -14,7 +14,7 @@
     <description>Ocean Color CCI Parent project</description>
 
     <modules>
-        <module>beam-processors</module>
+        <!-- <module>beam-processors</module> Disabled, because it is not used anymore-->
         <module>snap-processors</module>
         <module>modis-l1a-scanner</module>
     </modules>
