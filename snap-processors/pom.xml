@@ -4,14 +4,14 @@
 
     <groupId>org.esa.cci.oc</groupId>
     <artifactId>oc-cci-snap</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2</version>
     <packaging>nbm</packaging>
 
     <name>OceanColour-CCI for SNAP</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <snap.version>6.0.0</snap.version>
+        <snap.version>7.0.0</snap.version>
     </properties>
 
     <dependencies>
