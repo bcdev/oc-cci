@@ -92,7 +92,7 @@ public class MaybeFlipOp extends Operator {
         if (sourceGC instanceof TiePointGeoCoding) {
             TiePointGeoCoding tiePointGeoCoding = (TiePointGeoCoding) sourceGC;
 
-            ProductData latData = tiePointGeoCoding.getLatGrid().getData();
+            ProductData latData = tiePointGeoCoding.getLatGrid().getGridData();
             for (int i = 0; i < latData.getNumElems(); i++) {
                 if (!MathUtils.equalValues(latData.getElemFloatAt(i), -999.0f, 10E-6f)) {
                     onlyBadValues = false;
@@ -100,7 +100,7 @@ public class MaybeFlipOp extends Operator {
                 }
             }
             if (onlyBadValues) {
-                ProductData lonData = tiePointGeoCoding.getLonGrid().getData();
+                ProductData lonData = tiePointGeoCoding.getLonGrid().getGridData();
                 for (int i = 0; i < lonData.getNumElems(); i++) {
                     if (!MathUtils.equalValues(lonData.getElemFloatAt(i), -999.0f, 10E-6f)) {
                         onlyBadValues = false;
