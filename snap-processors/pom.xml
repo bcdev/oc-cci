@@ -4,7 +4,7 @@
 
     <groupId>org.esa.cci.oc</groupId>
     <artifactId>oc-cci-snap</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
     <packaging>nbm</packaging>
 
     <name>OceanColour-CCI for SNAP</name>
