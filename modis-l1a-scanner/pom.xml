@@ -2,10 +2,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.esa.cci.oc</groupId>
+    <parent>
+        <groupId>org.esa.cci.oc</groupId>
+        <artifactId>oc-cci-parent</artifactId>
+        <version>1-SNAPSHOT</version>
+    </parent>
+
     <artifactId>modis-l1a-scanner</artifactId>
     <version>0.9-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>nbm</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -53,130 +58,38 @@
 
         <dependency>
             <groupId>edu.ucar</groupId>
-            <artifactId>netcdf</artifactId>
-            <version>4.3.19</version>
+            <artifactId>netcdfAll</artifactId>
+            <version>5.3.3</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--          <groupId>org.jnegre.google</groupId>-->
+<!--          <artifactId>s2-geometry</artifactId>-->
+<!--          <version>1.2</version>-->
+<!--          <type>jar</type>-->
+<!--        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/io.sgr/s2-geometry-library-java -->
         <dependency>
-          <groupId>org.jnegre.google</groupId>
-          <artifactId>s2-geometry</artifactId>
-          <version>1.2</version>
-          <type>jar</type>
+            <groupId>io.sgr</groupId>
+            <artifactId>s2-geometry-library-java</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>bc-mvn</id>
-            <name>Public Maven Repository at Brockmann Consult</name>
-            <url>http://www.brockmann-consult.de/mvn/os</url>
-            <releases>
-                <enabled>true</enabled>
-                <checksumPolicy>warn</checksumPolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <checksumPolicy>warn</checksumPolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-jnegre-maven</id>
-            <name>bintray</name>
-            <url>http://dl.bintray.com/jnegre/maven</url>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
+                <groupId>org.apache.netbeans.utilities</groupId>
+                <artifactId>nbm-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.esa.beam.occci.ModisL1aScanner</mainClass>
-                        </manifest>
-                    </archive>
-                    <finalName>ModisL1aScanner</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <attach>false</attach>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.esa.beam.occci.ModisL1aScanner</mainClass>
-                                </transformer>
-                            </transformers>
-                            <finalName>ProductWithInsituComparer</finalName>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>true</minimizeJar>
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>edu.ucar:netcdf</exclude>
-                                    <exclude>edu.ucar:udunits</exclude>
-                                    <exclude>commons-httpclient:commons-httpclient</exclude>
-                                    <exclude>commons-codec:commons-codec</exclude>
-                                    <exclude>org.slf4j:jcl-over-slf4j</exclude>
-                                    <exclude>joda-time:joda-time</exclude>
-                                    <exclude>org.slf4j:slf4j-api</exclude>
-                                    <exclude>org.jdom:jdom2</exclude>
-                                    <exclude>net.jcip:jcip-annotations</exclude>
-                                    <exclude>com.sun.jna:jna</exclude>
-                                    <exclude>org.quartz-scheduler</exclude>
-                                    <exclude>c3p0:c3p0</exclude>
-                                    <exclude>com.google.protobuf:protobuf-java</exclude>
-                                    <exclude>net.sf.ehcache:ehcache-core</exclude>
-                                    <exclude>com.sleepycat:je</exclude>
-                                </excludes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
--->
+
         </plugins>
     </build>
+
 </project>

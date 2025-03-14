@@ -2,187 +2,70 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.esa.cci.oc</groupId>
+    <parent>
+        <groupId>org.esa.cci.oc</groupId>
+        <artifactId>oc-cci-parent</artifactId>
+        <version>1-SNAPSHOT</version>
+    </parent>
+
     <artifactId>oc-cci-snap</artifactId>
-    <version>1.5</version>
+    <version>2.0</version>
     <packaging>nbm</packaging>
 
-    <name>OceanColour-CCI for SNAP</name>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <snap.version>9.0.4</snap.version>
-    </properties>
+    <name>OceanColour-CCI-SNAP</name>
+    <description>OceanColour-CCI for SNAP</description>
 
     <dependencies>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>ceres-core</artifactId>
-            <version>${snap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>ceres-binding</artifactId>
-            <version>${snap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>ceres-jai</artifactId>
-            <version>${snap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>ceres-metadata</artifactId>
-            <version>${snap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>ceres-glayer</artifactId>
-            <version>${snap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>snap-runtime</artifactId>
-            <version>${snap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>snap-gpf</artifactId>
-            <version>${snap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>snap-core</artifactId>
-            <version>${snap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>snap-binning</artifactId>
-            <version>${snap.version}</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>snap-repo-public</id>-->
-<!--            <name>Public Maven Repository for SNAP</name>-->
-<!--            <url>http://nexus.senbox.net/nexus/content/repositories/public/</url>-->
-<!--            <releases>-->
-<!--                <enabled>true</enabled>-->
-<!--                <checksumPolicy>warn</checksumPolicy>-->
-<!--            </releases>-->
-<!--            <snapshots>-->
-<!--                <enabled>true</enabled>-->
-<!--                <checksumPolicy>warn</checksumPolicy>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
-<!--    </repositories>-->
-
-    <repositories>
-        <repository>
-            <id>snap-repo-public</id>
-            <name>Public Maven Repository for SNAP</name>
-            <url>https://nexus.snap-ci.ovh/repository/snap-maven-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <checksumPolicy>warn</checksumPolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <checksumPolicy>warn</checksumPolicy>
-            </snapshots>
-        </repository>
-
-        <repository>
-            <id>osgeo</id>
-            <url>https://repo.osgeo.org/repository/geotools-releases/</url>
-        </repository>
-    </repositories>
-
-<!--    <distributionManagement>-->
-<!--        <repository>-->
-<!--            <id>snap-repo-public</id>-->
-<!--            <name>Public Maven Repository for SNAP</name>-->
-<!--            <url>https://nexus.snap-ci.ovh/repository/snap-maven-releases/</url>-->
-<!--            <uniqueVersion>false</uniqueVersion>-->
-<!--        </repository>-->
-<!--        <snapshotRepository>-->
-<!--            <id>snap-repo-public</id>-->
-<!--            <name>Public Maven Snapshot Repository for SNAP</name>-->
-<!--            <url>https://nexus.snap-ci.ovh/repository/snap-maven-snapshot/</url>-->
-<!--            <uniqueVersion>false</uniqueVersion>-->
-<!--        </snapshotRepository>-->
-<!--    </distributionManagement>-->
-
-
-<!--    <pluginRepositories>-->
-<!--        <pluginRepository>-->
-<!--            <id>snap-repo-public</id>-->
-<!--            <name>Public Maven Repository for SNAP</name>-->
-<!--            <url>https://nexus.snap-ci.ovh/repository/snap-maven-public/</url>-->
-<!--            <releases>-->
-<!--                <enabled>true</enabled>-->
-<!--                <checksumPolicy>warn</checksumPolicy>-->
-<!--            </releases>-->
-<!--            <snapshots>-->
-<!--                <enabled>true</enabled>-->
-<!--                <checksumPolicy>warn</checksumPolicy>-->
-<!--            </snapshots>-->
-<!--        </pluginRepository>-->
-<!--    </pluginRepositories>-->
-
-
     <build>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <debug>true</debug>
-                    <encoding>UTF-8</encoding>
-                </configuration>
+                <groupId>org.apache.netbeans.utilities</groupId>
+                <artifactId>nbm-maven-plugin</artifactId>
             </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>nbm-maven-plugin</artifactId>
-                <version>4.1</version>
-                <extensions>true</extensions>
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.help</groupId>
-                        <artifactId>javahelp</artifactId>
-                        <version>2.0.05</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <licenseName>THE BEER-WARE LICENSE</licenseName>
-                    <licenseFile>LICENSE.txt</licenseFile>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
